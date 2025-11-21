@@ -13,7 +13,7 @@ if (session_status() == PHP_SESSION_NONE) {
     <?php include 'common/navbar.php'; ?>
 
     <div class="container mt-5">
-        <div class="p-5 mb-4 bg-light rounded-3 shadow"> 
+        <div class="p-5 mb-4 bg-light rounded-3 shadow">
             <div class="container-fluid py-4">
                 <h1 class="display-5 fw-bold">Benvenuto su Play Room Planner!</h1>
                 <p class="col-md- fs-4">Accedi o registrati per iniziare a prenotare le sale e gestire i tuoi inviti.</p>
@@ -40,10 +40,10 @@ if (session_status() == PHP_SESSION_NONE) {
                         <p class="card-text mt-3 mb-auto">Sale attrezzate per prove, lezioni e registrazione.</p>
 
                         <div class="mt-3">
-                             <a href="#" class="btn btn-outline-secondary">Scopri le sale</a>
+                            <a href="#" class="btn btn-outline-secondary">Scopri le sale</a>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
 
@@ -55,7 +55,7 @@ if (session_status() == PHP_SESSION_NONE) {
                         <p class="card-text mt-3 mb-auto">Spazi con palcoscenico per workshop e performance.</p>
 
                         <div class="mt-3">
-                             <a href="#" class="btn btn-outline-secondary">Scopri le sale</a>
+                            <a href="#" class="btn btn-outline-secondary">Scopri le sale</a>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@ if (session_status() == PHP_SESSION_NONE) {
                         <p class="card-text mt-3 mb-auto">Sale con pavimento tecnico, specchi e sbarre.</p>
 
                         <div class="mt-3">
-                             <a href="#" class="btn btn-outline-secondary">Scopri le sale</a>
+                            <a href="#" class="btn btn-outline-secondary">Scopri le sale</a>
                         </div>
                     </div>
                 </div>

@@ -1,0 +1,189 @@
+CREATE DATABASE play_room_planner;
+USE play_room_planner;
+
+CREATE TABLE DOTAZIONE_DI_SUPPORTO (
+    id_dotazione INT PRIMARY KEY AUTO_INCREMENT,
+    tipo VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE SETTORE (
+    id_settore INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(50) NOT NULL UNIQUE,
+    tipo VARCHAR(50) NOT NULL CHECK (tipo IN ('musica', 'teatro', 'ballo')),
+    num_iscritti INT DEFAULT 0,
+    id_responsabile INT NULL UNIQUE
+);
+
+CREATE TABLE UTENTE (
+    id_utente INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(50) NOT NULL,
+    cognome VARCHAR(50) NOT NULL,
+    data_nascita DATE NOT NULL,
+    ruolo VARCHAR(20) NOT NULL CHECK (ruolo IN ('docente', 'allievo', 'tecnico')),
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    foto VARCHAR(255) NULL,
+    
+    anni_servizio INT NULL CHECK (anni_servizio IS NULL OR anni_servizio >= 0),
+    data_nomina DATE NULL,
+    is_responsabile BOOLEAN NOT NULL DEFAULT FALSE,
+    
+    id_settore INT NOT NULL,
+    FOREIGN KEY (id_settore) REFERENCES SETTORE(id_settore)
+        ON DELETE NO ACTION -- impedisce la cancellazione di settori con iscritti
+        ON UPDATE CASCADE
+);
+
+-- aggiunta della FOREIGN KEY mancante a SETTORE
+ALTER TABLE SETTORE
+ADD CONSTRAINT fk_settore_responsabile
+    FOREIGN KEY (id_responsabile) REFERENCES UTENTE(id_utente)
+    ON DELETE NO ACTION -- impedisce l'eliminazione di un UTENTE se è responsabile di un settore
+    ON UPDATE CASCADE;
+
+CREATE TABLE SALA (
+    id_settore INT NOT NULL,
+    nome_sala VARCHAR(50) NOT NULL,
+    capienza_max INT NOT NULL CHECK (capienza_max > 0),
+    
+    PRIMARY KEY (id_settore, nome_sala),
+    FOREIGN KEY (id_settore) REFERENCES SETTORE(id_settore)
+        ON DELETE CASCADE -- se il settore è cancellato, le sue sale sono cancellate
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE PRENOTAZIONE (
+    id_settore INT NOT NULL,
+    nome_sala VARCHAR(50) NOT NULL,
+    data DATE NOT NULL,
+    ora INT NOT NULL CHECK (ora BETWEEN 9 AND 23),
+    
+    durata INT NOT NULL CHECK (durata > 0),
+    attivita VARCHAR(255) NULL,
+    id_organizzatore INT NOT NULL,
+    
+    PRIMARY KEY (id_settore, nome_sala, data, ora),
+    
+    FOREIGN KEY (id_settore, nome_sala) REFERENCES SALA(id_settore, nome_sala)
+        ON DELETE NO ACTION -- non cancellare una sala se ha prenotazioni
+        ON UPDATE CASCADE,
+    FOREIGN KEY (id_organizzatore) REFERENCES UTENTE(id_utente)
+        ON DELETE NO ACTION -- non cancellare un responsabile se ha prenotazioni
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE INVITO (
+    id_utente INT NOT NULL,
+    
+    id_settore INT NOT NULL,
+    nome_sala VARCHAR(50) NOT NULL,
+    data DATE NOT NULL,
+    ora INT NOT NULL,
+    
+    stato VARCHAR(20) NOT NULL DEFAULT 'invitato' CHECK (stato IN ('invitato', 'accettato', 'rifiutato')),
+    motivazione VARCHAR(255) NULL,
+    data_risposta TIMESTAMP NULL,
+    
+    PRIMARY KEY (id_utente, id_settore, nome_sala, data, ora),
+    
+    FOREIGN KEY (id_utente) REFERENCES UTENTE(id_utente)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (id_settore, nome_sala, data, ora) REFERENCES PRENOTAZIONE(id_settore, nome_sala, data, ora)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE SALA_DOTAZIONE (
+    id_settore INT NOT NULL,
+    nome_sala VARCHAR(50) NOT NULL,
+    id_dotazione INT NOT NULL,
+    
+    PRIMARY KEY (id_settore, nome_sala, id_dotazione),
+    FOREIGN KEY (id_settore, nome_sala) REFERENCES SALA(id_settore, nome_sala)
+        ON DELETE CASCADE -- se la sala viene eliminata, le sue associazioni con le dotazioni devono essere eliminate
+        ON UPDATE CASCADE,
+    FOREIGN KEY (id_dotazione) REFERENCES DOTAZIONE_DI_SUPPORTO(id_dotazione)
+        ON DELETE NO ACTION -- impedisce l'eliminazione della dotazione se è assegnata a qualche sala
+        ON UPDATE CASCADE
+);
+
+-- 3. POPOLAMENTO DELLE TABELLE 
+
+INSERT INTO DOTAZIONE_DI_SUPPORTO (id_dotazione, tipo) VALUES
+(1, 'Pianoforte a coda'),
+(2, 'Proiettore HD'),
+(3, 'Parete a specchi'),
+(4, 'Impianto audio surround'),
+(5, 'Mixer Audio');
+
+INSERT INTO SETTORE (id_settore, nome, tipo, num_iscritti, id_responsabile) VALUES
+(1, 'Dipartimento di Musica', 'musica', 0, NULL),
+(2, 'Accademia di Teatro', 'teatro', 0, NULL),
+(3, 'Scuola di Ballo', 'ballo', 0, NULL);
+
+INSERT INTO UTENTE (id_utente, nome, cognome, data_nascita, ruolo, email, foto, id_settore, is_responsabile) VALUES
+(101, 'Mario', 'Rossi', '1980-05-15', 'docente', 'mario.rossi@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 1, FALSE),
+(102, 'Anna', 'Bianchi', '1990-07-20', 'tecnico', 'anna.bianchi@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 1, FALSE),
+(103, 'Luca', 'Verdi', '2002-11-30', 'allievo', 'luca.verdi@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 1, FALSE),
+(104, 'Giulia', 'Neri', '2003-01-10', 'allievo', 'giulia.neri@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 1, FALSE),
+(105, 'Paolo', 'Gialli', '1975-02-05', 'docente', 'paolo.gialli@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 2, FALSE),
+(106, 'Sara', 'Pozzi', '2001-06-25', 'allievo', 'sara.pozzi@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 2, FALSE),
+(107, 'Franco', 'Miti', '1985-09-12', 'tecnico', 'franco.miti@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 3, FALSE),
+(108, 'Chiara', 'Blu', '2004-03-18', 'allievo', 'chiara.blu@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 3, FALSE);
+
+-- Aggiornamento num_iscritti
+UPDATE SETTORE SET num_iscritti = 4 WHERE id_settore = 1;
+UPDATE SETTORE SET num_iscritti = 2 WHERE id_settore = 2;
+UPDATE SETTORE SET num_iscritti = 2 WHERE id_settore = 3;
+
+-- Promozione dei Responsabili
+UPDATE UTENTE SET is_responsabile = TRUE, anni_servizio = 10, data_nomina = '2015-09-01' WHERE id_utente = 101; -- Mario Rossi
+UPDATE UTENTE SET is_responsabile = TRUE, anni_servizio = 15, data_nomina = '2010-09-01' WHERE id_utente = 105; -- Paolo Gialli
+UPDATE UTENTE SET is_responsabile = TRUE, anni_servizio = 5, data_nomina = '2020-01-15' WHERE id_utente = 107; -- Franco Miti
+
+-- Assegnazione Responsabili ai Settori
+UPDATE SETTORE SET id_responsabile = 101 WHERE id_settore = 1; -- Mario Rossi dirige Musica
+UPDATE SETTORE SET id_responsabile = 105 WHERE id_settore = 2; -- Paolo Gialli dirige Teatro
+UPDATE SETTORE SET id_responsabile = 107 WHERE id_settore = 3; -- Franco Miti dirige Ballo
+
+INSERT INTO SALA (id_settore, nome_sala, capienza_max) VALUES
+(1, 'Aula Magna', 100),
+(1, 'Sala Prove 1', 20),
+(2, 'Palco A', 150),
+(3, 'Sala Specchi', 40),
+(1, 'Studio Registrazione', 5);
+
+INSERT INTO PRENOTAZIONE (id_settore, nome_sala, data, ora, durata, attivita, id_organizzatore) VALUES
+(1, 'Sala Prove 1', '2025-11-10', 10, 2, 'Lezione Pianoforte Avanzato', 101), 
+(2, 'Palco A', '2025-11-12', 15, 3, 'Prove spettacolo teatrale "Amleto"', 105), 
+(1, 'Aula Magna', '2025-11-15', 9, 4, 'Conferenza Annuale Acustica Musicale', 101), 
+(1, 'Studio Registrazione', '2025-11-18', 14, 2, 'Registrazione Demo Band Rock', 101), 
+(3, 'Sala Specchi', '2025-11-20', 16, 2, 'Prove coreografia contemporanea', 107); 
+
+INSERT INTO INVITO (id_utente, id_settore, nome_sala, data, ora, stato, motivazione, data_risposta) VALUES
+
+(103, 1, 'Sala Prove 1', '2025-11-10', 10, 'accettato', NULL, '2025-11-05 10:00:00'), 
+(104, 1, 'Sala Prove 1', '2025-11-10', 10, 'rifiutato', 'Impegno concomitante', '2025-11-06 14:30:00'), 
+
+(106, 2, 'Palco A', '2025-11-12', 15, 'accettato', NULL, '2025-11-08 09:15:00'), 
+(105, 2, 'Palco A', '2025-11-12', 15, 'accettato', NULL, '2025-11-08 09:16:00'), 
+
+(102, 1, 'Aula Magna', '2025-11-15', 9, 'invitato', NULL, NULL), 
+(103, 1, 'Aula Magna', '2025-11-15', 9, 'invitato', NULL, NULL), 
+(104, 1, 'Aula Magna', '2025-11-15', 9, 'accettato', NULL, '2025-11-10 11:00:00'), 
+(107, 1, 'Aula Magna', '2025-11-15', 9, 'invitato', NULL, NULL), 
+
+(103, 1, 'Studio Registrazione', '2025-11-18', 14, 'invitato', NULL, NULL), 
+
+(108, 3, 'Sala Specchi', '2025-11-20', 16, 'accettato', NULL, '2025-11-18 10:30:00'); 
+
+INSERT INTO SALA_DOTAZIONE (id_settore, nome_sala, id_dotazione) VALUES
+(1, 'Aula Magna', 1),
+(1, 'Aula Magna', 2),
+(1, 'Aula Magna', 4),
+(1, 'Sala Prove 1', 1),
+(3, 'Sala Specchi', 3),
+(3, 'Sala Specchi', 4),
+(1, 'Studio Registrazione', 4),
+(1, 'Studio Registrazione', 5);

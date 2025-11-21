@@ -122,7 +122,7 @@ INSERT INTO SETTORE (id_settore, nome, tipo, num_iscritti, id_responsabile) VALU
 (2, 'Accademia di Teatro', 'teatro', 0, NULL),
 (3, 'Scuola di Ballo', 'ballo', 0, NULL);
 
-INSERT INTO UTENTE (id_utente, nome, cognome, data_nascita, ruolo, email, foto, id_settore, is_responsabile) VALUES
+INSERT INTO UTENTE (id_utente, nome, cognome, data_nascita, ruolo, email, password_hash, foto, id_settore, is_responsabile) VALUES
 (101, 'Mario', 'Rossi', '1980-05-15', 'docente', 'mario.rossi@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 1, FALSE),
 (102, 'Anna', 'Bianchi', '1990-07-20', 'tecnico', 'anna.bianchi@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 1, FALSE),
 (103, 'Luca', 'Verdi', '2002-11-30', 'allievo', 'luca.verdi@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 1, FALSE),

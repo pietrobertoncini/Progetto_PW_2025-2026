@@ -19,8 +19,8 @@ if (!isset($_SESSION['id_utente'])) {
 
     <div class="container mt-5">
         <h2>La tua Dashboard</h2>
-        <p class="fs-5">Ciao, <strong><?php echo htmlspecialchars($_SESSION['nome']); ?></strong>!</p>
-        <p>Il tuo ruolo è: <?php echo htmlspecialchars($_SESSION['ruolo']); ?></p>
+        <p class="fs-5">Ciao, <strong><?php echo htmlspecialchars(ucfirst($_SESSION['nome'])); ?></strong>!</p>
+        <p>Il tuo ruolo è: <?php echo htmlspecialchars(ucfirst($_SESSION['ruolo'])); ?></p>
 
         <?php if ($_SESSION['is_responsabile']): ?>
             <div class="alert alert-info" role="alert">

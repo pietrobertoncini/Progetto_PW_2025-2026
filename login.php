@@ -29,7 +29,7 @@ if (isset($_SESSION['id_utente'])) {
                             </div>
                         <?php endif; ?>
 
-                        <form action="backend/login_action.php" method="POST">
+                        <form action="backend/login_exe.php" method="POST">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="email" name="email" required>

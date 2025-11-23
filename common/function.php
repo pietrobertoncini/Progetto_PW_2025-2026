@@ -42,3 +42,21 @@ function inserisciUtente($cid, $nome, $cognome, $email, $password, $data_nascita
     
     return $id_nuovo_utente;
 }
+
+function datiUtenteCompleti($cid, $id_utente) {
+
+    $sql = "SELECT U.*, S.nome AS nome_settore
+            FROM utente U
+            LEFT JOIN SETTORE S ON U.id_settore = S.id_settore
+            WHERE U.id_utente = ?";
+
+    $stmt = $cid->prepare($sql);
+    $stmt->bind_param("i", $id_utente);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $dati = $result->fetch_assoc();
+    $stmt->close();
+    
+    return $dati;
+}

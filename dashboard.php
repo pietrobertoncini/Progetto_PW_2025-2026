@@ -3,7 +3,6 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// ---> Questo è il "GUARD" <---
 if (!isset($_SESSION['id_utente'])) {
     header('Location: login.php');
     exit;

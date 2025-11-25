@@ -52,11 +52,11 @@ function getDotazioniSala($cid, $id_settore, $nome_sala) {
 
     <?php include 'common/navbar.php'; ?>
 
-    <div class="container mt-5 pt-5 mb-5">
+    <div class="container mt-5 mb-5">
         
         <div class="row align-items-center mb-4 mt-4">
             <div class="col-md-8">
-                <h2 class="mb-1">Gestione Sale</h2>
+                <h2 class="mb-2">Gestione Sale</h2>
                 <h5 class="text-muted">
                     Settore di riferimento: <span class="text-brand fw-bold"><?php echo htmlspecialchars($nome_settore); ?></span>
                 </h5>
@@ -69,8 +69,8 @@ function getDotazioniSala($cid, $id_settore, $nome_sala) {
             </div>
         </div>
 
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-light border-0 py-3">
+        <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+            <div class="card-header bg-primary bg-opacity-10 border-0 py-3">
                 <h5 class="mb-0 text-dark">Elenco Sale e Dotazioni</h5>
             </div>
             
@@ -89,11 +89,11 @@ function getDotazioniSala($cid, $id_settore, $nome_sala) {
                             <?php if (count($sale) > 0): ?>
                                 <?php foreach ($sale as $s): ?>
                                     <tr>
-                                        <td class="ps-4 fw-bold text-brand">
+                                        <td class="ps-4 py-3 fw-bold text-brand">
                                             <?php echo htmlspecialchars($s['nome_sala']); ?>
                                         </td>
-                                        <td>
-                                            <span class="badge bg-secondary rounded-pill">
+                                        <td> 
+                                            <span class="badge bg-secondary rounded-pill fs-6">
                                                 <?php echo $s['capienza_max']; ?> posti
                                             </span>
                                         </td>

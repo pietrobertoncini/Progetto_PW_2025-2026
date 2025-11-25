@@ -27,7 +27,7 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
         <div class="row justify-content-center">
             <div class="col-lg-6 col-md-8">
 
-                <div class="card shadow-sm rounded-3 p-4 mb-4">
+                <div class="card shadow-sm rounded-3 p-4 mb-4 border-0">
                     <div class="card-header bg-white border-0 text-center">
                         <h3 class="fw-bold">Modifica Profilo</h3>
                     </div>

@@ -33,12 +33,12 @@ if (!$dati_utente) {
         <div class="row justify-content-center">
             <div class="col-lg-6 col-md-8">
 
-                <div class="card shadow-sm border-0 rounded-3">
-                    <div class="card-header bg-white border-0 py-3 text-center">
+                <div class="card shadow-sm border-0 p-4 rounded-3">
+                    <div class="card-header bg-white border-0 text-center">
                         <h3 class="fw-bold" style="color: #7A5E4E;">Il Mio Profilo</h3>
                     </div>
 
-                    <div class="card-body p-4">
+                    <div class="card-body">
 
                         <div class="table-responsive">
                             <table class="table table-borderless align-middle mb-0">

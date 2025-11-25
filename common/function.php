@@ -95,7 +95,7 @@ function getImpegniFuturi($cid, $id_utente) {
             JOIN UTENTE U ON P.id_organizzatore = U.id_utente
             WHERE I.id_utente = ? 
               AND I.stato = 'accettato'
-              AND P.data >= CURDATE()
+              -- AND P.data >= CURDATE()
             ORDER BY P.data ASC, P.ora ASC";
 
     $stmt = $cid->prepare($sql);

@@ -57,7 +57,7 @@ if (isset($cid)) {
                 <h5 class="alert-heading fw-bold">Area Gestione</h5>
                 <p class="mb-0">
                     In qualità di Responsabile, puoi gestire le sale e organizzare le prove. 
-                    Vai alla <a href="gestione_prenotazioni.php" class="alert-link fw-bold">gestione delle sale</a>.
+                    Vai alla <a href="gestione_sale.php" class="alert-link fw-bold">gestione delle sale</a>.
                 </p>
             </div>
         <?php endif; ?>

@@ -44,7 +44,7 @@ if (isset($_SESSION['id_utente'])) {
 
           <?php if (isset($_SESSION['is_responsabile']) && $_SESSION['is_responsabile'] == true): ?>
             <li class="nav-item">
-              <a class="nav-link" href="gestione_prenotazioni.php">Gestione Sale</a>
+              <a class="nav-link" href="gestione_sale.php">Gestione Sale</a>
             </li>
           <?php endif; ?>
         <?php endif; ?>

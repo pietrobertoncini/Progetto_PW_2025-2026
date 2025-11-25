@@ -82,9 +82,9 @@ if (!$dati_utente) {
                             </table>
                         </div>
                         <div class="text-center mt-3">
-                            <button class="btn btn-outline-secondary px-4 disabled" disabled aria-disabled="true">
-                                Modifica Dati
-                            </button>
+                            <a href="modifica_profilo.php" class="btn btn-outline-secondary px-4">
+                                 Modifica Dati
+                             </a>
                         </div>
                     </div>
                 </div>

@@ -1,0 +1,48 @@
+<?php
+// backend/delete_profile.php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+require_once '../common/setup.php';
+
+// Verifica che l'utente sia loggato e che la richiesta sia POST (per sicurezza)
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id_utente'])) {
+    
+    $id_utente = $_SESSION['id_utente'];
+
+    try {
+        // Prepariamo la query di eliminazione
+        $sql = "DELETE FROM UTENTE WHERE id_utente = ?";
+        
+        $stmt = $cid->prepare($sql);
+        $stmt->bind_param("i", $id_utente);
+        
+        if ($stmt->execute()) {
+            // Se l'eliminazione è andata a buon fine:
+            
+            // 1. Distruggiamo la sessione (Logout)
+            $_SESSION = array();
+            session_destroy();
+            
+            // 2. Reindirizziamo alla home con un messaggio
+            header("Location: ../index.php?msg=Account eliminato correttamente.");
+            exit;
+        } else {
+            throw new Exception("Impossibile eliminare l'utente.");
+        }
+
+    } catch (mysqli_sql_exception $e) {
+        // Se ci sono vincoli di integrità (es. l'utente è un responsabile con settori collegati)
+        // potremmo non voler permettere la cancellazione diretta.
+        if ($e->getCode() == 1451) { // Error Code: Cannot delete or update a parent row
+            header("Location: ../modifica_profilo.php?error=Non puoi eliminare l'account perché risulti Responsabile di un settore o hai dati collegati vitali. Contatta l'amministratore.");
+        } else {
+            header("Location: ../modifica_profilo.php?error=Errore del database: " . $e->getMessage());
+        }
+    }
+} else {
+    // Se provano ad accedere direttamente via URL senza POST
+    header("Location: ../dashboard.php");
+    exit;
+}
+?>

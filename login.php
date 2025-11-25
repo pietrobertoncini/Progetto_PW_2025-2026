@@ -16,7 +16,7 @@ if (isset($_SESSION['id_utente'])) {
 
     <?php include 'common/navbar.php'; ?>
 
-    <div class="container mt-5" style="padding-top: 100px;">
+    <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-5">
                 <div class="card shadow-sm">

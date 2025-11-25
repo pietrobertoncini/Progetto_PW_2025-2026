@@ -35,19 +35,19 @@ if (isset($cid)) {
 
     <?php include 'common/navbar.php'; ?>
 
-    <div class="container mt-5" style="padding-top: 60px;">
+    <div class="container mt-5">
         
         <div class="mb-4">
             <h2>La tua Dashboard</h2>
             <p class="fs-5">
                 Ciao, <strong class="text-brand"><?php echo htmlspecialchars(ucfirst($_SESSION['nome'])); ?></strong>!
             </p>
-            <p class="text-muted">
+            <p>
                 Il tuo ruolo è: 
-                <span class="badge bg-secondary"><?php echo htmlspecialchars(ucfirst($_SESSION['ruolo'])); ?></span>
+                <span class="badge bg-secondary fs-6"><?php echo htmlspecialchars(ucfirst($_SESSION['ruolo'])); ?></span>
                 
                 <?php if (isset($_SESSION['is_responsabile']) && $_SESSION['is_responsabile']): ?>
-                    <span class="badge bg-primary ms-1">Responsabile</span>
+                    <span class="badge bg-primary ms-1 fs-6">Responsabile</span>
                 <?php endif; ?>
             </p>
         </div>
@@ -56,7 +56,7 @@ if (isset($cid)) {
             <div class="alert alert-info shadow-sm mb-5 border-info" role="alert">
                 <h5 class="alert-heading fw-bold">Area Gestione</h5>
                 <p class="mb-0">
-                    In qualità di Responsabile, puoi gestire le sale e organizzare le prove. 
+                    In qualità di Responsabile, puoi gestire le sale e organizzare le prenotazioni. 
                     Vai alla <a href="gestione_sale.php" class="alert-link fw-bold">gestione delle sale</a>.
                 </p>
             </div>
@@ -71,7 +71,7 @@ if (isset($cid)) {
 
         <div class="card shadow-sm mb-5 border-0">
             <div class="card-header bg-warning bg-opacity-10 border-0 py-3">
-                <h4 class="mb-0 fs-5 text-dark">📩 Inviti in Attesa (<?php echo count($inviti_pendenti); ?>)</h4>
+                <h4 class="mb-0 fs-5 text-dark">📩 Inviti in Attesa <span class="badge bg-secondary text-align ms-1 text-"><?php echo count($inviti_pendenti); ?></span></h4>
             </div>
             <div class="card-body">
                 <?php if (count($inviti_pendenti) > 0): ?>

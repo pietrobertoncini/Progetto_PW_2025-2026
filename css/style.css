@@ -6,3 +6,59 @@ body {
     background-color: #F3EADF;
     padding-top: 80px;
 }
+/* css/style.css */
+
+/* Stile per il badge delle notifiche (il pallino rosso col numero) */
+.notification-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 3px 6px;
+    border-radius: 50%;
+    background-color: #dc3545;
+    color: white;
+    font-size: 0.7rem;
+}
+
+/* Il contenitore del menu a tendina stile "Twitch" */
+.dropdown-menu-notifications {
+    width: 350px; /* Larghezza fissa come il pannello Twitch */
+    padding: 0;
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    overflow: hidden; /* Per arrotondare gli angoli */
+}
+
+/* Header del menu (dove c'è scritto "Inviti") */
+.notification-header {
+    background-color: #fff;
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    font-weight: bold;
+    color: #7A5E4E;
+}
+
+/* Contenitore scrollabile per gli oggetti */
+.notification-body {
+    max-height: 300px; /* Altezza massima prima che appaia la scrollbar */
+    overflow-y: auto;
+}
+
+/* Singolo elemento della lista */
+.notification-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s;
+    display: block;
+    text-decoration: none;
+    color: #333;
+}
+
+.notification-item:hover {
+    background-color: #fafafa;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}

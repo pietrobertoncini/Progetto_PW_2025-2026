@@ -60,3 +60,48 @@ function datiUtenteCompleti($cid, $id_utente) {
     
     return $dati;
 }
+
+// common/function.php
+
+function getInvitiPendenti($cid, $id_utente) {
+    $sql = "SELECT I.*, S.nome_sala, P.attivita, U.nome as nome_org, U.cognome as cognome_org
+            FROM INVITO I
+            JOIN PRENOTAZIONE P ON I.id_settore = P.id_settore 
+                 AND I.nome_sala = P.nome_sala 
+                 AND I.data = P.data 
+                 AND I.ora = P.ora
+            JOIN SALA S ON P.id_settore = S.id_settore AND P.nome_sala = S.nome_sala
+            JOIN UTENTE U ON P.id_organizzatore = U.id_utente
+            WHERE I.id_utente = ? AND I.stato = 'invitato'
+            ORDER BY I.data ASC, I.ora ASC";
+
+    $stmt = $cid->prepare($sql);
+    $stmt->bind_param("i", $id_utente);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+
+function getImpegniFuturi($cid, $id_utente) {
+    // Seleziona gli inviti ACCETTATI con data odierna o futura
+    $sql = "SELECT I.*, S.nome_sala, P.attivita, P.durata, U.nome as nome_org, U.cognome as cognome_org
+            FROM INVITO I
+            JOIN PRENOTAZIONE P ON I.id_settore = P.id_settore 
+                 AND I.nome_sala = P.nome_sala 
+                 AND I.data = P.data 
+                 AND I.ora = P.ora
+            JOIN SALA S ON P.id_settore = S.id_settore AND P.nome_sala = S.nome_sala
+            JOIN UTENTE U ON P.id_organizzatore = U.id_utente
+            WHERE I.id_utente = ? 
+              AND I.stato = 'accettato'
+              AND P.data >= CURDATE()
+            ORDER BY P.data ASC, P.ora ASC";
+
+    $stmt = $cid->prepare($sql);
+    $stmt->bind_param("i", $id_utente);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    return $result->fetch_all(MYSQLI_ASSOC);
+}

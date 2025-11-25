@@ -30,7 +30,7 @@ try {
 
     <?php include 'common/navbar.php'; ?>
 
-    <div class="container mt-5">
+    <div class="container mt-5" style="padding-top: 70px;">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-7">
                 <div class="card shadow-sm">

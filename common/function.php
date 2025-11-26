@@ -24,26 +24,49 @@ function controllaUtente($cid, $email, $password)
     }
 }
 
-function inserisciUtente($cid, $nome, $cognome, $email, $password, $data_nascita, $ruolo, $id_settore) {
+function inserisciUtente($cid, $nome, $cognome, $email, $password, $data_nascita, $ruolo, $id_settore, $foto = null)
+{
     $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
     $sql = "INSERT INTO UTENTE 
-                (nome, cognome, email, password_hash, data_nascita, ruolo, id_settore, is_responsabile) 
+                (nome, cognome, email, password_hash, data_nascita, ruolo, id_settore, is_responsabile, foto) 
             VALUES 
-                (?, ?, ?, ?, ?, ?, ?, FALSE)";
-                
+                (?, ?, ?, ?, ?, ?, ?, FALSE, ?)";
+
     $stmt = $cid->prepare($sql);
-    
-    $stmt->bind_param("ssssssi", $nome, $cognome, $email, $password_hash, $data_nascita, $ruolo, $id_settore);
-    
+
+    $stmt->bind_param("ssssssis", $nome, $cognome, $email, $password_hash, $data_nascita, $ruolo, $id_settore, $foto);
+
     $stmt->execute();
     $id_nuovo_utente = $cid->insert_id;
     $stmt->close();
-    
+
     return $id_nuovo_utente;
 }
 
-function datiUtenteCompleti($cid, $id_utente) {
+function modificaUtente($cid, $id_utente, $nome, $cognome, $email, $data_nascita, $foto)
+{
+    if (!empty($foto)) {
+        $sql = "UPDATE UTENTE
+                SET nome = ?, cognome = ?, email = ?, data_nascita = ?, foto = ?
+                WHERE id_utente = ?";
+
+        $stmt = $cid->prepare($sql);
+        $stmt->bind_param("sssssi", $nome, $cognome, $email, $data_nascita, $foto, $id_utente);
+    } else {
+        $sql = "UPDATE UTENTE
+                SET nome = ?, cognome = ?, email = ?, data_nascita = ?
+                WHERE id_utente = ?";
+
+        $stmt = $cid->prepare($sql);
+        $stmt->bind_param("ssssi", $nome, $cognome, $email, $data_nascita, $id_utente);
+    }
+    $stmt->execute();
+    $stmt->close();
+}
+
+function datiUtenteCompleti($cid, $id_utente)
+{
 
     $sql = "SELECT U.*, S.nome AS nome_settore
             FROM utente U
@@ -57,13 +80,14 @@ function datiUtenteCompleti($cid, $id_utente) {
 
     $dati = $result->fetch_assoc();
     $stmt->close();
-    
+
     return $dati;
 }
 
 // common/function.php
 
-function getInvitiPendenti($cid, $id_utente) {
+function getInvitiPendenti($cid, $id_utente)
+{
     $sql = "SELECT I.*, S.nome_sala, P.attivita, U.nome as nome_org, U.cognome as cognome_org
             FROM INVITO I
             JOIN PRENOTAZIONE P ON I.id_settore = P.id_settore 
@@ -79,11 +103,12 @@ function getInvitiPendenti($cid, $id_utente) {
     $stmt->bind_param("i", $id_utente);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
-function getImpegniFuturi($cid, $id_utente) {
+function getImpegniFuturi($cid, $id_utente)
+{
     // Seleziona gli inviti ACCETTATI con data odierna o futura
     $sql = "SELECT I.*, S.nome_sala, P.attivita, P.durata, U.nome as nome_org, U.cognome as cognome_org
             FROM INVITO I
@@ -95,13 +120,13 @@ function getImpegniFuturi($cid, $id_utente) {
             JOIN UTENTE U ON P.id_organizzatore = U.id_utente
             WHERE I.id_utente = ? 
               AND I.stato = 'accettato'
-              -- AND P.data >= CURDATE()
+              AND P.data >= CURDATE()
             ORDER BY P.data ASC, P.ora ASC";
 
     $stmt = $cid->prepare($sql);
     $stmt->bind_param("i", $id_utente);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     return $result->fetch_all(MYSQLI_ASSOC);
 }

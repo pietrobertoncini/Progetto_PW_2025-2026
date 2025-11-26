@@ -34,11 +34,20 @@ if (!$dati_utente) {
             <div class="col-lg-6 col-md-8">
 
                 <div class="card shadow-sm border-0 p-4 rounded-3">
-                    <div class="card-header bg-white border-0 text-center">
-                        <h3 class="fw-bold" style="color: #7A5E4E;">Il Mio Profilo</h3>
+                    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                        <h3 class="fw-bold mb-0 ms-2" style="color: #7A5E4E;">Il Mio Profilo</h3>
+                        <div class="pe-3">
+                            <?php if (!empty($dati_utente['foto'])): ?>
+                                <img src="<?php echo htmlspecialchars($dati_utente['foto']); ?>" alt="Foto profilo" class="rounded-circle shadow-sm border" style="width: 80px; height: 80px; object-fit: cover;">
+                            <?php else: ?>
+                                <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center shadow-sm" style="width: 80px; height: 80px;">
+                                    <i class="bi bi-person-fill fs-2"></i>
+                                </div>
+                            <?php endif; ?>
+                        </div>
                     </div>
 
-                    <div class="card-body">
+                    <div class="card-body pt-1">
 
                         <div class="table-responsive">
                             <table class="table table-borderless align-middle mb-0">
@@ -75,7 +84,7 @@ if (!$dati_utente) {
                                     <tr>
                                         <th scope="row" class="text-muted py-3">Data di Nascita</th>
                                         <td class="py-3">
-                                            <?php echo $dati_utente['data_nascita']; ?>
+                                            <?php echo date("d/m/Y", strtotime($dati_utente['data_nascita'])); ?>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -83,8 +92,8 @@ if (!$dati_utente) {
                         </div>
                         <div class="text-center mt-3">
                             <a href="modifica_profilo.php" class="btn btn-outline-secondary px-4">
-                                 Modifica Dati
-                             </a>
+                                Modifica Dati
+                            </a>
                         </div>
                     </div>
                 </div>

@@ -37,7 +37,25 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
                             <div class="alert alert-danger"><?php echo htmlspecialchars($_GET['error']); ?></div>
                         <?php endif; ?>
 
-                        <form action="backend/update_profile.php" method="POST">
+                        <form action="backend/update_profile.php" method="POST" enctype="multipart/form-data">
+                            <div class="mb-4">
+                                <label class="form-label text-muted">Foto Profilo</label>
+                                <div class="d-flex align-items-center gap-3">
+
+                                    <?php if (!empty($dati_utente['foto'])): ?>
+                                        <img src="<?php echo htmlspecialchars($dati_utente['foto']); ?>" alt="Foto attuale" class="rounded-circle shadow-sm" style="width: 80px; height: 80px; object-fit: cover;">
+
+                                    <?php else: ?>
+                                        <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center shadow-sm" style="width: 80px; height: 80px;">
+                                            <i class="bi bi-person-fill fs-1"></i>
+                                        </div>
+                                    <?php endif; ?>
+                                    <div class="flex-grow-1">
+                                        <input type="file" class="form-control" id="foto" name="foto" accept="image/png, image/jpeg, image/gif">
+                                        <div class="form-text small">Carica un file per sostituire l'immagine attuale.</div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="mb-3">
                                 <label for="nome" class="form-label text-muted">Nome</label>
                                 <input type="text" class="form-control" id="nome" name="nome"

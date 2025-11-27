@@ -167,7 +167,7 @@ if (isset($cid)) {
                                                 <input type="hidden" name="risposta" value="rifiutato">
                                                 <input type="hidden" name="motivazione" value="Disdetta successiva dall'utente">
                                                 
-                                                <button type="submit" class="btn btn-sm btn-outline-secondary disabled" onclick="return confirm('Sei sicuro di voler disdire?');">Disdici</button>
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary" onclick="return confirm('Sei sicuro di voler disdire?');">Disdici</button>
                                             </form>
                                         </td>
                                     </tr>

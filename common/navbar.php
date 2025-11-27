@@ -46,6 +46,9 @@ if (isset($_SESSION['id_utente'])) {
             <li class="nav-item">
               <a class="nav-link" href="gestione_sale.php">Gestione Sale</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="gestione_prenotazioni.php">Gestione Prenotazioni</a>
+            </li>
           <?php endif; ?>
         <?php endif; ?>
       </ul>
@@ -67,6 +70,7 @@ if (isset($_SESSION['id_utente'])) {
           </li>
         <?php endif; ?>
       </ul>
+      
     </div>
   </div>
 </nav>

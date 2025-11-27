@@ -35,7 +35,7 @@ if (isset($cid)) {
 
     <?php include 'common/navbar.php'; ?>
 
-    <div class="container mt-5">
+    <div class="container my-5">
         
         <div class="mb-4">
             <h2>La tua Dashboard</h2>

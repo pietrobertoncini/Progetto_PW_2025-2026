@@ -35,7 +35,7 @@ if (isset($cid)) {
 
     <?php include 'common/navbar.php'; ?>
 
-    <div class="container my-5">
+    <div class="container mb-5">
         
         <div class="mb-4">
             <h2>La tua Dashboard</h2>
@@ -167,7 +167,7 @@ if (isset($cid)) {
                                                 <input type="hidden" name="risposta" value="rifiutato">
                                                 <input type="hidden" name="motivazione" value="Disdetta successiva dall'utente">
                                                 
-                                                <button type="submit" class="btn btn-sm btn-outline-secondary" onclick="return confirm('Sei sicuro di voler disdire?');">Disdici</button>
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary disabled" onclick="return confirm('Sei sicuro di voler disdire?');">Disdici</button>
                                             </form>
                                         </td>
                                     </tr>

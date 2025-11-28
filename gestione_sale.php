@@ -1,4 +1,5 @@
 <?php
+// gestione_sale.php
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -63,11 +64,17 @@ function getDotazioniSala($cid, $id_settore, $nome_sala) {
             </div>
             
             <div class="col-md-4 text-end">
-                <a href="prenota.php" class="btn btn-primary shadow-sm">
-                    + Nuova Prenotazione
+                <a href="nuova_sala.php" class="btn btn-primary shadow-sm">
+                    <i class="bi bi-plus-lg"></i> Nuova Sala
                 </a>
             </div>
         </div>
+
+        <?php if (isset($_GET['msg'])): ?>
+            <div class="alert alert-success border-0 shadow-sm mb-4">
+                <i class="bi bi-check-circle-fill me-2"></i> <?php echo htmlspecialchars($_GET['msg']); ?>
+            </div>
+        <?php endif; ?>
 
         <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
             <div class="card-header bg-primary bg-opacity-10 border-0 py-3">
@@ -108,14 +115,16 @@ function getDotazioniSala($cid, $id_settore, $nome_sala) {
                                             ?>
                                         </td>
                                         <td class="text-end pe-4">
-                                            <button class="btn btn-sm btn-outline-secondary disabled">Dettagli</button>
+                                            <a href="modifica_sala.php?nome=<?php echo urlencode($s['nome_sala']); ?>" class="btn btn-sm btn-outline-secondary">
+                                                <i class="bi bi-gear-fill"></i> Gestisci
+                                            </a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
                                     <td colspan="4" class="text-center py-5 text-muted">
-                                        Nessuna sala trovata per questo settore.
+                                        Nessuna sala presente in questo settore.
                                     </td>
                                 </tr>
                             <?php endif; ?>
@@ -134,5 +143,6 @@ function getDotazioniSala($cid, $id_settore, $nome_sala) {
     </div>
 
     <?php require "common/footer.html"; ?>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -16,76 +16,63 @@ $id_utente = $_SESSION['id_utente'];
 $dati_utente = datiUtenteCompleti($cid, $id_utente);
 $id_settore_utente = $dati_utente['id_settore'];
 
-// --- PARAMETRI ---
+// --- PARAMETRI URL ---
 $id_sala_selezionata = isset($_REQUEST['sala']) ? $_REQUEST['sala'] : null;
 $data_rif = isset($_REQUEST['week']) ? $_REQUEST['week'] : date('Y-m-d');
 
-// --- LOGICA POST-SELEZIONE (Passaggio 2 -> 3) ---
+// --- LOGICA POST-SELEZIONE ---
 $data_scelta = null;
 $ora_scelta = null;
 $durata_calcolata = 1;
 $errore_selezione = null;
 
-// Se l'utente ha inviato il modulo del calendario
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['slots'])) {
-    $slots = $_POST['slots']; // Array di stringhe "YYYY-MM-DD|HH"
+    $slots = $_POST['slots']; 
     
     if (empty($slots)) {
         $errore_selezione = "Seleziona almeno un orario.";
     } else {
-        // Ordiniamo gli slot per averli in ordine cronologico (es. 10, 11, 12)
-        sort($slots);
-        
-        // Analisi del primo slot
-        $first_slot = explode('|', $slots[0]);
-        $data_check = $first_slot[0];
-        $prev_ora = (int)$first_slot[1];
-        
-        $consecutivi = true;
-        
-        // --- 1. CONTROLLO CONSECUTIVITÀ E STESSO GIORNO ---
-        foreach ($slots as $index => $slot) {
-            if ($index === 0) continue; // Saltiamo il primo
-            
-            $parts = explode('|', $slot);
-            $curr_data = $parts[0];
-            $curr_ora = (int)$parts[1];
+        $ore_selezionate = [];
+        $giorno_riferimento = null;
+        $giorno_diverso = false;
 
-            // Controllo Giorno
-            if ($curr_data !== $data_check) {
-                $errore_selezione = "Puoi selezionare orari solo per un singolo giorno alla volta.";
-                $consecutivi = false;
-                break;
-            }
-            
-            // Controllo Consecutività (L'ora attuale deve essere Precedente + 1)
-            if ($curr_ora !== ($prev_ora + 1)) {
-                $errore_selezione = "Errore: Hai selezionato orari non consecutivi (es. 10 e 12). Seleziona solo ore di fila.";
-                $consecutivi = false;
-                break;
-            }
-            
-            $prev_ora = $curr_ora; // Aggiorna per il prossimo giro
+        foreach ($slots as $slot) {
+            $parts = explode('|', $slot);
+            $d = $parts[0];
+            $h = (int)$parts[1];
+
+            if ($giorno_riferimento === null) $giorno_riferimento = $d;
+            if ($d !== $giorno_riferimento) $giorno_diverso = true;
+
+            $ore_selezionate[] = $h;
         }
 
-        // Se tutto è andato bene
-        if ($consecutivi) {
-            $last_slot = explode('|', end($slots));
-            $ora_fine_slot = (int)$last_slot[1];
-            
-            $ora_inizio = (int)$first_slot[1];
-            
-            // Durata = (Ultima Ora - Prima Ora) + 1. Es: 10, 11 -> (11-10)+1 = 2 ore.
-            $durata_calcolata = ($ora_fine_slot - $ora_inizio) + 1;
-            
-            // Impostiamo le variabili per mostrare il form finale
-            $data_scelta = $data_check;
-            $ora_scelta = $ora_inizio;
+        if ($giorno_diverso) {
+            $errore_selezione = "Puoi selezionare orari solo per un singolo giorno alla volta.";
+        } else {
+            sort($ore_selezionate, SORT_NUMERIC);
+            $consecutivi = true;
+            for ($i = 0; $i < count($ore_selezionate) - 1; $i++) {
+                if ($ore_selezionate[$i + 1] !== ($ore_selezionate[$i] + 1)) {
+                    $consecutivi = false;
+                    break;
+                }
+            }
+
+            if (!$consecutivi) {
+                $errore_selezione = "Errore: Hai selezionato orari non consecutivi. Seleziona solo ore di fila.";
+            } else {
+                $ora_inizio = $ore_selezionate[0];
+                $ultima_ora = end($ore_selezionate);
+                $durata_calcolata = ($ultima_ora - $ora_inizio) + 1;
+                $data_scelta = $giorno_riferimento;
+                $ora_scelta = $ora_inizio;
+            }
         }
     }
 }
 
-// --- RECUPERO SALE DISPONIBILI ---
+// --- RECUPERO SALE ---
 $sql = "SELECT * FROM SALA WHERE id_settore = ? ORDER BY nome_sala";
 $stmt = $cid->prepare($sql);
 $stmt->bind_param("i", $id_settore_utente);
@@ -99,7 +86,7 @@ $domenica_settimana = date('Y-m-d', strtotime('sunday this week', $timestamp_rif
 $prev_week = date('Y-m-d', strtotime($lunedi_settimana . ' -7 days'));
 $next_week = date('Y-m-d', strtotime($lunedi_settimana . ' +7 days'));
 
-// --- LOGICA CALENDARIO (Occupazione) ---
+// --- LOGICA CALENDARIO ---
 $occupied = []; 
 if ($id_sala_selezionata) {
     $sql_p = "SELECT data, ora, durata FROM PRENOTAZIONE 
@@ -116,12 +103,17 @@ if ($id_sala_selezionata) {
     }
 }
 
-// --- LOGICA UTENTI DISPONIBILI (Per il form finale) ---
+// --- LOGICA UTENTI ---
 $utenti_invitabili = [];
 if ($data_scelta && $ora_scelta) {
-    $sql_u = "SELECT id_utente, nome, cognome, ruolo FROM UTENTE WHERE id_utente != ? AND id_settore = ? ORDER BY cognome";
+    $sql_u = "SELECT U.id_utente, U.nome, U.cognome, U.ruolo 
+              FROM UTENTE U
+              WHERE U.id_utente != ? AND U.id_settore = ? 
+              AND U.id_utente NOT IN (SELECT I.id_utente FROM INVITO I WHERE I.data = ? AND I.ora = ? AND I.stato = 'accettato')
+              AND U.id_utente NOT IN (SELECT P.id_organizzatore FROM PRENOTAZIONE P WHERE P.data = ? AND P.ora = ?)
+              ORDER BY U.cognome";
     $stmt_u = $cid->prepare($sql_u);
-    $stmt_u->bind_param("ii", $id_utente, $id_settore_utente);
+    $stmt_u->bind_param("iisisi", $id_utente, $id_settore_utente, $data_scelta, $ora_scelta, $data_scelta, $ora_scelta);
     $stmt_u->execute();
     $utenti_invitabili = $stmt_u->get_result()->fetch_all(MYSQLI_ASSOC);
 }
@@ -139,23 +131,24 @@ if ($data_scelta && $ora_scelta) {
         <h2 class="mb-4 text-center fw-bold" style="color: #7A5E4E;">Nuova Prenotazione</h2>
         
         <?php if ($errore_selezione): ?>
-            <div class="alert alert-danger text-center shadow-sm">
+            <div class="alert alert-danger text-center shadow-sm rounded-4">
                 <i class="bi bi-exclamation-triangle-fill me-2"></i><?php echo htmlspecialchars($errore_selezione); ?>
             </div>
         <?php endif; ?>
         
         <?php if (isset($_GET['error'])): ?>
-            <div class="alert alert-danger text-center shadow-sm"><?php echo htmlspecialchars($_GET['error']); ?></div>
+            <div class="alert alert-danger text-center shadow-sm rounded-4"><?php echo htmlspecialchars($_GET['error']); ?></div>
         <?php endif; ?>
 
-        <div class="card shadow-sm mb-4">
-            <div class="card-body bg-light">
+        <div class="card shadow-sm mb-4 border-0 rounded-5 overflow-hidden">
+            <div class="card-body bg-light p-4">
                 <form action="prenota.php" method="GET" class="row g-3 align-items-end">
                     <input type="hidden" name="week" value="<?php echo $lunedi_settimana; ?>">
+                    
                     <div class="col-md-8">
-                        <label for="sala" class="form-label fw-bold">1. Scegli la Sala:</label>
-                        <select class="form-select" name="sala" id="sala" onchange="this.form.submit()">
-                            <option value="" disabled <?php echo !$id_sala_selezionata ? 'selected' : ''; ?>>-- Seleziona --</option>
+                        <label for="sala" class="form-label fw-bold text-muted text-uppercase small ps-1">1. Scegli la Sala</label>
+                        <select class="form-select rounded-pill shadow-sm py-2 px-3 fw-bold text-dark" name="sala" id="sala" onchange="this.form.submit()" style="cursor: pointer; border-color: #D2B48C;">
+                            <option value="" disabled <?php echo !$id_sala_selezionata ? 'selected' : ''; ?>>-- Seleziona una sala dal menu --</option>
                             <?php foreach ($sale as $s): ?>
                                 <option value="<?php echo htmlspecialchars($s['nome_sala']); ?>" 
                                     <?php echo ($id_sala_selezionata == $s['nome_sala']) ? 'selected' : ''; ?>>
@@ -164,8 +157,11 @@ if ($data_scelta && $ora_scelta) {
                             <?php endforeach; ?>
                         </select>
                     </div>
+                    
                     <div class="col-md-4">
-                        <button type="submit" class="btn btn-primary w-100">Aggiorna Calendario</button>
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill shadow-sm py-2 fw-bold">
+                            <i class="bi bi-calendar-event me-2"></i> Aggiorna Calendario
+                        </button>
                     </div>
                 </form>
             </div>
@@ -178,16 +174,16 @@ if ($data_scelta && $ora_scelta) {
                 <input type="hidden" name="week" value="<?php echo $lunedi_settimana; ?>">
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <a href="prenota.php?sala=<?php echo urlencode($id_sala_selezionata); ?>&week=<?php echo $prev_week; ?>" class="btn btn-outline-secondary btn-sm">&larr; Settimana Prec.</a>
+                    <a href="prenota.php?sala=<?php echo urlencode($id_sala_selezionata); ?>&week=<?php echo $prev_week; ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">&larr; Settimana Prec.</a>
                     <h5 class="mb-0 fw-bold">Settimana dal <?php echo date('d/m', strtotime($lunedi_settimana)); ?> al <?php echo date('d/m', strtotime($domenica_settimana)); ?></h5>
-                    <a href="prenota.php?sala=<?php echo urlencode($id_sala_selezionata); ?>&week=<?php echo $next_week; ?>" class="btn btn-outline-secondary btn-sm">Settimana Succ. &rarr;</a>
+                    <a href="prenota.php?sala=<?php echo urlencode($id_sala_selezionata); ?>&week=<?php echo $next_week; ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Settimana Succ. &rarr;</a>
                 </div>
 
-                <div class="alert alert-info py-2 small border-0 bg-info bg-opacity-10">
-                    <i class="bi bi-info-circle-fill text-info"></i> Seleziona le caselle orarie consecutive che vuoi prenotare e premi "Procedi".
+                <div class="alert alert-info py-2 small border-0 bg-info bg-opacity-10 rounded-4 mb-3">
+                    <i class="bi bi-info-circle-fill text-info ms-2"></i> Seleziona le caselle orarie consecutive che vuoi prenotare e premi "Procedi".
                 </div>
 
-                <div class="table-responsive shadow-sm mb-4">
+                <div class="table-responsive shadow-sm mb-4 rounded-4 overflow-hidden border">
                     <table class="table table-bordered calendar-table mb-0 bg-white text-center">
                         <thead>
                             <tr>
@@ -230,7 +226,7 @@ if ($data_scelta && $ora_scelta) {
                 </div>
 
                 <div class="text-end mb-5">
-                    <button type="submit" class="btn btn-success btn-lg shadow">
+                    <button type="submit" class="btn btn-success btn-lg shadow rounded-pill px-4 fw-bold">
                         Procedi con la Selezione <i class="bi bi-arrow-right"></i>
                     </button>
                 </div>
@@ -239,17 +235,17 @@ if ($data_scelta && $ora_scelta) {
         <?php endif; ?>
 
         <?php if ($data_scelta && $ora_scelta && $id_sala_selezionata): ?>
-            <div id="form-prenotazione" class="card border-primary shadow rounded-3">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Completa Prenotazione</h4>
+            <div id="form-prenotazione" class="card border-primary shadow rounded-4 overflow-hidden">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0 fs-5 fw-bold ms-2">Completa Prenotazione</h4>
                 </div>
                 <div class="card-body p-4">
                     <p class="lead mb-2">Sala: <strong><?php echo htmlspecialchars($id_sala_selezionata); ?></strong></p>
                     
-                    <div class="alert alert-success border-success border-opacity-25 bg-success bg-opacity-10">
-                        <i class="bi bi-calendar-check-fill text-success me-2"></i>
+                    <div class="alert alert-success border-success border-opacity-25 bg-success bg-opacity-10 rounded-4">
+                        <i class="bi bi-calendar-check-fill text-success me-2 ms-2"></i>
                         Prenotazione per il giorno <strong><?php echo date('d/m/Y', strtotime($data_scelta)); ?></strong><br>
-                        <span class="ms-4">
+                        <span class="ms-5">
                             Dalle ore <strong><?php echo $ora_scelta; ?>:00</strong> 
                             alle ore <strong><?php echo ($ora_scelta + $durata_calcolata); ?>:00</strong>.
                         </span>
@@ -263,18 +259,21 @@ if ($data_scelta && $ora_scelta) {
                         <input type="hidden" name="durata" value="<?php echo $durata_calcolata; ?>">
 
                         <div class="mb-3">
-                            <label for="attivita" class="form-label fw-bold">Descrizione Attività</label>
-                            <input type="text" class="form-control" id="attivita" name="attivita" placeholder="Es. Prove, Lezione..." required>
+                            <label for="attivita" class="form-label fw-bold ps-1">Descrizione Attività</label>
+                            <input type="text" class="form-control rounded-3" id="attivita" name="attivita" placeholder="Es. Prove, Lezione..." required>
                         </div>
 
                         <hr>
                         
                         <h5 class="fw-bold mb-3">Invita Utenti (Opzionale)</h5>
+                        <div class="alert alert-info py-1 small rounded-3">
+                            <i class="bi bi-info-circle ms-1"></i> Vengono mostrati solo gli utenti attualmente liberi in questo orario.
+                        </div>
                         <div class="row g-2 mb-4" style="max-height: 200px; overflow-y: auto;">
                             <?php if (!empty($utenti_invitabili)): ?>
                                 <?php foreach ($utenti_invitabili as $u): ?>
                                     <div class="col-md-6 col-lg-4">
-                                        <div class="form-check p-2 border rounded bg-white">
+                                        <div class="form-check p-2 border rounded-3 bg-white">
                                             <input class="form-check-input ms-1" type="checkbox" name="invitati[]" value="<?php echo $u['id_utente']; ?>" id="user_<?php echo $u['id_utente']; ?>">
                                             <label class="form-check-label ms-2 w-75" for="user_<?php echo $u['id_utente']; ?>">
                                                 <?php echo htmlspecialchars($u['nome'] . " " . $u['cognome']); ?>
@@ -284,13 +283,13 @@ if ($data_scelta && $ora_scelta) {
                                     </div>
                                 <?php endforeach; ?>
                             <?php else: ?>
-                                <p class="text-muted">Nessun altro utente disponibile nel tuo settore.</p>
+                                <p class="text-muted ms-1">Nessun utente disponibile nel tuo settore in questo orario.</p>
                             <?php endif; ?>
                         </div>
 
                         <div class="d-flex justify-content-end gap-2">
-                            <a href="prenota.php?sala=<?php echo urlencode($id_sala_selezionata); ?>&week=<?php echo $lunedi_settimana; ?>" class="btn btn-secondary">Annulla</a>
-                            <button type="submit" class="btn btn-success px-4 fw-bold">Conferma Prenotazione</button>
+                            <a href="prenota.php?sala=<?php echo urlencode($id_sala_selezionata); ?>&week=<?php echo $lunedi_settimana; ?>" class="btn btn-secondary rounded-pill px-4">Annulla</a>
+                            <button type="submit" class="btn btn-success px-4 fw-bold rounded-pill">Conferma Prenotazione</button>
                         </div>
                     </form>
                 </div>

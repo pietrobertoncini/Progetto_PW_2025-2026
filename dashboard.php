@@ -35,7 +35,7 @@ if (isset($cid)) {
 
     <?php include 'common/navbar.php'; ?>
 
-    <div class="container mb-5">
+    <div class="container mb-5 pt-5">
         
         <div class="mb-4">
             <h2>La tua Dashboard</h2>
@@ -57,7 +57,7 @@ if (isset($cid)) {
                 <h5 class="alert-heading fw-bold">Area Gestione</h5>
                 <p class="mb-0">
                     In qualità di Responsabile, puoi gestire le sale e organizzare le prenotazioni. 
-                    Vai alla <a href="gestione_prenotazioni.php" class="alert-link fw-bold">gestione prenotazioni</a>.
+                    Vai alla <a href="gestione_prenotazioni.php" class="alert-link fw-bold">gestione delle prenotazioni</a>.
                 </p>
             </div>
         <?php endif; ?>
@@ -167,7 +167,7 @@ if (isset($cid)) {
                                                 <input type="hidden" name="risposta" value="rifiutato">
                                                 <input type="hidden" name="motivazione" value="Disdetta successiva dall'utente">
                                                 
-                                                <button type="submit" class="btn btn-sm btn-outline-secondary disabled" onclick="return confirm('Sei sicuro di voler disdire?');">Disdici</button>
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Sei sicuro di voler disdire?');">Disdici</button>
                                             </form>
                                         </td>
                                     </tr>

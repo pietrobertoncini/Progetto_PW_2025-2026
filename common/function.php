@@ -131,9 +131,12 @@ function getImpegniFuturi($cid, $id_utente)
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
-function getTotaleUtenti($cid) {
+// STATISTICHE per ADMIN
+/* conta tutti gli utenti */
+function getTotaleUtenti($cid)
+{
     $sql = "SELECT COUNT(*) as totale FROM UTENTE";
-    
+
     if ($result = $cid->query($sql)) {
         $row = $result->fetch_assoc();
         return $row['totale'];
@@ -141,7 +144,9 @@ function getTotaleUtenti($cid) {
     return 0; // In caso di errore o tabella vuota
 }
 
-function getTotaleSettori($cid) {
+/* conta tutti i settori */
+function getTotaleSettori($cid)
+{
     $sql = "SELECT COUNT(*) as totale FROM SETTORE";
 
     if ($result = $cid->query($sql)) {
@@ -151,8 +156,9 @@ function getTotaleSettori($cid) {
     return 0;
 }
 
-function getPrenotazioniOggi($cid) {
-    
+/* conta tutte le prenotazioni */
+function getPrenotazioni($cid)
+{
     $sql = "SELECT COUNT(*) as totale FROM PRENOTAZIONE";
     if ($result = $cid->query($sql)) {
         $row = $result->fetch_assoc();
@@ -161,6 +167,165 @@ function getPrenotazioniOggi($cid) {
     return 0;
 }
 
+// ADMIN_SETTORI
+/* recupera tutti i settori includendo nome e cognome del responsabile */
+function getAllSettoriAdmin($cid)
+{
+    $sql = "SELECT S.*, U.nome AS nome_resp, U.cognome AS cognome_resp 
+            FROM SETTORE S
+            LEFT JOIN UTENTE U ON S.id_responsabile = U.id_utente
+            ORDER BY S.nome ASC";
+    $result = $cid->query($sql);
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
 
+/* crea un nuovo settore */
+function creaSettore($cid, $nome, $tipo)
+{
+    $sql = "INSERT INTO SETTORE (nome, tipo, num_iscritti) VALUES (?, ?, 0)";
+    $stmt = $cid->prepare($sql);
+    $stmt->bind_param("ss", $nome, $tipo);
+    $result = $stmt->execute();
+    $stmt->close();
+    return $result;
+}
 
-?>
+/* aggiorna un settore */
+function aggiornaSettore($cid, $id_settore, $nome, $tipo)
+{
+    $sql = "UPDATE SETTORE SET nome = ?, tipo = ? WHERE id_settore = ?";
+    $stmt = $cid->prepare($sql);
+    $stmt->bind_param("ssi", $nome, $tipo, $id_settore);
+    $result = $stmt->execute();
+    $stmt->close();
+    return $result;
+}
+
+/* elimina un settore */
+function eliminaSettore($cid, $id_settore)
+{
+    $sql = "DELETE FROM SETTORE WHERE id_settore = ?";
+    $stmt = $cid->prepare($sql);
+    $stmt->bind_param("i", $id_settore);
+
+    try {
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    } catch (mysqli_sql_exception $e) {
+        // Catturiamo l'errore (es. violazione foreign key) per gestirlo nel backend
+        return false;
+    }
+}
+
+// ADMIN_UTENTI
+/* recupera tutti gli utenti, con possibilità di filtro per ruolo */
+function getAllUtentiAdmin($cid, $filtro_ruolo = null)
+{
+    $sql = "SELECT U.*, S.nome AS nome_settore
+            FROM UTENTE U
+            LEFT JOIN SETTORE S ON U.id_settore = S.id_settore
+            ORDER BY U.is_admin DESC, U.is_responsabile DESC, U.cognome ASC, U.nome ASC";
+
+    $result = $cid->query($sql);
+    $utenti = $result->fetch_all(MYSQLI_ASSOC);
+    return $utenti;
+}
+
+/* promuove un utente a responsabile */
+function promuoviAResponsabile($cid, $id_utente, $id_settore)
+{
+    // Usiamo una transazione perché dobbiamo aggiornare due tabelle
+    $cid->begin_transaction();
+
+    try {
+        // Rimuovi l'eventuale vecchio responsabile da quel settore
+        $sql_reset = "UPDATE SETTORE SET id_responsabile = NULL WHERE id_settore = ?";
+        $stmt_reset = $cid->prepare($sql_reset);
+        $stmt_reset->bind_param("i", $id_settore);
+        $stmt_reset->execute();
+        $stmt_reset->close();
+
+        // Aggiorna l'utente: diventa responsabile e gli assegniamo il settore
+        // (Solo se non è già admin)
+        $sql_u = "UPDATE UTENTE SET is_responsabile = 1, id_settore = ? WHERE id_utente = ? AND is_admin = 0";
+        $stmt_u = $cid->prepare($sql_u);
+        $stmt_u->bind_param("ii", $id_settore, $id_utente);
+        $stmt_u->execute();
+        if ($stmt_u->affected_rows === 0) {
+            throw new Exception("Utente non valido.");
+        }
+        $stmt_u->close();
+
+        // Aggiorna il settore: imposta il nuovo id_responsabile
+        $sql_s = "UPDATE SETTORE SET id_responsabile = ? WHERE id_settore = ?";
+        $stmt_s = $cid->prepare($sql_s);
+        $stmt_s->bind_param("ii", $id_utente, $id_settore);
+        $stmt_s->execute();
+        $stmt_s->close();
+
+        $cid->commit();
+        return true;
+    } catch (Exception $e) {
+        $cid->rollback();
+        return false;
+    }
+}
+
+/* retrocede un responsabile a utente */
+function retrocediResponsabile($cid, $id_utente)
+{
+    $cid->begin_transaction();
+
+    try {
+        // Aggiorna l'utente: non è più responsabile
+        // Nota: Manteniamo l'id_settore, così rimane un membro "semplice" di quel settore.
+        $sql_u = "UPDATE UTENTE SET is_responsabile = 0 WHERE id_utente = ?";
+        $stmt_u = $cid->prepare($sql_u);
+        $stmt_u->bind_param("i", $id_utente);
+        $stmt_u->execute();
+        $stmt_u->close();
+
+        // Aggiorna il settore: rimuove il collegamento al responsabile
+        $sql_s = "UPDATE SETTORE SET id_responsabile = NULL WHERE id_responsabile = ?";
+        $stmt_s = $cid->prepare($sql_s);
+        $stmt_s->bind_param("i", $id_utente);
+        $stmt_s->execute();
+        $stmt_s->close();
+
+        $cid->commit();
+        return true;
+    } catch (Exception $e) {
+        $cid->rollback();
+        return false;
+    }
+}
+
+/* elimina utente */
+function eliminaUtente($cid, $id_utente_da_eliminare, $id_mio_utente)
+{
+    // Impedisce di eliminare se stessi o un altro admin
+    $sql_check = "SELECT is_admin FROM UTENTE WHERE id_utente = ?";
+    $stmt_check = $cid->prepare($sql_check);
+    $stmt_check->bind_param("i", $id_utente_da_eliminare);
+    $stmt_check->execute();
+    $res_check = $stmt_check->get_result();
+    $utente = $res_check->fetch_assoc();
+    $stmt_check->close();
+
+    if (!$utente || $utente['is_admin'] || $id_utente_da_eliminare == $id_mio_utente) {
+        return false; // Non si può eliminare
+    }
+
+    $sql = "DELETE FROM UTENTE WHERE id_utente = ?";
+    $stmt = $cid->prepare($sql);
+    $stmt->bind_param("i", $id_utente_da_eliminare);
+
+    try {
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    } catch (mysqli_sql_exception $e) {
+        return false; // Errore DB (es. vincoli FK)
+    }
+}

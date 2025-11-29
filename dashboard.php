@@ -35,7 +35,7 @@ $stats_prenotazioni = 0;
 if (!empty($_SESSION['is_admin'])) {
     $stats_utenti = getTotaleUtenti($cid);
     $stats_settori = getTotaleSettori($cid);
-    $stats_prenotazioni = getPrenotazioniOggi($cid);
+    $stats_prenotazioni = getPrenotazioni($cid);
 }
 ?>
 

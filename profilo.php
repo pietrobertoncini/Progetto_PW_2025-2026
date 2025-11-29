@@ -64,23 +64,35 @@ if (!$dati_utente) {
                                             <?php echo htmlspecialchars($dati_utente['email']); ?>
                                         </td>
                                     </tr>
+
                                     <tr class="border-bottom">
                                         <th scope="row" class="text-muted py-3">Ruolo</th>
                                         <td class="py-3">
-                                            <span class="badge bg-secondary">
-                                                <?php echo htmlspecialchars(ucfirst($dati_utente['ruolo'])); ?>
-                                            </span>
-                                            <?php if ($dati_utente['is_responsabile']): ?>
+                                            <?php if (!empty($_SESSION['is_admin'])): ?>
+                                                <span class="badge bg-danger ms-1">Admin</span>
+                                            <?php else: ?>
+                                                <span class="badge bg-secondary">
+                                                    <?php echo htmlspecialchars(ucfirst($dati_utente['ruolo'])); ?>
+                                                </span>
+                                            <?php endif; ?>
+
+                                            <?php if (!empty($dati_utente['is_responsabile'])): ?>
                                                 <span class="badge bg-primary ms-1">Responsabile</span>
                                             <?php endif; ?>
                                         </td>
                                     </tr>
+
                                     <tr class="border-bottom">
                                         <th scope="row" class="text-muted py-3">Settore</th>
                                         <td class="fw-bold py-3" style="color: #7A5E4E;">
-                                            <?php echo htmlspecialchars(ucfirst($dati_utente['nome_settore'])); ?>
+                                            <?php if (!empty($_SESSION['is_admin'])): ?>
+                                                <span class="fw-normal text-muted fst-italic">Nessuno</span>
+                                            <?php else: ?>
+                                                <?php echo htmlspecialchars(ucfirst($dati_utente['nome_settore'])); ?>
+                                            <?php endif; ?>
                                         </td>
                                     </tr>
+
                                     <tr>
                                         <th scope="row" class="text-muted py-3">Data di Nascita</th>
                                         <td class="py-3">

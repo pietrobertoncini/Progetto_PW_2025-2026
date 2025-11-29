@@ -2,7 +2,7 @@
 
 function controllaUtente($cid, $email, $password)
 {
-    $sql = "SELECT id_utente, nome, ruolo, password_hash, is_responsabile 
+    $sql = "SELECT id_utente, nome, ruolo, password_hash, is_responsabile, is_admin  
             FROM UTENTE 
             WHERE email = ?";
 
@@ -130,3 +130,37 @@ function getImpegniFuturi($cid, $id_utente)
 
     return $result->fetch_all(MYSQLI_ASSOC);
 }
+
+function getTotaleUtenti($cid) {
+    $sql = "SELECT COUNT(*) as totale FROM UTENTE";
+    
+    if ($result = $cid->query($sql)) {
+        $row = $result->fetch_assoc();
+        return $row['totale'];
+    }
+    return 0; // In caso di errore o tabella vuota
+}
+
+function getTotaleSettori($cid) {
+    $sql = "SELECT COUNT(*) as totale FROM SETTORE";
+
+    if ($result = $cid->query($sql)) {
+        $row = $result->fetch_assoc();
+        return $row['totale'];
+    }
+    return 0;
+}
+
+function getPrenotazioniOggi($cid) {
+    
+    $sql = "SELECT COUNT(*) as totale FROM PRENOTAZIONE";
+    if ($result = $cid->query($sql)) {
+        $row = $result->fetch_assoc();
+        return $row['totale'];
+    }
+    return 0;
+}
+
+
+
+?>

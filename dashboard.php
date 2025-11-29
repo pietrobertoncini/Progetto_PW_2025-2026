@@ -3,17 +3,17 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// 1. Controllo di sicurezza
+//  Controllo di sicurezza
 if (!isset($_SESSION['id_utente'])) {
     header('Location: login.php');
     exit;
 }
 
-// 2. Setup e Funzioni
+// Setup e Funzioni
 require_once __DIR__ . '/common/setup.php';
 require_once __DIR__ . '/common/function.php';
 
-// 3. Recupero Dati
+// Recupero Dati
 $inviti_pendenti = [];
 $impegni_futuri = [];
 
@@ -24,6 +24,18 @@ if (isset($cid)) {
     if (function_exists('getImpegniFuturi')) {
         $impegni_futuri = getImpegniFuturi($cid, $_SESSION['id_utente']);
     }
+}
+
+// Recupero statistiche Admin
+$stats_utenti = 0;
+$stats_settori = 0;
+$stats_prenotazioni = 0;
+
+// Se l'utente è Admin, recuperiamo i dati dal DB
+if (!empty($_SESSION['is_admin'])) {
+    $stats_utenti = getTotaleUtenti($cid);
+    $stats_settori = getTotaleSettori($cid);
+    $stats_prenotazioni = getPrenotazioniOggi($cid);
 }
 ?>
 
@@ -36,28 +48,79 @@ if (isset($cid)) {
     <?php include 'common/navbar.php'; ?>
 
     <div class="container mb-5 pt-5">
-        
+
         <div class="mb-4">
             <h2>La tua Dashboard</h2>
             <p class="fs-5">
                 Ciao, <strong class="text-brand"><?php echo htmlspecialchars(ucfirst($_SESSION['nome'])); ?></strong>!
             </p>
             <p>
-                Il tuo ruolo è: 
+                Il tuo ruolo è:
                 <span class="badge bg-secondary fs-6"><?php echo htmlspecialchars(ucfirst($_SESSION['ruolo'])); ?></span>
-                
+
+                <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): ?>
+                    <span class="badge bg-primary ms-1 fs-6">Admin</span>
+                <?php endif; ?>
                 <?php if (isset($_SESSION['is_responsabile']) && $_SESSION['is_responsabile']): ?>
                     <span class="badge bg-primary ms-1 fs-6">Responsabile</span>
                 <?php endif; ?>
             </p>
         </div>
 
+        <!-- ADMIN -->
+        <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): ?>
+            <!-- Pannelo Alert -->
+            <div class="alert alert-danger shadow-sm mb-4 border-danger" role="alert">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <h4 class="alert-heading fw-bold mb-1">Pannello di Amministrazione</h4>
+                        <p class="mb-0">
+                            Hai i privilegi di gestione completa della piattaforma.
+                            Da qui puoi amministrare la struttura (Settori) e le persone (Utenti) o visualizzare tutte le prenotazioni.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistiche -->
+            <div class="row g-4 mb-5 text-center">
+                <div class="col-md-4">
+                    <div class="card shadow-sm bg-danger bg-opacity-10 h-100">
+                        <div class="card-body p-3">
+                            <h2 class="fw-bold text-danger mb-2"><?php echo $stats_utenti; ?></h2>
+                            <p class="text-muted fw-bold text-uppercase small ls-1 mb-0">Utenti Iscritti</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card shadow-sm bg-danger bg-opacity-10 h-100">
+                        <div class="card-body p-3">
+                            <h2 class="fw-bold text-danger mb-2"><?php echo $stats_prenotazioni; ?></h2>
+                            <p class="text-muted fw-bold text-uppercase small ls-1 mb-0">Prenotazioni Totali</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card shadow-sm bg-danger bg-opacity-10 h-100">
+                        <div class="card-body p-3">
+                            <h2 class="fw-bold text-danger mb-2"><?php echo $stats_settori; ?></h2>
+                            <p class="text-muted fw-bold text-uppercase small ls-1 mb-0">Settori Attivi</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Fine Statistiche -->
+        <?php endif; ?>
+
+        <!-- RESPONSABILE -->
+        <!-- Pannello Responsabile -->
         <?php if (isset($_SESSION['is_responsabile']) && $_SESSION['is_responsabile']): ?>
-            <div class="alert alert-info shadow-sm mb-5 border-info" role="alert">
+            <div class="alert alert-info shadow-sm mb-4 border-info" role="alert">
                 <h5 class="alert-heading fw-bold">Area Gestione</h5>
                 <p class="mb-0">
-                    In qualità di Responsabile, puoi gestire le sale e organizzare le prenotazioni. 
-                    Vai alla <a href="gestione_prenotazioni.php" class="alert-link fw-bold">gestione delle prenotazioni</a>.
+                    In qualità di Responsabile, puoi gestire le sale e organizzare le prenotazioni.
+                    Vai alla <a href="gestione_sale.php" class="alert-link fw-bold">gestione delle sale</a>
+                    o alla <a href="gestione_prenotazioni.php" class="alert-link fw-bold">gestione delle prenotazioni</a>.
                 </p>
             </div>
         <?php endif; ?>
@@ -69,121 +132,174 @@ if (isset($cid)) {
             <div class="alert alert-danger"><?php echo htmlspecialchars($_GET['error']); ?></div>
         <?php endif; ?>
 
-        <div class="card shadow-sm mb-5 border-0">
-            <div class="card-header bg-warning bg-opacity-10 border-0 py-3">
-                <h4 class="mb-0 fs-5 text-dark">📩 Inviti in Attesa <span class="badge bg-secondary text-align ms-1 text-"><?php echo count($inviti_pendenti); ?></span></h4>
-            </div>
-            <div class="card-body">
-                <?php if (count($inviti_pendenti) > 0): ?>
-                    <div class="table-responsive">
-                        <table class="table align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Attività</th>
-                                    <th>Luogo e Data</th>
-                                    <th>Organizzatore</th>
-                                    <th style="min-width: 320px;">La tua Risposta</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($inviti_pendenti as $invito): ?>
+        <!-- CARD ADMIN -->
+        <div class="row g-4 mb-5 justify-content-center">
+            <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): ?>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm border-0 h-100 text-decoration-none bg-white">
+                        <div class="card-body p-4 text-center d-flex flex-column align-items-center justify-content-center">
+                            <i class="bi bi-diagram-3 text-danger display-4 mb-3"></i>
+                            <h3 class="card-title fw-bold text-dark">Gestione Settori</h3>
+                            <p class="card-text flex-grow-1 text-muted small">
+                                Crea, modifica o elimina i settori (Musica, Teatro, Ballo...) e le loro aree.
+                            </p>
+                            <a href="admin_settori.php" class="btn btn-outline-danger btn-sm mt-2 rounded-pill px-4 fw-bold">Gestisci Struttura</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm border-0 h-100 text-decoration-none bg-white">
+                        <div class="card-body p-4 text-center d-flex flex-column align-items-center justify-content-center">
+                            <i class="bi bi-people-fill text-danger display-4 mb-3"></i>
+                            <h3 class="card-title fw-bold text-dark">Gestione Utenti</h3>
+                            <p class="card-text flex-grow-1 text-muted small">
+                                Visualizza tutti gli iscritti, promuovi i Responsabili di settore o elimina account.
+                            </p>
+                            <a href="admin_utenti.php" class="btn btn-outline-danger btn-sm mt-2 rounded-pill px-4 fw-bold">Gestisci Persone</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm border-0 h-100 text-decoration-none bg-white">
+                        <div class="card-body p-4 text-center d-flex flex-column align-items-center justify-content-center">
+                            <i class="bi bi-calendar-week-fill text-danger display-4 mb-3"></i>
+                            <h3 class="card-title fw-bold text-dark">Prenotazioni</h4>
+                                <p class="card-text flex-grow-1 text-muted small">
+                                    Visualizza tutte le prenotazioni di tutti i settori.
+                                </p>
+                                <a href="admin_prenotazioni.php" class="btn btn-outline-danger btn-sm mt-2 rounded-pill px-3 fw-bold">Visione Globale</a>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+        <!-- FINE CARD ADMIN -->
+
+        <!-- CARD INVITI -->
+        <?php if (empty($_SESSION['is_admin'])): ?>
+            <div class="card shadow-sm mb-5 border-0">
+                <div class="card-header bg-warning bg-opacity-10 border-0 py-3">
+                    <h4 class="mb-0 fs-5 text-dark">📩 Inviti in Attesa <span class="badge bg-secondary text-align ms-1 text-"><?php echo count($inviti_pendenti); ?></span></h4>
+                </div>
+                <div class="card-body">
+                    <?php if (count($inviti_pendenti) > 0): ?>
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead class="table-light">
                                     <tr>
-                                        <td><strong><?php echo htmlspecialchars($invito['attivita']); ?></strong></td>
-                                        <td>
-                                            <?php echo htmlspecialchars($invito['nome_sala']); ?><br>
-                                            <small class="text-muted">
-                                                <?php echo date("d/m/Y", strtotime($invito['data'])); ?> ore <?php echo $invito['ora']; ?>:00
-                                            </small>
-                                        </td>
-                                        <td><?php echo htmlspecialchars($invito['nome_org'] . " " . $invito['cognome_org']); ?></td>
-                                        <td>
-                                            <div class="d-flex flex-column gap-2">
+                                        <th>Attività</th>
+                                        <th>Luogo e Data</th>
+                                        <th>Organizzatore</th>
+                                        <th style="min-width: 320px;">La tua Risposta</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($inviti_pendenti as $invito): ?>
+                                        <tr>
+                                            <td><strong><?php echo htmlspecialchars($invito['attivita']); ?></strong></td>
+                                            <td>
+                                                <?php echo htmlspecialchars($invito['nome_sala']); ?><br>
+                                                <small class="text-muted">
+                                                    <?php echo date("d/m/Y", strtotime($invito['data'])); ?> ore <?php echo $invito['ora']; ?>:00
+                                                </small>
+                                            </td>
+                                            <td><?php echo htmlspecialchars($invito['nome_org'] . " " . $invito['cognome_org']); ?></td>
+                                            <td>
+                                                <div class="d-flex flex-column gap-2">
+                                                    <form action="backend/invite_reply.php" method="POST">
+                                                        <input type="hidden" name="id_settore" value="<?php echo $invito['id_settore']; ?>">
+                                                        <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($invito['nome_sala']); ?>">
+                                                        <input type="hidden" name="data" value="<?php echo $invito['data']; ?>">
+                                                        <input type="hidden" name="ora" value="<?php echo $invito['ora']; ?>">
+                                                        <input type="hidden" name="risposta" value="accettato">
+                                                        <button type="submit" class="btn btn-success btn-sm w-100">Accetta Invito</button>
+                                                    </form>
+
+                                                    <form action="backend/invite_reply.php" method="POST" class="d-flex gap-1">
+                                                        <input type="hidden" name="id_settore" value="<?php echo $invito['id_settore']; ?>">
+                                                        <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($invito['nome_sala']); ?>">
+                                                        <input type="hidden" name="data" value="<?php echo $invito['data']; ?>">
+                                                        <input type="hidden" name="ora" value="<?php echo $invito['ora']; ?>">
+                                                        <input type="hidden" name="risposta" value="rifiutato">
+
+                                                        <input type="text" name="motivazione" class="form-control form-control-sm" placeholder="Motivo rifiuto..." required>
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm">Rifiuta</button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php else: ?>
+                        <p class="text-muted mb-0 py-2">Non hai nuovi inviti a cui rispondere al momento.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+        <!-- FINE CARD INVITI -->
+
+        <!-- CARD IMPEGNI -->
+        <?php if (empty($_SESSION['is_admin'])): ?>
+            <div class="card shadow-sm border-0 overflow-hidden">
+                <div class="card-header bg-success bg-opacity-10 border-0 py-3">
+                    <h4 class="mb-0 fs-5 text-dark">📅 I Tuoi Prossimi Impegni</h4>
+                </div>
+                <div class="card-body p-0">
+                    <?php if (count($impegni_futuri) > 0): ?>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-5">Data</th>
+                                        <th>Orario</th>
+                                        <th>Sala</th>
+                                        <th>Attività</th>
+                                        <th class="text-end pe-5">Gestione</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($impegni_futuri as $impegno): ?>
+                                        <tr>
+                                            <td class="ps-5 py-3"><strong><?php echo date("d/m/Y", strtotime($impegno['data'])); ?></strong></td>
+                                            <td>
+                                                <span class="badge bg-light text-dark border">
+                                                    <?php echo $impegno['ora']; ?>:00 - <?php echo $impegno['ora'] + $impegno['durata']; ?>:00
+                                                </span>
+                                            </td>
+                                            <td><?php echo htmlspecialchars($impegno['nome_sala']); ?></td>
+                                            <td><?php echo htmlspecialchars($impegno['attivita']); ?></td>
+                                            <td class="text-end pe-5">
                                                 <form action="backend/invite_reply.php" method="POST">
-                                                    <input type="hidden" name="id_settore" value="<?php echo $invito['id_settore']; ?>">
-                                                    <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($invito['nome_sala']); ?>">
-                                                    <input type="hidden" name="data" value="<?php echo $invito['data']; ?>">
-                                                    <input type="hidden" name="ora" value="<?php echo $invito['ora']; ?>">
-                                                    <input type="hidden" name="risposta" value="accettato">
-                                                    <button type="submit" class="btn btn-success btn-sm w-100">Accetta Invito</button>
-                                                </form>
-
-                                                <form action="backend/invite_reply.php" method="POST" class="d-flex gap-1">
-                                                    <input type="hidden" name="id_settore" value="<?php echo $invito['id_settore']; ?>">
-                                                    <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($invito['nome_sala']); ?>">
-                                                    <input type="hidden" name="data" value="<?php echo $invito['data']; ?>">
-                                                    <input type="hidden" name="ora" value="<?php echo $invito['ora']; ?>">
+                                                    <input type="hidden" name="id_settore" value="<?php echo $impegno['id_settore']; ?>">
+                                                    <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($impegno['nome_sala']); ?>">
+                                                    <input type="hidden" name="data" value="<?php echo $impegno['data']; ?>">
+                                                    <input type="hidden" name="ora" value="<?php echo $impegno['ora']; ?>">
                                                     <input type="hidden" name="risposta" value="rifiutato">
-                                                    
-                                                    <input type="text" name="motivazione" class="form-control form-control-sm" placeholder="Motivo rifiuto..." required>
-                                                    <button type="submit" class="btn btn-outline-danger btn-sm">Rifiuta</button>
+                                                    <input type="hidden" name="motivazione" value="Disdetta successiva dall'utente">
+
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Sei sicuro di voler disdire?');">Disdici</button>
                                                 </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php else: ?>
-                    <p class="text-muted mb-0 py-2">Non hai nuovi inviti a cui rispondere al momento.</p>
-                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php else: ?>
+                        <div class="text-center py-4">
+                            <p class="lead text-muted">Non hai impegni confermati in programma.</p>
+                            <p class="small text-secondary">Attendi che un responsabile ti inviti a una prova.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
-        </div>
-
-        <div class="card shadow-sm border-0 overflow-hidden">
-            <div class="card-header bg-success bg-opacity-10 border-0 py-3">
-                <h4 class="mb-0 fs-5 text-dark">📅 I Tuoi Prossimi Impegni</h4>
-            </div>
-            <div class="card-body p-0">
-                <?php if (count($impegni_futuri) > 0): ?>
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="ps-5">Data</th>
-                                    <th>Orario</th>
-                                    <th>Sala</th>
-                                    <th>Attività</th>
-                                    <th class="text-end pe-5">Gestione</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($impegni_futuri as $impegno): ?>
-                                    <tr>
-                                        <td class="ps-5 py-3"><strong><?php echo date("d/m/Y", strtotime($impegno['data'])); ?></strong></td>
-                                        <td>
-                                            <span class="badge bg-light text-dark border">
-                                                <?php echo $impegno['ora']; ?>:00 - <?php echo $impegno['ora'] + $impegno['durata']; ?>:00
-                                            </span>
-                                        </td>
-                                        <td><?php echo htmlspecialchars($impegno['nome_sala']); ?></td>
-                                        <td><?php echo htmlspecialchars($impegno['attivita']); ?></td>
-                                        <td class="text-end pe-5">
-                                            <form action="backend/invite_reply.php" method="POST">
-                                                <input type="hidden" name="id_settore" value="<?php echo $impegno['id_settore']; ?>">
-                                                <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($impegno['nome_sala']); ?>">
-                                                <input type="hidden" name="data" value="<?php echo $impegno['data']; ?>">
-                                                <input type="hidden" name="ora" value="<?php echo $impegno['ora']; ?>">
-                                                <input type="hidden" name="risposta" value="rifiutato">
-                                                <input type="hidden" name="motivazione" value="Disdetta successiva dall'utente">
-                                                
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Sei sicuro di voler disdire?');">Disdici</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php else: ?>
-                    <div class="text-center py-4">
-                        <p class="lead text-muted">Non hai impegni confermati in programma.</p>
-                        <p class="small text-secondary">Attendi che un responsabile ti inviti a una prova.</p>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
-
+        <?php endif; ?>
+        <!-- FINE CARD IMPEGNI -->
     </div>
 
     <?php require "common/footer.html"; ?>

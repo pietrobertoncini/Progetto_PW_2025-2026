@@ -15,6 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['nome'] = $utente_trovato['nome'];
             $_SESSION['ruolo'] = $utente_trovato['ruolo'];
             $_SESSION['is_responsabile'] = (bool)$utente_trovato['is_responsabile'];
+            $_SESSION['is_admin'] = (bool)$utente_trovato['is_admin'];
             
             header('Location: ../dashboard.php');
             exit;

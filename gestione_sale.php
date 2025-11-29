@@ -135,8 +135,8 @@ function getDotazioniSala($cid, $id_settore, $nome_sala) {
         </div>
         
         <div class="mt-4">
-            <a href="index.php" class="btn btn-outline-secondary">
-                &larr; Torna alla Home
+            <a href="dashboard.php" class="btn btn-outline-secondary">
+                &larr; Torna alla Dashboard
             </a>
         </div>
 

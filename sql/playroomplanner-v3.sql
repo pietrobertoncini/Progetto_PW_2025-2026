@@ -19,7 +19,7 @@ CREATE TABLE UTENTE (
     nome VARCHAR(50) NOT NULL,
     cognome VARCHAR(50) NOT NULL,
     data_nascita DATE NOT NULL,
-    ruolo VARCHAR(20) NOT NULL CHECK (ruolo IN ('docente', 'allievo', 'tecnico')),
+    ruolo VARCHAR(20) NULL CHECK (ruolo IN ('docente', 'allievo', 'tecnico')),
     email VARCHAR(100) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     foto VARCHAR(255) NULL,
@@ -27,8 +27,9 @@ CREATE TABLE UTENTE (
     anni_servizio INT NULL CHECK (anni_servizio IS NULL OR anni_servizio >= 0),
     data_nomina DATE NULL,
     is_responsabile BOOLEAN NOT NULL DEFAULT FALSE,
+    is_admin BOOLEAN NOT NULL DEFAULT FALSE,
     
-    id_settore INT NOT NULL,
+    id_settore INT NULL,
     FOREIGN KEY (id_settore) REFERENCES SETTORE(id_settore)
         ON DELETE NO ACTION -- impedisce la cancellazione di settori con iscritti
         ON UPDATE CASCADE
@@ -122,15 +123,18 @@ INSERT INTO SETTORE (id_settore, nome, tipo, num_iscritti, id_responsabile) VALU
 (2, 'Accademia di Teatro', 'teatro', 0, NULL),
 (3, 'Scuola di Ballo', 'ballo', 0, NULL);
 
-INSERT INTO UTENTE (id_utente, nome, cognome, data_nascita, ruolo, email, password_hash, foto, id_settore, is_responsabile) VALUES
-(101, 'Mario', 'Rossi', '1980-05-15', 'docente', 'mario.rossi@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 1, FALSE),
-(102, 'Anna', 'Bianchi', '1990-07-20', 'tecnico', 'anna.bianchi@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 1, FALSE),
-(103, 'Luca', 'Verdi', '2002-11-30', 'allievo', 'luca.verdi@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 1, FALSE),
-(104, 'Giulia', 'Neri', '2003-01-10', 'allievo', 'giulia.neri@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 1, FALSE),
-(105, 'Paolo', 'Gialli', '1975-02-05', 'docente', 'paolo.gialli@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 2, FALSE),
-(106, 'Sara', 'Pozzi', '2001-06-25', 'allievo', 'sara.pozzi@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 2, FALSE),
-(107, 'Franco', 'Miti', '1985-09-12', 'tecnico', 'franco.miti@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 3, FALSE),
-(108, 'Chiara', 'Blu', '2004-03-18', 'allievo', 'chiara.blu@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 3, FALSE);
+INSERT INTO UTENTE (id_utente, nome, cognome, data_nascita, ruolo, email, password_hash, foto, id_settore, is_responsabile, is_admin) VALUES
+-- ADMIN 
+(100, 'Super', 'Admin', '1980-01-01', NULL, 'admin@playroom.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, NULL, FALSE, TRUE),
+
+(101, 'Mario', 'Rossi', '1980-05-15', 'docente', 'mario.rossi@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 1, FALSE, FALSE),
+(102, 'Anna', 'Bianchi', '1990-07-20', 'tecnico', 'anna.bianchi@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 1, FALSE, FALSE),
+(103, 'Luca', 'Verdi', '2002-11-30', 'allievo', 'luca.verdi@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 1, FALSE, FALSE),
+(104, 'Giulia', 'Neri', '2003-01-10', 'allievo', 'giulia.neri@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 1, FALSE, FALSE),
+(105, 'Paolo', 'Gialli', '1975-02-05', 'docente', 'paolo.gialli@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 2, FALSE, FALSE),
+(106, 'Sara', 'Pozzi', '2001-06-25', 'allievo', 'sara.pozzi@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 2, FALSE, FALSE),
+(107, 'Franco', 'Miti', '1985-09-12', 'tecnico', 'franco.miti@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 3, FALSE, FALSE),
+(108, 'Chiara', 'Blu', '2004-03-18', 'allievo', 'chiara.blu@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 3, FALSE, FALSE);
 
 -- Aggiornamento num_iscritti
 UPDATE SETTORE SET num_iscritti = 4 WHERE id_settore = 1;

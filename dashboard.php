@@ -49,22 +49,31 @@ if (!empty($_SESSION['is_admin'])) {
 
     <div class="container mb-5 pt-5">
 
-        <div class="mb-4">
-            <h2>La tua Dashboard</h2>
-            <p class="fs-5">
-                Ciao, <strong class="text-brand"><?php echo htmlspecialchars(ucfirst($_SESSION['nome'])); ?></strong>!
-            </p>
-            <p>
-                Il tuo ruolo è:
-                <span class="badge bg-secondary fs-6"><?php echo htmlspecialchars(ucfirst($_SESSION['ruolo'])); ?></span>
+        <div class="row align-items-center mb-4">
+            <div class="col-md-8">
+                <h2>La tua Dashboard</h2>
+                <p class="fs-5">
+                    Ciao, <strong class="text-brand"><?php echo htmlspecialchars(ucfirst($_SESSION['nome'])); ?></strong>!
+                </p>
+                <p>
+                    Il tuo ruolo è:
+                    <span class="badge bg-secondary fs-6"><?php echo htmlspecialchars(ucfirst($_SESSION['ruolo'])); ?></span>
 
-                <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): ?>
-                    <span class="badge bg-primary ms-1 fs-6">Admin</span>
-                <?php endif; ?>
-                <?php if (isset($_SESSION['is_responsabile']) && $_SESSION['is_responsabile']): ?>
-                    <span class="badge bg-primary ms-1 fs-6">Responsabile</span>
-                <?php endif; ?>
-            </p>
+                    <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): ?>
+                        <span class="badge bg-danger ms-1 fs-6">Admin</span>
+                    <?php endif; ?>
+                    <?php if (isset($_SESSION['is_responsabile']) && $_SESSION['is_responsabile']): ?>
+                        <span class="badge bg-primary ms-1 fs-6">Responsabile</span>
+                    <?php endif; ?>
+                </p>
+            </div>
+            <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): ?>
+                <div class="col-md-4 text-end">
+                    <a href="admin_dotazione.php" class="btn btn-danger text-white shadow-sm rounded-3 px-4 py-2 fw-bold d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-plus-lg fs-5"></i> Nuova Dotazione
+                    </a>
+                </div>
+            <?php endif; ?>
         </div>
 
         <!-- ADMIN -->
@@ -76,7 +85,7 @@ if (!empty($_SESSION['is_admin'])) {
                         <h4 class="alert-heading fw-bold mb-1">Pannello di Amministrazione</h4>
                         <p class="mb-0">
                             Hai i privilegi di gestione completa della piattaforma.
-                            Da qui puoi amministrare la struttura (Settori) e le persone (Utenti) o visualizzare tutte le prenotazioni.
+                            Da qui puoi amministrare i Settori, gli Utenti, visualizzare tutte le prenotazioni o definire nuove Dotazioni.
                         </p>
                     </div>
                 </div>

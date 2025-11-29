@@ -53,7 +53,7 @@ $prenotazioni = $result->fetch_all(MYSQLI_ASSOC);
             <div class="col-md-8">
                 <h2 class="mb-2">Le Mie Prenotazioni</h2>
                 <h5 class="text-muted">
-                    Settore: <span class="text-brand fw-bold"><?php echo htmlspecialchars($nome_settore); ?></span>
+                    Settore di riferimento: <span class="text-brand fw-bold"><?php echo htmlspecialchars($nome_settore); ?></span>
                 </h5>
             </div>
             

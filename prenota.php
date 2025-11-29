@@ -183,16 +183,16 @@ if ($data_scelta && $ora_scelta) {
                     <i class="bi bi-info-circle-fill text-info ms-2"></i> Seleziona le caselle orarie consecutive che vuoi prenotare e premi "Procedi".
                 </div>
 
-                <div class="table-responsive shadow-sm mb-4 rounded-4 overflow-hidden border">
-                    <table class="table table-bordered calendar-table mb-0 bg-white text-center">
+                <div class="table-responsive shadow-sm mb-4 rounded-4 overflow-hidden">
+                    <table class="table calendar-table mb-0 text-center">
                         <thead>
                             <tr>
-                                <th style="width: 80px;">Ora</th>
+                                <th class="align-middle" style="width: 80px;">Ora</th>
                                 <?php 
                                 $giorni = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
                                 foreach($giorni as $index => $giorno) {
                                     $d = date('d/m', strtotime($lunedi_settimana . " +$index days"));
-                                    echo "<th>$giorno<br><small class='fw-normal'>$d</small></th>";
+                                    echo "<th style='width: 120px'>$giorno<br><small class='fw-normal'>$d</small></th>";
                                 }
                                 ?>
                             </tr>
@@ -200,7 +200,7 @@ if ($data_scelta && $ora_scelta) {
                         <tbody>
                             <?php for ($ora = 9; $ora <= 23; $ora++): ?>
                                 <tr>
-                                    <td class="fw-bold bg-light align-middle"><?php echo $ora; ?>:00</td>
+                                    <td class="fw-bold align-middle"><?php echo $ora; ?>:00</td>
                                     <?php for ($i = 0; $i < 7; $i++): 
                                         $data_curr = date('Y-m-d', strtotime($lunedi_settimana . " +$i days"));
                                         $is_occupied = isset($occupied[$data_curr][$ora]);
@@ -208,7 +208,7 @@ if ($data_scelta && $ora_scelta) {
                                         $value = $data_curr . "|" . $ora;
                                     ?>
                                         <?php if ($is_occupied): ?>
-                                            <td class="cell-occupied align-middle" title="Occupato"><i class="bi bi-x-circle"></i></td>
+                                            <td class="cell-occupied align-middle" title="Occupato"><i class="bi bi-x-circle text-danger"></i></td>
                                         <?php elseif ($is_past): ?>
                                             <td class="bg-light text-muted small align-middle">-</td>
                                         <?php else: ?>

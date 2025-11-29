@@ -41,13 +41,30 @@ if (isset($_SESSION['id_utente'])) {
           <li class="nav-item">
             <a class="nav-link" href="profilo.php">Il mio Profilo</a>
           </li>
-
-          <?php if (isset($_SESSION['is_responsabile']) && $_SESSION['is_responsabile'] == true): ?>
+          
+          <!-- NAVBAR RESPONSABILE -->
+          <?php if (isset($_SESSION['is_responsabile']) && $_SESSION['is_responsabile']): ?>
             <li class="nav-item">
               <a class="nav-link" href="gestione_sale.php">Gestione Sale</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="gestione_prenotazioni.php">Gestione Prenotazioni</a>
+            </li>
+          <?php endif; ?>
+          
+          <!-- NAVBAR ADMIN -->
+          <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): ?>
+            <li class="nav-item">
+              <a class="nav-link" href="admin_settori.php">Gestione Settori</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="admin_utenti.php">Gestione Utenti</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="admin_prenotazioni.php">Prenotazioni</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="admin_prenotazioni.php">Dotazioni</a>
             </li>
           <?php endif; ?>
         <?php endif; ?>

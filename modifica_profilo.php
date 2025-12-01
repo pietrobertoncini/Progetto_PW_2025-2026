@@ -109,7 +109,6 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
     </div>
 
     <?php include 'common/footer.html'; ?>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

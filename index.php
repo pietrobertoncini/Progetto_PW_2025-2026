@@ -67,7 +67,7 @@ if (session_status() == PHP_SESSION_NONE) {
                 </div>
                 <div class="row mt-5">
                     <div class="col-12 col-lg-6 text-center">
-                        <a href="gestione_sale.php" class="btn btn-secondary btn-lg px-5 rounded-3 shadow-sm">Scopri le sale</a>
+                        <a href="#" class="btn btn-secondary btn-lg px-5 rounded-3 shadow-sm">Scopri le sale</a>
                     </div>
                 </div>
 
@@ -112,7 +112,7 @@ if (session_status() == PHP_SESSION_NONE) {
                 <div class="row mt-5">
                     <div class="col-12 col-lg-6"></div>
                     <div class="col-12 col-lg-6 text-center">
-                        <a href="gestione_sale.php" class="btn btn-secondary btn-lg px-5 rounded-3 shadow-sm">Scopri le sale</a>
+                        <a href="#" class="btn btn-secondary btn-lg px-5 rounded-3 shadow-sm">Scopri le sale</a>
                     </div>
                 </div>
 
@@ -156,7 +156,7 @@ if (session_status() == PHP_SESSION_NONE) {
                 </div>
                 <div class="row mt-5">
                     <div class="col-12 col-lg-6 text-center">
-                        <a href="gestione_sale.php" class="btn btn-secondary btn-lg px-5 rounded-3 shadow-sm">Scopri le sale</a>
+                        <a href="#" class="btn btn-secondary btn-lg px-5 rounded-3 shadow-sm">Scopri le sale</a>
                     </div>
                 </div>
 

@@ -27,7 +27,7 @@ $elenco_utenti = getAllUtentiAdmin($cid);
     <div class="flex-shrink-0 container py-5">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold">Gestione Utenti</h2>
+            <h2>Gestione Utenti</h2>
         </div>
 
         <?php if (isset($_GET['msg'])): ?>

@@ -69,7 +69,7 @@ $elenco_settori = getAllSettoriAdmin($cid);
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
-                                <div class="form-text small text-warning mt-2">
+                                <div class="form-text small text-danger mt-2">
                                     <i class="bi bi-exclamation-triangle-fill"></i> Se il settore ha già un responsabile, verrà sostituito.
                                 </div>
                             </div>

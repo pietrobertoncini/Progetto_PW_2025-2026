@@ -2,9 +2,49 @@
     font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
+html, body {
+    overscroll-behavior-y: none; 
+}
+
 body {
     background-color: #eedfcc;
     padding-top: 80px;
+}
+
+.hero-section {
+    /* Immagine di sfondo scura con overlay */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url('../images/hero.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    /* ALTEZZA E POSIZIONAMENTO (Il trucco per andare in cima) */
+    /* 1. Annulliamo lo spazio riservato alla navbar dal body */
+    margin-top: -80px; 
+    
+    /* 2. Diamo un'altezza minima generosa */
+    min-height: 600px; 
+    
+    /* 3. Aggiungiamo padding in alto per non far finire il testo sotto la navbar */
+    /* 80px (navbar) + 60px (spazio extra) = 140px */
+    padding-top: 140px;
+    padding-bottom: 80px;
+
+    /* Stile estetico */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    margin-bottom: 3rem; /* Spazio prima delle sezioni successive */
+}
+
+/* Effetto ombra per rendere il titolo super leggibile */
+.hero-section h1 {
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+/* Opzionale: rende il testo lead un po' più chiaro */
+.hero-section .lead {
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 1px 5px rgba(0,0,0,0.5);
+    font-size: 1.25rem;
 }
 
 .sezioni {

@@ -12,29 +12,39 @@ if (session_status() == PHP_SESSION_NONE) {
 
     <?php include 'common/navbar.php'; ?>
 
-    <div class="container my-5">
-        <div class="p-5 mb-4 bg-light rounded-3 shadow">
-            <div class="container-fluid py-4">
-                <h1 class="display-5 fw-bold">Benvenuto su Play Room Planner!</h1>
-                <p class="col-md- fs-4">Accedi o registrati per iniziare a prenotare le sale e gestire i tuoi inviti.</p>
+    <header class="hero-section text-center text-white d-flex align-items-center justify-content-center">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-3">Prenota il tuo spazio creativo</h1>
 
-                <?php if (!isset($_SESSION['id_utente'])): ?>
-                    <a href="login.php" class="btn btn-primary btn-md me-2">Accedi</a>
-                    <a href="register.php" class="btn btn-outline-secondary btn-md">Registrati</a>
-                <?php else: ?>
-                    <a href="dashboard.php" class="btn btn-success btn-lg">Vai alla tua Dashboard</a>
-                <?php endif; ?>
+                    <p class="lead mb-4 fw-normal">
+                        Gestisci le sale prova, organizza eventi teatrali e pianifica le tue lezioni di ballo.
+                        Tutto in un unico posto, semplice e veloce.
+                    </p>
+
+                    <div class="d-flex justify-content-center gap-3">
+                        <?php if (!isset($_SESSION['id_utente'])): ?>
+                            <a href="login.php" class="btn btn-primary btn-lg px-4 shadow-sm fw-bold">Accedi</a>
+                            <a href="register.php" class="btn btn-outline-light btn-lg px-4 fw-bold">Registrati</a>
+                        <?php else: ?>
+                            <a href="dashboard.php" class="btn btn-success btn-lg px-5 shadow fw-bold">
+                                <i class="bi bi-speedometer2 me-2"></i>Vai alla Dashboard
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </header>
 
     <div class="sezioni">
-        
+
         <section id="musica" class="py-5 border-top border-1 border-secondary-subtle">
             <div class="container my-4">
                 <div class="row gy-4 gx-lg-5 align-items-start">
 
-                    <div class="col-lg-6 order-1 px-3 px-lg-0" >
+                    <div class="col-lg-6 order-1 px-3 px-lg-0">
                         <h2 class="display-5 fw-bold mb-4 me-lg-4">Musica</h2>
 
                         <p class="lead text-muted mb-4 me-lg-4"> Immergiti in ambienti progettati per il suono puro senza compromessi.
@@ -57,7 +67,7 @@ if (session_status() == PHP_SESSION_NONE) {
                         </div>
                     </div>
 
-                    <div class="col-lg-6 order-2 mt-5" >
+                    <div class="col-lg-6 order-2 mt-5">
                         <img src="images/musica.jpg"
                             alt="Sala Musica"
                             class="img-fluid rounded-4 shadow-lg w-100"

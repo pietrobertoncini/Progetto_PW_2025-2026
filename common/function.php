@@ -329,3 +329,85 @@ function eliminaUtente($cid, $id_utente_da_eliminare, $id_mio_utente)
         return false; // Errore DB (es. vincoli FK)
     }
 }
+
+// ADMIN PRENOTAZIONI
+/* recupera tutte le prenotazioni */
+function getAllPrenotazioniAdmin($cid) {
+    $sql = "SELECT P.*, 
+                   S.nome_sala,
+                   SETT.nome as nome_settore,
+                   U.nome AS nome_org,
+                   U.cognome as cognome_org
+            FROM PRENOTAZIONE P
+            JOIN SALA S ON P.id_settore = S.id_settore AND P.nome_sala = S.nome_sala
+            JOIN SETTORE SETT ON P.id_settore = SETT.id_settore
+            JOIN UTENTE U ON P.id_organizzatore = U.id_utente
+            ORDER BY P.data DESC, P.ora DESC";
+    
+    $result = $cid->query($sql);
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+
+/* elimina prenotazione */
+function eliminaPrenotazioneAdmin($cid, $id_settore, $nome_sala, $data, $ora) {
+    // La cancellazione (ON DELETE CASCADE) nel DB
+    // si occuperà di rimuovere automaticamente gli INVITI collegati
+    $sql = "DELETE FROM PRENOTAZIONE 
+            WHERE id_settore = ? AND nome_sala = ? AND data = ? AND ora = ?";
+    
+    $stmt = $cid->prepare($sql);
+    $stmt->bind_param("isss", $id_settore, $nome_sala, $data, $ora);
+    
+    try {
+        $stmt->execute();
+        $affected = $stmt->affected_rows;
+        $stmt->close();
+        return ($affected > 0);
+    } catch (mysqli_sql_exception $e) {
+        return false;
+    }
+}
+
+// ADMIN DOTAZIONI
+
+/* recupera tutte le dotazioni dal database */
+function getAllDotazioni($cid) {
+    $sql = "SELECT * FROM DOTAZIONE_DI_SUPPORTO ORDER BY tipo ASC";
+    $result = $cid->query($sql);
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+
+/* crea una nuova dotazione */
+function creaDotazione($cid, $tipo) {
+    $sql = "INSERT INTO DOTAZIONE_DI_SUPPORTO (tipo) VALUES (?)";
+    $stmt = $cid->prepare($sql);
+    $stmt->bind_param("s", $tipo);
+    $result = $stmt->execute();
+    $stmt->close();
+    return $result;
+}
+
+/* aggiorna una dotazione esistente */
+function aggiornaDotazione($cid, $id_dotazione, $tipo) {
+    $sql = "UPDATE DOTAZIONE_DI_SUPPORTO SET tipo = ? WHERE id_dotazione = ?";
+    $stmt = $cid->prepare($sql);
+    $stmt->bind_param("si", $tipo, $id_dotazione);
+    $result = $stmt->execute();
+    $stmt->close();
+    return $result;
+}
+
+/* elimina una dotazione. fallisce se la dotazione è assegnata a qualche sala*/
+function eliminaDotazione($cid, $id_dotazione) {
+    $sql = "DELETE FROM DOTAZIONE_DI_SUPPORTO WHERE id_dotazione = ?";
+    $stmt = $cid->prepare($sql);
+    $stmt->bind_param("i", $id_dotazione);
+    
+    try {
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    } catch (mysqli_sql_exception $e) {
+        return false; 
+    }
+}

@@ -62,7 +62,7 @@ $elenco_settori = getAllSettoriAdmin($cid);
 
         <div class="row g-4">
             <div class="col-lg-4">
-                <div class="card shadow-sm border-0 rounded-3">
+                <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
                     <div class="card-header border-0 py-3 fw-bold <?php echo $is_editing ? 'bg-warning text-dark' : 'bg-primary text-white'; ?>">
                         <i class="bi <?php echo $is_editing ? 'bi-pencil-square' : 'bi-plus-lg'; ?> me-2"></i>
                         <?php echo $is_editing ? 'Modifica Settore' : 'Nuovo Settore'; ?>
@@ -95,7 +95,7 @@ $elenco_settori = getAllSettoriAdmin($cid);
                             </div>
 
                             <div class="d-grid">
-                                <button type="submit" class="btn <?php echo $is_editing ? 'btn-warning text-dark' : 'btn-primary'; ?> btn-lg rounded-3 fw-bold shadow-sm">
+                                <button type="submit" class="btn rounded-pill <?php echo $is_editing ? 'btn-warning text-dark' : 'btn-primary'; ?> btn-lg fw-bold shadow-sm">
                                     <i class="bi <?php echo $is_editing ? 'bi-save' : 'bi-plus-lg'; ?> me-2"></i>
                                     <?php echo $is_editing ? 'Salva Modifiche' : 'Crea Settore'; ?>
                                 </button>
@@ -115,7 +115,7 @@ $elenco_settori = getAllSettoriAdmin($cid);
             </div>
 
             <div class="col-lg-8">
-                <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+                <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
                     <div class="card-header bg-white py-3 fw-bold text-muted border-bottom-0">
                         Elenco Settori Esistenti (<?php echo count($elenco_settori); ?>)
                     </div>

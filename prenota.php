@@ -73,11 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['slots'])) {
 }
 
 // --- RECUPERO SALE ---
-$sql = "SELECT * FROM SALA WHERE id_settore = ? ORDER BY nome_sala";
-$stmt = $cid->prepare($sql);
-$stmt->bind_param("i", $id_settore_utente);
-$stmt->execute();
-$sale = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$sale = getSaleBySettore($cid, $id_settore_utente);
 
 // --- CALCOLO SETTIMANA ---
 $timestamp_rif = strtotime($data_rif);
@@ -89,13 +85,7 @@ $next_week = date('Y-m-d', strtotime($lunedi_settimana . ' +7 days'));
 // --- LOGICA CALENDARIO ---
 $occupied = [];
 if ($id_sala_selezionata) {
-    $sql_p = "SELECT data, ora, durata FROM PRENOTAZIONE 
-              WHERE nome_sala = ? AND id_settore = ? 
-              AND data BETWEEN ? AND ?";
-    $stmt_p = $cid->prepare($sql_p);
-    $stmt_p->bind_param("siss", $id_sala_selezionata, $id_settore_utente, $lunedi_settimana, $domenica_settimana);
-    $stmt_p->execute();
-    $res_p = $stmt_p->get_result();
+    $res_p = getOccupazioniSettimana($cid, $id_sala_selezionata, $id_settore_utente, $lunedi_settimana, $domenica_settimana);
     while ($row = $res_p->fetch_assoc()) {
         for ($i = 0; $i < $row['durata']; $i++) {
             $occupied[$row['data']][$row['ora'] + $i] = true;
@@ -106,16 +96,7 @@ if ($id_sala_selezionata) {
 // --- LOGICA UTENTI ---
 $utenti_invitabili = [];
 if ($data_scelta && $ora_scelta) {
-    $sql_u = "SELECT U.id_utente, U.nome, U.cognome, U.ruolo 
-              FROM UTENTE U
-              WHERE U.id_utente != ? AND U.id_settore = ? 
-              AND U.id_utente NOT IN (SELECT I.id_utente FROM INVITO I WHERE I.data = ? AND I.ora = ? AND I.stato = 'accettato')
-              AND U.id_utente NOT IN (SELECT P.id_organizzatore FROM PRENOTAZIONE P WHERE P.data = ? AND P.ora = ?)
-              ORDER BY U.cognome";
-    $stmt_u = $cid->prepare($sql_u);
-    $stmt_u->bind_param("iisisi", $id_utente, $id_settore_utente, $data_scelta, $ora_scelta, $data_scelta, $ora_scelta);
-    $stmt_u->execute();
-    $utenti_invitabili = $stmt_u->get_result()->fetch_all(MYSQLI_ASSOC);
+    $utenti_invitabili = getUtentiInvitabili($cid, $id_utente, $id_settore_utente, $data_scelta, $ora_scelta);
 }
 ?>
 
@@ -237,7 +218,7 @@ if ($data_scelta && $ora_scelta) {
         <?php endif; ?>
 
         <?php if ($data_scelta && $ora_scelta && $id_sala_selezionata): ?>
-            <div id="form-prenotazione" class="card border-primary shadow rounded-4 overflow-hidden">
+            <div id="form-prenotazione" class="card border-0 shadow rounded-4 overflow-hidden">
                 <div class="card-header bg-primary text-white py-3">
                     <h4 class="mb-0 fs-5 fw-bold ms-2">Completa Prenotazione</h4>
                 </div>
@@ -267,25 +248,42 @@ if ($data_scelta && $ora_scelta) {
 
                         <hr>
 
-                        <h5 class="fw-bold mb-3">Invita Utenti (Opzionale)</h5>
-                        <div class="alert alert-info py-1 small rounded-3">
-                            <i class="bi bi-info-circle ms-1"></i> Vengono mostrati solo gli utenti attualmente liberi in questo orario.
+                        <h5 class="fw-bold mb-3">Invita Partecipanti</h5>
+                        <div class="mb-3">
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Filtri">
+                                <button type="button" class="btn btn-outline-primary active" onclick="filtraUtenti('tutti')">Tutti</button>
+                                <button type="button" class="btn btn-outline-primary" onclick="filtraUtenti('settore')">Mio Settore</button>
+                                <button type="button" class="btn btn-outline-primary" onclick="filtraUtenti('docente')">Docenti</button>
+                                <button type="button" class="btn btn-outline-primary" onclick="filtraUtenti('allievo')">Allievi</button>
+                            </div>
                         </div>
-                        <div class="row g-2 mb-4" style="max-height: 200px; overflow-y: auto;">
+
+                        <div class="row g-2 mb-4 p-2 border rounded bg-light" style="max-height: 250px; overflow-y: auto;">
                             <?php if (!empty($utenti_invitabili)): ?>
-                                <?php foreach ($utenti_invitabili as $u): ?>
-                                    <div class="col-md-6 col-lg-4">
-                                        <div class="form-check p-2 border rounded-3 bg-white">
+                                <?php foreach ($utenti_invitabili as $u):
+                                    // Prepariamo le classi per il filtro
+                                    $is_mio_settore = ($u['id_settore'] == $id_settore_utente) ? 'true' : 'false';
+                                    $ruolo = strtolower($u['ruolo']);
+                                ?>
+                                    <div class="col-md-6 user-item" data-settore="<?php echo $is_mio_settore; ?>" data-ruolo="<?php echo $ruolo; ?>">
+                                        <div class="form-check p-2 border rounded-3 bg-white h-100 shadow-sm">
                                             <input class="form-check-input ms-1" type="checkbox" name="invitati[]" value="<?php echo $u['id_utente']; ?>" id="user_<?php echo $u['id_utente']; ?>">
-                                            <label class="form-check-label ms-2 w-75" for="user_<?php echo $u['id_utente']; ?>">
-                                                <?php echo htmlspecialchars($u['nome'] . " " . $u['cognome']); ?>
-                                                <small class="text-muted d-block"><?php echo ucfirst($u['ruolo']); ?></small>
+                                            <label class="form-check-label ms-2 w-75 lh-sm" style="font-size: 0.9rem;" for="user_<?php echo $u['id_utente']; ?>">
+                                                <strong><?php echo htmlspecialchars($u['nome'] . " " . $u['cognome']); ?></strong>
+                                                <span class="d-block text-muted small mt-1">
+                                                    <?php echo ucfirst($u['ruolo']); ?>
+                                                    <?php if ($u['id_settore'] != $id_settore_utente): ?>
+                                                        <span class="badge bg-warning text-dark text-wrap" style="font-size: 0.65rem;">
+                                                            <?php echo htmlspecialchars($u['nome_settore']); ?>
+                                                        </span>
+                                                    <?php endif; ?>
+                                                </span>
                                             </label>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
                             <?php else: ?>
-                                <p class="text-muted ms-1">Nessun utente disponibile nel tuo settore in questo orario.</p>
+                                <p class="text-muted ms-1">Nessun utente disponibile in questo orario.</p>
                             <?php endif; ?>
                         </div>
 
@@ -301,6 +299,28 @@ if ($data_scelta && $ora_scelta) {
     </div>
 
     <?php include 'common/footer.html'; ?>
+    <script>
+        function filtraUtenti(filtro) {
+            const items = document.querySelectorAll('.user-item');
+            // Gestione visuale bottoni (opzionale, per UI)
+            document.querySelectorAll('.btn-group .btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            items.forEach(item => {
+                const isMioSettore = item.getAttribute('data-settore') === 'true';
+                const ruolo = item.getAttribute('data-ruolo');
+
+                if (filtro === 'tutti') {
+                    item.style.display = 'block';
+                } else if (filtro === 'settore') {
+                    item.style.display = isMioSettore ? 'block' : 'none';
+                } else {
+                    // Filtro per ruolo (docente o allievo)
+                    item.style.display = (ruolo === filtro) ? 'block' : 'none';
+                }
+            });
+        }
+    </script>
 </body>
 
 </html>

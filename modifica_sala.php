@@ -15,24 +15,14 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
 $id_settore = $dati_utente['id_settore'];
 
 // Recupero dati Sala
-$stmt = $cid->prepare("SELECT * FROM SALA WHERE id_settore = ? AND nome_sala = ?");
-$stmt->bind_param("is", $id_settore, $nome_sala_url);
-$stmt->execute();
-$result = $stmt->get_result();
-$sala = $result->fetch_assoc();
-
+$sala = getSalaById($cid, $id_settore, $nome_sala_url);
 if (!$sala) die("Sala non trovata.");
 
 // Recupero dotazioni attuali della sala (per checkare i box)
-$dotazioni_attuali = [];
-$stmt_dot = $cid->prepare("SELECT id_dotazione FROM SALA_DOTAZIONE WHERE id_settore = ? AND nome_sala = ?");
-$stmt_dot->bind_param("is", $id_settore, $nome_sala_url);
-$stmt_dot->execute();
-$res_dot = $stmt_dot->get_result();
-while($row = $res_dot->fetch_assoc()) $dotazioni_attuali[] = $row['id_dotazione'];
-
+$dotazioni_attuali = getDotazioniIdsBySala($cid, $id_settore, $nome_sala_url);
 // Recupero tutte le dotazioni possibili
-$tutte_dotazioni = $cid->query("SELECT * FROM DOTAZIONE_DI_SUPPORTO ORDER BY tipo")->fetch_all(MYSQLI_ASSOC);
+$tutte_dotazioni = getAllDotazioni($cid);
+
 ?>
 
 <!DOCTYPE html>

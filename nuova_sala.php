@@ -9,9 +9,7 @@ if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
 }
 
 // Recuperiamo la lista di tutte le dotazioni possibili per mostrarle nei checkbox
-$dotazioni_disponibili = [];
-$res = $cid->query("SELECT * FROM DOTAZIONE_DI_SUPPORTO ORDER BY tipo");
-$dotazioni_disponibili = $res->fetch_all(MYSQLI_ASSOC);
+$dotazioni_disponibili = getAllDotazioni($cid);
 ?>
 
 <!DOCTYPE html>

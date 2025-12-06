@@ -25,13 +25,7 @@ if (!$nome_sala || !$data_old || !$ora_old) {
 $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
 $id_settore = $dati_utente['id_settore'];
 
-$sql = "SELECT * FROM PRENOTAZIONE 
-        WHERE id_settore = ? AND nome_sala = ? AND data = ? AND ora = ?";
-$stmt = $cid->prepare($sql);
-$stmt->bind_param("issi", $id_settore, $nome_sala, $data_old, $ora_old);
-$stmt->execute();
-$result = $stmt->get_result();
-$prenotazione = $result->fetch_assoc();
+$prenotazione = getPrenotazioneSingola($cid, $id_settore, $nome_sala, $data_old, $ora_old);
 
 if (!$prenotazione) {
     die("Prenotazione non trovata o non hai i permessi per gestirla.");

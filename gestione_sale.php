@@ -8,40 +8,13 @@ require_once __DIR__ . '/common/setup.php';
 require_once __DIR__ . '/common/function.php';
 
 // --- 1. SICUREZZA: SOLO ADMIN ---
-// Modifica richiesta: Accesso limitato solo all'admin
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_admin'])) {
     header('Location: index.php');
     exit;
 }
 
-// --- 2. RECUPERO TUTTE LE SALE ---
-// Modifica richiesta: Vedere tutte le sale di tutti i settori
-// Facciamo una JOIN con SETTORE per mostrare a chi appartiene la sala
-$sql_sale = "SELECT S.*, SETT.nome AS nome_settore 
-             FROM SALA S 
-             JOIN SETTORE SETT ON S.id_settore = SETT.id_settore 
-             ORDER BY SETT.nome ASC, S.nome_sala ASC";
-
-$result_sale = $cid->query($sql_sale);
-$sale = $result_sale->fetch_all(MYSQLI_ASSOC);
-
-// Funzione helper locale (o recuperata da function.php se presente)
-function getDotazioniSalaLocal($cid, $id_settore, $nome_sala) {
-    $sql = "SELECT D.tipo 
-            FROM SALA_DOTAZIONE SD
-            JOIN DOTAZIONE_DI_SUPPORTO D ON SD.id_dotazione = D.id_dotazione
-            WHERE SD.id_settore = ? AND SD.nome_sala = ?";
-    $stmt = $cid->prepare($sql);
-    $stmt->bind_param("is", $id_settore, $nome_sala);
-    $stmt->execute();
-    $res = $stmt->get_result();
-    
-    $lista = [];
-    while($row = $res->fetch_assoc()) {
-        $lista[] = $row['tipo'];
-    }
-    return implode(", ", $lista);
-}
+// --- 2. RECUPERO DATI (TRAMITE FUNZIONI) ---
+$sale = getAllSaleGlobal($cid);
 ?>
 
 <!DOCTYPE html>
@@ -109,7 +82,7 @@ function getDotazioniSalaLocal($cid, $id_settore, $nome_sala) {
                                         </td>
                                         <td>
                                             <?php 
-                                                $dotazioni = getDotazioniSalaLocal($cid, $s['id_settore'], $s['nome_sala']);
+                                                $dotazioni = getDotazioniSala($cid, $s['id_settore'], $s['nome_sala']);
                                                 if ($dotazioni) {
                                                     echo '<small class="text-muted">' . htmlspecialchars($dotazioni) . '</small>';
                                                 } else {

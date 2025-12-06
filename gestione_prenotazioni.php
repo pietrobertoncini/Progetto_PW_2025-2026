@@ -5,38 +5,24 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Inclusione setup DB e funzioni
 require_once __DIR__ . '/common/setup.php';
 require_once __DIR__ . '/common/function.php';
 
 // --- 1. SICUREZZA ---
-// Accesso consentito solo ai responsabili
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
-    header('Location: dashboard.php');
+    header('Location: index.php');
     exit;
 }
 
-// --- 2. RECUPERO DATI UTENTE E SETTORE ---
-$id_utente_loggato = $_SESSION['id_utente']; // ID di chi è loggato
+// --- 2. RECUPERO DATI ---
+// Nota: qui serve datiUtenteCompleti per sapere id_settore
+$id_utente_loggato = $_SESSION['id_utente'];
 $dati_utente = datiUtenteCompleti($cid, $id_utente_loggato);
 $id_settore = $dati_utente['id_settore'];
 $nome_settore = $dati_utente['nome_settore'];
 
-// --- 3. RECUPERO PRENOTAZIONI ATTIVE (FILTRATE PER ORGANIZZATORE) ---
-// Modifica: Aggiunto "AND id_organizzatore = ?" per vedere solo le TUE prenotazioni
-$prenotazioni = [];
-$sql_prenotazioni = "SELECT * FROM PRENOTAZIONE 
-                     WHERE id_settore = ? 
-                     AND id_organizzatore = ? 
-                     AND data >= CURDATE() 
-                     ORDER BY data ASC, ora ASC";
-
-$stmt = $cid->prepare($sql_prenotazioni);
-// "ii" indica due interi: id_settore e id_utente_loggato
-$stmt->bind_param("ii", $id_settore, $id_utente_loggato);
-$stmt->execute();
-$result = $stmt->get_result();
-$prenotazioni = $result->fetch_all(MYSQLI_ASSOC);
+// --- 3. RECUPERO PRENOTAZIONI (TRAMITE FUNZIONE) ---
+$prenotazioni = getPrenotazioniByOrganizzatore($cid, $id_settore, $id_utente_loggato);
 ?>
 
 <!DOCTYPE html>
@@ -131,12 +117,6 @@ $prenotazioni = $result->fetch_all(MYSQLI_ASSOC);
             </div>
         </div>
         
-        <div class="mt-4">
-            <a href="dashboard.php" class="btn btn-outline-secondary">
-                &larr; Torna alla Dashboard
-            </a>
-        </div>
-
     </div>
 
     <?php require "common/footer.html"; ?>

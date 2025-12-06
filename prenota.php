@@ -27,48 +27,14 @@ $durata_calcolata = 1;
 $errore_selezione = null;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['slots'])) {
-    $slots = $_POST['slots'];
+    $risultato = elaboraSlotSelezionati($_POST['slots']);
 
-    if (empty($slots)) {
-        $errore_selezione = "Seleziona almeno un orario.";
+    if ($risultato['error']) {
+        $errore_selezione = $risultato['error'];
     } else {
-        $ore_selezionate = [];
-        $giorno_riferimento = null;
-        $giorno_diverso = false;
-
-        foreach ($slots as $slot) {
-            $parts = explode('|', $slot);
-            $d = $parts[0];
-            $h = (int)$parts[1];
-
-            if ($giorno_riferimento === null) $giorno_riferimento = $d;
-            if ($d !== $giorno_riferimento) $giorno_diverso = true;
-
-            $ore_selezionate[] = $h;
-        }
-
-        if ($giorno_diverso) {
-            $errore_selezione = "Puoi selezionare orari solo per un singolo giorno alla volta.";
-        } else {
-            sort($ore_selezionate, SORT_NUMERIC);
-            $consecutivi = true;
-            for ($i = 0; $i < count($ore_selezionate) - 1; $i++) {
-                if ($ore_selezionate[$i + 1] !== ($ore_selezionate[$i] + 1)) {
-                    $consecutivi = false;
-                    break;
-                }
-            }
-
-            if (!$consecutivi) {
-                $errore_selezione = "Errore: Hai selezionato orari non consecutivi. Seleziona solo ore di fila.";
-            } else {
-                $ora_inizio = $ore_selezionate[0];
-                $ultima_ora = end($ore_selezionate);
-                $durata_calcolata = ($ultima_ora - $ora_inizio) + 1;
-                $data_scelta = $giorno_riferimento;
-                $ora_scelta = $ora_inizio;
-            }
-        }
+        $data_scelta = $risultato['data'];
+        $ora_scelta = $risultato['ora'];
+        $durata_calcolata = $risultato['durata'];
     }
 }
 

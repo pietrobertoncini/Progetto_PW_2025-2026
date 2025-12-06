@@ -75,9 +75,6 @@ if (isset($_SESSION['id_utente'])) {
           
           <?php if (isset($_SESSION['is_responsabile']) && $_SESSION['is_responsabile']): ?>
             <li class="nav-item">
-              <a class="nav-link" href="gestione_sale.php">Gestione Sale</a>
-            </li>
-            <li class="nav-item">
               <a class="nav-link" href="gestione_prenotazioni.php">Gestione Prenotazioni</a>
             </li>
             <li class="nav-item">
@@ -91,6 +88,9 @@ if (isset($_SESSION['id_utente'])) {
             </li>
             <li class="nav-item">
               <a class="nav-link" href="admin_utenti.php">Utenti</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="gestione_sale.php">Sale</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="admin_prenotazioni.php">Prenotazioni</a>

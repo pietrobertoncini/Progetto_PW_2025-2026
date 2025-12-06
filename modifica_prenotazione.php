@@ -1,40 +1,41 @@
 <?php
-// gestione_prenotazioni.php
-
+// modifica_prenotazione.php
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+require_once 'common/setup.php';
+require_once 'common/function.php';
 
-// Inclusione setup DB e funzioni
-require_once __DIR__ . '/common/setup.php';
-require_once __DIR__ . '/common/function.php';
-
-// --- 1. SICUREZZA ---
-// Accesso consentito solo ai responsabili
+// 1. Controllo Accesso
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
-    header('Location: index.php');
+    header('Location: dashboard.php');
     exit;
 }
 
-// --- 2. RECUPERO DATI UTENTE E SETTORE ---
-$id_utente_loggato = $_SESSION['id_utente']; // ID di chi è loggato
-$dati_utente = datiUtenteCompleti($cid, $id_utente_loggato);
+// 2. Recupero Parametri URL (La chiave primaria della prenotazione)
+$nome_sala = isset($_GET['sala']) ? urldecode($_GET['sala']) : null;
+$data_old = isset($_GET['data']) ? $_GET['data'] : null;
+$ora_old = isset($_GET['ora']) ? (int)$_GET['ora'] : null;
+
+if (!$nome_sala || !$data_old || !$ora_old) {
+    die("Errore: Parametri prenotazione mancanti.");
+}
+
+// 3. Recupero Dati Prenotazione dal DB
+$dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
 $id_settore = $dati_utente['id_settore'];
-$nome_settore = $dati_utente['nome_settore'];
 
-// --- 3. RECUPERO PRENOTAZIONI ATTIVE (FILTRATE PER ORGANIZZATORE) ---
-$prenotazioni = [];
-$sql_prenotazioni = "SELECT * FROM PRENOTAZIONE 
-                     WHERE id_settore = ? 
-                     AND id_organizzatore = ? 
-                     AND data >= CURDATE() 
-                     ORDER BY data ASC, ora ASC";
-
-$stmt = $cid->prepare($sql_prenotazioni);
-$stmt->bind_param("ii", $id_settore, $id_utente_loggato);
+$sql = "SELECT * FROM PRENOTAZIONE 
+        WHERE id_settore = ? AND nome_sala = ? AND data = ? AND ora = ?";
+$stmt = $cid->prepare($sql);
+$stmt->bind_param("issi", $id_settore, $nome_sala, $data_old, $ora_old);
 $stmt->execute();
 $result = $stmt->get_result();
-$prenotazioni = $result->fetch_all(MYSQLI_ASSOC);
+$prenotazione = $result->fetch_assoc();
+
+if (!$prenotazione) {
+    die("Prenotazione non trovata o non hai i permessi per gestirla.");
+}
 ?>
 
 <!DOCTYPE html>
@@ -42,95 +43,96 @@ $prenotazioni = $result->fetch_all(MYSQLI_ASSOC);
 <?php require "common/header.html" ?>
 
 <body>
-
     <?php include 'common/navbar.php'; ?>
 
     <div class="container mt-5 mb-5">
-        
-        <div class="row align-items-center mb-4 mt-4">
-            <div class="col-md-8">
-                <h2 class="mb-2">Le Mie Prenotazioni</h2>
-                <h5 class="text-muted">
-                    Settore di riferimento: <span class="text-brand fw-bold"><?php echo htmlspecialchars($nome_settore); ?></span>
-                </h5>
-            </div>
-            
-            <div class="col-md-4 text-end">
-                <a href="prenota.php" class="btn btn-primary shadow-sm">
-                    <i class="bi bi-plus-lg"></i> Nuova Prenotazione
-                </a>
-            </div>
-        </div>
-        
-        <?php if (isset($_GET['msg'])): ?>
-            <div class="alert alert-success border-0 shadow-sm mb-4">
-                <i class="bi bi-check-circle-fill me-2"></i> <?php echo htmlspecialchars($_GET['msg']); ?>
-            </div>
-        <?php endif; ?>
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                
+                <div class="card shadow-sm border-0 rounded-3">
+                    <div class="card-header bg-secondary bg-opacity-10 border-0 py-3 d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0 fw-bold text-dark">Gestisci Prenotazione</h4>
+                        <a href="gestione_prenotazioni.php" class="btn btn-sm btn-outline-secondary">Annulla</a>
+                    </div>
+                    
+                    <div class="card-body p-4">
+                        
+                        <?php if (isset($_GET['error'])): ?>
+                            <div class="alert alert-danger"><?php echo htmlspecialchars($_GET['error']); ?></div>
+                        <?php endif; ?>
 
-        <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
-            <div class="card-header bg-primary bg-opacity-10 border-0 py-3">
-                <h5 class="mb-0 text-dark">Elenco Prenotazioni Create da Te</h5>
-            </div>
-            
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="ps-4">Nome Sala</th>
-                                <th>Data</th>
-                                <th>Orario</th>
-                                <th>Attività</th>
-                                <th class="text-end pe-4">Azioni</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if (count($prenotazioni) > 0): ?>
-                                <?php foreach ($prenotazioni as $p): ?>
-                                    <tr>
-                                        <td class="ps-4 py-3 fw-bold text-brand">
-                                            <?php echo htmlspecialchars($p['nome_sala']); ?>
-                                        </td>
-                                        
-                                        <td>
-                                            <?php echo date("d/m/Y", strtotime($p['data'])); ?>
-                                        </td>
+                        <form action="backend/modifica_prenotazione_exe.php" method="POST">
+                            
+                            <input type="hidden" name="old_nome_sala" value="<?php echo htmlspecialchars($nome_sala); ?>">
+                            <input type="hidden" name="old_data" value="<?php echo $data_old; ?>">
+                            <input type="hidden" name="old_ora" value="<?php echo $ora_old; ?>">
+                            <input type="hidden" name="id_settore" value="<?php echo $id_settore; ?>">
 
-                                        <td> 
-                                            <?php 
-                                                $ora_fine = $p['ora'] + $p['durata'];
-                                                echo $p['ora'] . ":00 - " . $ora_fine . ":00"; 
-                                            ?>
-                                        </td>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Sala</label>
+                                <input type="text" class="form-control bg-light" name="nome_sala" value="<?php echo htmlspecialchars($prenotazione['nome_sala']); ?>" readonly>
+                                <div class="form-text">Per cambiare sala, elimina questa prenotazione e fanne una nuova.</div>
+                            </div>
 
-                                        <td>
-                                            <?php echo htmlspecialchars($p['attivita']); ?>
-                                        </td>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="data" class="form-label fw-bold">Data</label>
+                                    <input type="date" class="form-control" id="data" name="new_data" 
+                                           value="<?php echo $prenotazione['data']; ?>" required min="<?php echo date('Y-m-d'); ?>">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="ora" class="form-label fw-bold">Ora Inizio</label>
+                                    <select class="form-select" id="ora" name="new_ora" required>
+                                        <?php for($i=9; $i<=23; $i++): ?>
+                                            <option value="<?php echo $i; ?>" <?php echo ($i == $prenotazione['ora']) ? 'selected' : ''; ?>>
+                                                <?php echo $i; ?>:00
+                                            </option>
+                                        <?php endfor; ?>
+                                    </select>
+                                </div>
+                            </div>
 
-                                        <td class="text-end pe-4">
-                                            <a href="modifica_prenotazione.php?sala=<?php echo urlencode($p['nome_sala']); ?>&data=<?php echo $p['data']; ?>&ora=<?php echo $p['ora']; ?>" 
-                                            class="btn btn-sm btn-secondary">
-                                            <i class="bi bi-gear-fill"></i> Gestisci
-                                            </a>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="5" class="text-center py-5 text-muted">
-                                        Non hai ancora creato nessuna prenotazione attiva.
-                                    </td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
+                            <div class="mb-3">
+                                <label for="durata" class="form-label fw-bold">Durata (ore)</label>
+                                <input type="number" class="form-control" id="durata" name="new_durata" 
+                                       min="1" max="4" value="<?php echo $prenotazione['durata']; ?>" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="attivita" class="form-label fw-bold">Attività</label>
+                                <input type="text" class="form-control" id="attivita" name="new_attivita" 
+                                       value="<?php echo htmlspecialchars($prenotazione['attivita']); ?>" required>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">Salva Modifiche</button>
+                            </div>
+                        </form>
+
+                        <hr class="my-4">
+
+                        <div class="bg-danger bg-opacity-10 p-3 rounded border border-danger border-opacity-25">
+                            <h5 class="text-danger fw-bold fs-6">Zona Pericolo</h5>
+                            <p class="small text-muted mb-3">L'eliminazione è irreversibile e cancellerà anche tutti gli inviti associati.</p>
+                            
+                            <form action="backend/elimina_prenotazione.php" method="POST" onsubmit="return confirm('Sei DAVVERO sicuro di voler eliminare questa prenotazione?');">
+                                <input type="hidden" name="id_settore" value="<?php echo $id_settore; ?>">
+                                <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($nome_sala); ?>">
+                                <input type="hidden" name="data" value="<?php echo $data_old; ?>">
+                                <input type="hidden" name="ora" value="<?php echo $ora_old; ?>">
+                                
+                                <button type="submit" class="btn btn-danger w-100">
+                                    <i class="bi bi-trash3-fill"></i> Elimina Prenotazione
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>
-        
     </div>
 
-    <?php require "common/footer.html"; ?>
+    <?php include 'common/footer.html'; ?>
 </body>
 </html>

@@ -4,7 +4,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// 1. Controllo Sicurezza: Solo Responsabili
+// 1. Controllo Sicurezza
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
     header('Location: index.php');
     exit;
@@ -15,22 +15,8 @@ require_once __DIR__ . '/common/function.php';
 
 $id_responsabile = $_SESSION['id_utente'];
 
-// 2. Query per recuperare le risposte
-$sql = "SELECT I.*, U.nome, U.cognome, U.ruolo, P.attivita 
-        FROM INVITO I
-        JOIN PRENOTAZIONE P ON I.id_settore = P.id_settore 
-             AND I.nome_sala = P.nome_sala 
-             AND I.data = P.data 
-             AND I.ora = P.ora
-        JOIN UTENTE U ON I.id_utente = U.id_utente
-        WHERE P.id_organizzatore = ?
-        ORDER BY I.data_risposta DESC, I.data ASC";
-
-$stmt = $cid->prepare($sql);
-$stmt->bind_param("i", $id_responsabile);
-$stmt->execute();
-$result = $stmt->get_result();
-$risposte = $result->fetch_all(MYSQLI_ASSOC);
+// 2. RECUPERO RISPOSTE (Tramite Funzione)
+$risposte = getRisposteInvitiByResponsabile($cid, $id_responsabile);
 ?>
 
 <!DOCTYPE html>

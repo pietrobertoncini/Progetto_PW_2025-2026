@@ -18,31 +18,8 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
 $id_settore = $dati_utente['id_settore'];
 $nome_settore = $dati_utente['nome_settore'];
 
-// --- 3. RECUPERO SALE ---
-$sale = [];
-$sql_sale = "SELECT * FROM SALA WHERE id_settore = ? ORDER BY nome_sala";
-$stmt = $cid->prepare($sql_sale);
-$stmt->bind_param("i", $id_settore);
-$stmt->execute();
-$result_sale = $stmt->get_result();
-$sale = $result_sale->fetch_all(MYSQLI_ASSOC);
-
-function getDotazioniSala($cid, $id_settore, $nome_sala) {
-    $sql = "SELECT D.tipo 
-            FROM SALA_DOTAZIONE SD
-            JOIN DOTAZIONE_DI_SUPPORTO D ON SD.id_dotazione = D.id_dotazione
-            WHERE SD.id_settore = ? AND SD.nome_sala = ?";
-    $stmt = $cid->prepare($sql);
-    $stmt->bind_param("is", $id_settore, $nome_sala);
-    $stmt->execute();
-    $res = $stmt->get_result();
-    
-    $lista = [];
-    while($row = $res->fetch_assoc()) {
-        $lista[] = $row['tipo'];
-    }
-    return implode(", ", $lista);
-}
+// --- 3. RECUPERO SALE (Tramite Funzione) ---
+$sale = getSaleBySettore($cid, $id_settore);
 ?>
 
 <!DOCTYPE html>
@@ -106,6 +83,7 @@ function getDotazioniSala($cid, $id_settore, $nome_sala) {
                                         </td>
                                         <td>
                                             <?php 
+                                                // CHIAMATA ALLA FUNZIONE ESTERNA
                                                 $dotazioni = getDotazioniSala($cid, $id_settore, $s['nome_sala']);
                                                 if ($dotazioni) {
                                                     echo '<small class="text-muted">' . htmlspecialchars($dotazioni) . '</small>';

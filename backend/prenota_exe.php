@@ -19,13 +19,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id_utente'])) {
 
     $ora_fine = $ora_inizio + $durata;
 
-    // 1. CONTROLLO SOVRAPPOSIZIONI
+    // CONTROLLO CAPIENZA (NOVITÀ)
+    // Recuperiamo i dati della sala per sapere la capienza max
+    $sala_info = getSalaById($cid, $id_settore, $nome_sala);
+
+    // Partecipanti = Organizzatore (1) + Invitati
+    $num_partecipanti = 1 + count($invitati);
+
+    if ($sala_info && $num_partecipanti > $sala_info['capienza_max']) {
+        header("Location: ../prenota.php?error=Errore: Numero partecipanti supera la capienza della sala.&sala=" . urlencode($nome_sala) . "&week=" . $data);
+        exit;
+    }
+
+    // CONTROLLO SOVRAPPOSIZIONI
     if (checkSovrapposizioneNuova($cid, $id_settore, $nome_sala, $data, $ora_inizio, $durata)) {
         header("Location: ../prenota.php?error=Sala già occupata in orario sovrapposto.&sala=" . urlencode($nome_sala) . "&week=" . $data);
         exit;
     }
 
-    // 2. INSERIMENTO
+    // INSERIMENTO
     try {
         $cid->begin_transaction();
         

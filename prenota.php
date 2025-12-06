@@ -93,10 +93,21 @@ if ($id_sala_selezionata) {
     }
 }
 
-// --- LOGICA UTENTI ---
+// --- LOGICA UTENTI E FILTRI ---
 $utenti_invitabili = [];
+$lista_settori = [];
+$capienza_sala_corrente = 0; // variabile per la capienza
+
 if ($data_scelta && $ora_scelta) {
     $utenti_invitabili = getUtentiInvitabili($cid, $id_utente, $id_settore_utente, $data_scelta, $ora_scelta);
+    $lista_settori = getListaSettori($cid);
+
+    foreach ($sale as $s) {
+        if ($s['nome_sala'] == $id_sala_selezionata) {
+            $capienza_sala_corrente = $s['capienza_max'];
+            break;
+        }
+    }
 }
 ?>
 
@@ -248,42 +259,94 @@ if ($data_scelta && $ora_scelta) {
 
                         <hr>
 
-                        <h5 class="fw-bold mb-3">Invita Partecipanti</h5>
-                        <div class="mb-3">
-                            <div class="btn-group btn-group-sm" role="group" aria-label="Filtri">
-                                <button type="button" class="btn btn-outline-primary active" onclick="filtraUtenti('tutti')">Tutti</button>
-                                <button type="button" class="btn btn-outline-primary" onclick="filtraUtenti('settore')">Mio Settore</button>
-                                <button type="button" class="btn btn-outline-primary" onclick="filtraUtenti('docente')">Docenti</button>
-                                <button type="button" class="btn btn-outline-primary" onclick="filtraUtenti('allievo')">Allievi</button>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0">Invita Partecipanti</h5>
+                            <span class="badge bg-primary fs-6">
+                                <i class="bi bi-people-fill"></i>
+                                <span id="counter-text">1</span> / <?php echo $capienza_sala_corrente; ?> Posti
+                            </span>
+                        </div>
+
+                        <input type="hidden" id="maxCapienza" value="<?php echo $capienza_sala_corrente; ?>">
+
+                        <div class="row g-2 mb-3 align-items-center">
+                            <div class="col-md-4">
+                                <select id="filtroSettore" class="form-select form-select-sm rounded-pill border-secondary" onchange="applicaFiltri()">
+                                    <option value="all">Tutti i Settori</option>
+                                    <?php if (!empty($lista_settori)): ?>
+                                        <?php foreach ($lista_settori as $sett): ?>
+                                            <option value="<?php echo $sett['id_settore']; ?>" <?php echo ($sett['id_settore'] == $id_settore_utente) ? 'selected' : ''; ?>>
+                                                <?php echo htmlspecialchars($sett['nome']); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <select id="filtroRuolo" class="form-select form-select-sm rounded-pill border-secondary" onchange="applicaFiltri()">
+                                    <option value="all">Tutti i Ruoli</option>
+                                    <option value="docente">Docente</option>
+                                    <option value="allievo">Allievo</option>
+                                    <option value="tecnico">Tecnico</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <button type="button" class="btn btn-sm btn-outline-dark rounded-pill w-100" id="btnSelectAll" onclick="toggleSelezionaTutti()">
+                                    <i class="bi bi-check-all"></i> Seleziona Tutti Possibili
+                                </button>
                             </div>
                         </div>
 
-                        <div class="row g-2 mb-4 p-2 border rounded bg-light" style="max-height: 250px; overflow-y: auto;">
+                        <div class="row g-2 mb-4 p-2 border rounded bg-light" style="max-height: 300px; overflow-y: auto;">
                             <?php if (!empty($utenti_invitabili)): ?>
                                 <?php foreach ($utenti_invitabili as $u):
-                                    // Prepariamo le classi per il filtro
-                                    $is_mio_settore = ($u['id_settore'] == $id_settore_utente) ? 'true' : 'false';
                                     $ruolo = strtolower($u['ruolo']);
+                                    $id_sett_user = $u['id_settore'];
+
+                                    $badge_class = 'bg-secondary';
+                                    if (isset($u['tipo_settore'])) {
+                                        switch ($u['tipo_settore']) {
+                                            case 'musica':
+                                                $badge_class = 'bg-primary';
+                                                break;
+                                            case 'teatro':
+                                                $badge_class = 'bg-danger';
+                                                break;
+                                            case 'ballo':
+                                                $badge_class = 'bg-success';
+                                                break;
+                                        }
+                                    }
                                 ?>
-                                    <div class="col-md-6 user-item" data-settore="<?php echo $is_mio_settore; ?>" data-ruolo="<?php echo $ruolo; ?>">
-                                        <div class="form-check p-2 border rounded-3 bg-white h-100 shadow-sm">
-                                            <input class="form-check-input ms-1" type="checkbox" name="invitati[]" value="<?php echo $u['id_utente']; ?>" id="user_<?php echo $u['id_utente']; ?>">
-                                            <label class="form-check-label ms-2 w-75 lh-sm" style="font-size: 0.9rem;" for="user_<?php echo $u['id_utente']; ?>">
-                                                <strong><?php echo htmlspecialchars($u['nome'] . " " . $u['cognome']); ?></strong>
-                                                <span class="d-block text-muted small mt-1">
-                                                    <?php echo ucfirst($u['ruolo']); ?>
-                                                    <?php if ($u['id_settore'] != $id_settore_utente): ?>
-                                                        <span class="badge bg-warning text-dark text-wrap" style="font-size: 0.65rem;">
-                                                            <?php echo htmlspecialchars($u['nome_settore']); ?>
-                                                        </span>
-                                                    <?php endif; ?>
+                                    <div class="col-md-6 user-item" data-id-settore="<?php echo $id_sett_user; ?>" data-ruolo="<?php echo $ruolo; ?>">
+                                        <div class="form-check p-2 border rounded-3 bg-white h-100 shadow-sm d-flex align-items-center">
+                                            <input class="form-check-input ms-1 me-3 my-0 user-checkbox" type="checkbox" name="invitati[]" value="<?php echo $u['id_utente']; ?>" id="user_<?php echo $u['id_utente']; ?>" style="transform: scale(1.2);" onchange="aggiornaContatore()">
+
+                                            <label class="form-check-label w-100 lh-sm" style="cursor: pointer;" for="user_<?php echo $u['id_utente']; ?>">
+                                                <span class="d-block fw-bold text-dark mb-1">
+                                                    <?php echo htmlspecialchars($u['nome'] . " " . $u['cognome']); ?>
                                                 </span>
+                                                <?php if ($u['is_responsabile']): ?>
+                                                    <span class="badge bg-dark border border-light me-1" style="font-size: 0.65rem;">
+                                                        <i class="bi bi-star-fill text-warning"></i> RESPONSABILE
+                                                    </span>
+                                                <?php endif; ?>
+                                                <span class="badge bg-light text-secondary border me-1" style="font-size: 0.65rem;">
+                                                    <?php echo ucfirst($u['ruolo']); ?>
+                                                </span>
+                                                <?php if ($u['id_settore'] != $id_settore_utente): ?>
+                                                    <span class="badge <?php echo $badge_class; ?> bg-opacity-75" style="font-size: 0.65rem;">
+                                                        <?php echo htmlspecialchars($u['nome_settore']); ?>
+                                                    </span>
+                                                <?php endif; ?>
                                             </label>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
                             <?php else: ?>
-                                <p class="text-muted ms-1">Nessun utente disponibile in questo orario.</p>
+                                <div class="col-12 text-center py-4 text-muted">
+                                    Nessun utente disponibile in questo orario.
+                                </div>
                             <?php endif; ?>
                         </div>
 
@@ -300,26 +363,104 @@ if ($data_scelta && $ora_scelta) {
 
     <?php include 'common/footer.html'; ?>
     <script>
-        function filtraUtenti(filtro) {
+        function applicaFiltri() {
+            const settoreSelezionato = document.getElementById('filtroSettore').value;
+            const ruoloSelezionato = document.getElementById('filtroRuolo').value;
             const items = document.querySelectorAll('.user-item');
-            // Gestione visuale bottoni (opzionale, per UI)
-            document.querySelectorAll('.btn-group .btn').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
 
             items.forEach(item => {
-                const isMioSettore = item.getAttribute('data-settore') === 'true';
-                const ruolo = item.getAttribute('data-ruolo');
+                const itemSettore = item.getAttribute('data-id-settore');
+                const itemRuolo = item.getAttribute('data-ruolo');
 
-                if (filtro === 'tutti') {
+                const matchSettore = (settoreSelezionato === 'all') || (itemSettore === settoreSelezionato);
+                const matchRuolo = (ruoloSelezionato === 'all') || (itemRuolo === ruoloSelezionato);
+
+                const checkbox = item.querySelector('.user-checkbox');
+
+                if (matchSettore && matchRuolo) {
                     item.style.display = 'block';
-                } else if (filtro === 'settore') {
-                    item.style.display = isMioSettore ? 'block' : 'none';
                 } else {
-                    // Filtro per ruolo (docente o allievo)
-                    item.style.display = (ruolo === filtro) ? 'block' : 'none';
+                    item.style.display = 'none';
+                    if (checkbox) {
+                        checkbox.checked = false; // Deseleziona se viene nascosto
+                        aggiornaContatore(); // Ricalcola
+                    }
                 }
             });
         }
+
+        function aggiornaContatore() {
+            const maxCapienza = parseInt(document.getElementById('maxCapienza').value);
+            const checkboxes = document.querySelectorAll('.user-checkbox');
+
+            // Contiamo quelli checkati + 1 (l'organizzatore)
+            let checkedCount = document.querySelectorAll('.user-checkbox:checked').length;
+            let occupati = checkedCount + 1;
+
+            // Aggiorna testo
+            const counterSpan = document.getElementById('counter-text');
+            counterSpan.innerText = occupati;
+
+            // Logica Disabilitazione:
+            // Se siamo al limite, disabilita tutti quelli NON checkati
+            // Se siamo sotto il limite, abilita tutti
+            if (occupati >= maxCapienza) {
+                counterSpan.parentElement.classList.remove('bg-primary');
+                counterSpan.parentElement.classList.add('bg-danger');
+
+                checkboxes.forEach(cb => {
+                    if (!cb.checked) {
+                        cb.disabled = true;
+                        // Opzionale: visual styling per disabilitati
+                        cb.closest('.form-check').classList.add('opacity-50');
+                    }
+                });
+            } else {
+                counterSpan.parentElement.classList.remove('bg-danger');
+                counterSpan.parentElement.classList.add('bg-primary');
+
+                checkboxes.forEach(cb => {
+                    cb.disabled = false;
+                    cb.closest('.form-check').classList.remove('opacity-50');
+                });
+            }
+        }
+
+        let tuttiSelezionati = false;
+
+        function toggleSelezionaTutti() {
+            const maxCapienza = parseInt(document.getElementById('maxCapienza').value);
+            // Prendi solo i visibili che non sono disabilitati
+            const visibleItems = Array.from(document.querySelectorAll('.user-item')).filter(item => item.style.display !== 'none');
+
+            tuttiSelezionati = !tuttiSelezionati;
+
+            let currentOccupati = 1; // Parti dall'organizzatore
+
+            visibleItems.forEach(item => {
+                const checkbox = item.querySelector('.user-checkbox');
+                if (checkbox) {
+                    if (tuttiSelezionati) {
+                        // Check solo se non superiamo la capienza
+                        if (currentOccupati < maxCapienza) {
+                            checkbox.checked = true;
+                            currentOccupati++;
+                        }
+                    } else {
+                        checkbox.checked = false;
+                    }
+                }
+            });
+
+            aggiornaContatore();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            if (document.getElementById('filtroSettore')) {
+                applicaFiltri();
+                aggiornaContatore(); // Setta stato iniziale
+            }
+        });
     </script>
 </body>
 

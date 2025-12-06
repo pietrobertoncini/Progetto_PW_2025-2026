@@ -11,7 +11,6 @@ if (isset($_SESSION['id_utente'])) {
 }
 
 try {
-    // La query è la stessa
     $query = "SELECT id_settore, nome FROM SETTORE ORDER BY nome";
     $result = $cid->query($query);
 

@@ -472,10 +472,12 @@ function getOccupazioniSettimana($cid, $nome_sala, $id_settore, $lunedi, $domeni
 // AGGIORNATA PER FILTRI: prende anche id_settore
 function getUtentiInvitabili($cid, $id_escluso, $id_settore_corrente, $data, $ora) {
     // Nota: rimuoviamo il filtro "U.id_settore = ?" per permettere di invitare gente di ALTRI settori come da specifiche
-    $sql = "SELECT U.id_utente, U.nome, U.cognome, U.ruolo, U.id_settore, S.nome as nome_settore
+    $sql = "SELECT U.id_utente, U.nome, U.cognome, U.ruolo, U.is_responsabile, 
+                   U.id_settore, S.nome as nome_settore, S.tipo as tipo_settore
             FROM UTENTE U
             LEFT JOIN SETTORE S ON U.id_settore = S.id_settore
-            WHERE U.id_utente != ? 
+            WHERE U.id_utente != ?
+            AND U.is_admin = 0
             AND U.id_utente NOT IN (SELECT I.id_utente FROM INVITO I WHERE I.data = ? AND I.ora = ? AND I.stato = 'accettato')
             AND U.id_utente NOT IN (SELECT P.id_organizzatore FROM PRENOTAZIONE P WHERE P.data = ? AND P.ora = ?)
             ORDER BY U.cognome";
@@ -503,5 +505,16 @@ function rispondiInvito($cid, $id_utente, $id_settore, $nome_sala, $data, $ora, 
     $stmt = $cid->prepare("UPDATE INVITO SET stato = ?, motivazione = ?, data_risposta = NOW() WHERE id_utente = ? AND id_settore = ? AND nome_sala = ? AND data = ? AND ora = ?");
     $stmt->bind_param("sssisss", $risposta, $motivazione, $id_utente, $id_settore, $nome_sala, $data, $ora);
     return $stmt->execute();
+}
+
+// Recupera lista semplice settori per i dropdown dei filtri
+function getListaSettori($cid) {
+    // Ordiniamo per nome per facilitare la ricerca visiva
+    $res = $cid->query("SELECT id_settore, nome FROM SETTORE ORDER BY nome ASC");
+    $result = [];
+    if ($res) {
+        $result = $res->fetch_all(MYSQLI_ASSOC);
+    }
+    return $result;
 }
 ?>

@@ -9,7 +9,7 @@ require_once __DIR__ . '/common/function.php';
 
 // --- 1. SICUREZZA ---
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
-    header('Location: dashboard.php');
+    header('Location: index.php');
     exit;
 }
 
@@ -134,12 +134,6 @@ function getDotazioniSala($cid, $id_settore, $nome_sala) {
             </div>
         </div>
         
-        <div class="mt-4">
-            <a href="dashboard.php" class="btn btn-outline-secondary">
-                &larr; Torna alla Dashboard
-            </a>
-        </div>
-
     </div>
 
     <?php require "common/footer.html"; ?>

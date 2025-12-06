@@ -27,12 +27,9 @@ if (session_status() == PHP_SESSION_NONE) {
                         <?php if (!isset($_SESSION['id_utente'])): ?>
                             <a href="login.php" class="btn btn-primary btn-lg px-4 shadow-sm fw-bold">Accedi</a>
                             <a href="register.php" class="btn btn-outline-light btn-lg px-4 fw-bold">Registrati</a>
-                        <?php else: ?>
-                            <a href="dashboard.php" class="btn btn-success btn-lg px-5 shadow fw-bold">
-                                <i class="bi bi-speedometer2 me-2"></i>Vai alla Dashboard
-                            </a>
                         <?php endif; ?>
-                    </div>
+                        
+                        </div>
                 </div>
             </div>
         </div>

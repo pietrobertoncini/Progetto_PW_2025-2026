@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['ruolo'] = $_POST["ruolo"];
         $_SESSION['is_responsabile'] = FALSE; 
 
-        header('Location: ../dashboard.php');
+        header('Location: ../index.php');
         exit;
 
     } catch (mysqli_sql_exception $e) {

@@ -141,11 +141,6 @@ $elenco_prenotazioni = getAllPrenotazioniAdmin($cid);
                 </table>
             </div>
         </div>
-        <div class="mt-4">
-            <a href="dashboard.php" class="btn btn-outline-secondary">
-                &larr; Torna alla Dashboard
-            </a>
-        </div>
 
     </div>
 

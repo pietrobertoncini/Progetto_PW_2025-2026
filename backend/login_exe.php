@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['is_responsabile'] = (bool)$utente_trovato['is_responsabile'];
             $_SESSION['is_admin'] = (bool)$utente_trovato['is_admin'];
             
-            header('Location: ../dashboard.php');
+            header('Location: ../index.php');
             exit;
         } else {
             header('Location: ../login.php?error=Email o password non validi.');

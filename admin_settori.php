@@ -196,11 +196,6 @@ $elenco_settori = getAllSettoriAdmin($cid);
             </div>
         </div>
 
-        <div class="mt-4">
-            <a href="dashboard.php" class="btn btn-outline-secondary">
-                &larr; Torna alla Dashboard
-            </a>
-        </div>
     </div>
 
     <?php include 'common/footer.html' ?>

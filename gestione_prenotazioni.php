@@ -12,7 +12,7 @@ require_once __DIR__ . '/common/function.php';
 // --- 1. SICUREZZA ---
 // Accesso consentito solo ai responsabili
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
-    header('Location: dashboard.php');
+    header('Location: index.php');
     exit;
 }
 
@@ -23,7 +23,6 @@ $id_settore = $dati_utente['id_settore'];
 $nome_settore = $dati_utente['nome_settore'];
 
 // --- 3. RECUPERO PRENOTAZIONI ATTIVE (FILTRATE PER ORGANIZZATORE) ---
-// Modifica: Aggiunto "AND id_organizzatore = ?" per vedere solo le TUE prenotazioni
 $prenotazioni = [];
 $sql_prenotazioni = "SELECT * FROM PRENOTAZIONE 
                      WHERE id_settore = ? 
@@ -32,7 +31,6 @@ $sql_prenotazioni = "SELECT * FROM PRENOTAZIONE
                      ORDER BY data ASC, ora ASC";
 
 $stmt = $cid->prepare($sql_prenotazioni);
-// "ii" indica due interi: id_settore e id_utente_loggato
 $stmt->bind_param("ii", $id_settore, $id_utente_loggato);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -131,12 +129,6 @@ $prenotazioni = $result->fetch_all(MYSQLI_ASSOC);
             </div>
         </div>
         
-        <div class="mt-4">
-            <a href="dashboard.php" class="btn btn-outline-secondary">
-                &larr; Torna alla Dashboard
-            </a>
-        </div>
-
     </div>
 
     <?php require "common/footer.html"; ?>

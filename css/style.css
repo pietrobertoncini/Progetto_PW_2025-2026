@@ -10,20 +10,16 @@ body {
     background-color: #eedfcc;
     padding-top: 80px;
     
-    /* --- STICKY FOOTER FIX --- */
     min-height: 100vh;      /* Forza il corpo a essere alto almeno quanto lo schermo */
     display: flex;          /* Attiva il layout flessibile */
     flex-direction: column; /* Dispone gli elementi in colonna verticale */
-    /* ------------------------ */
+    
 }
 
-/* --- STICKY FOOTER FIX --- */
 footer {
-    /* "auto" spinge il footer il più in basso possibile, occupando tutto lo spazio vuoto */
-    margin-top: auto !important; 
+    margin-top: auto; 
     width: 100%;
 }
-/* ------------------------ */
 
 html, body {
     overscroll-behavior-y: none; 
@@ -118,4 +114,18 @@ html, body {
     height: 24px;
     cursor: pointer;
     accent-color: #198754;
+}
+
+/* Navbar scrollabile su mobile */
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        /* Imposta un'altezza massima per il menu aperto.
+           100vh è l'altezza dello schermo. 
+           Sottraiamo circa 80px per l'altezza della barra fissa in alto. */
+        max-height: calc(100vh - 80px);
+        
+        /* Abilita lo scorrimento verticale se il contenuto eccede l'altezza */
+        overflow-y: auto;
+        padding-bottom: 20px;
+    }
 }

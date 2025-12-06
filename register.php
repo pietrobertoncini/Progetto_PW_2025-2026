@@ -15,8 +15,6 @@ try {
     $query = "SELECT id_settore, nome FROM SETTORE ORDER BY nome";
     $result = $cid->query($query);
 
-    // --- ECCO LA CORREZIONE ---
-    // Usiamo fetch_all(MYSQLI_ASSOC) invece di fetchAll()
     $settori = $result->fetch_all(MYSQLI_ASSOC);
 } catch (mysqli_sql_exception $e) {
     die("Errore: impossibile caricare i settori. " . $e->getMessage());

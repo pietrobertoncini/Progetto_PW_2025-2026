@@ -24,11 +24,11 @@ if (function_exists('getImpegniFuturi')) {
 <html lang="it">
 <?php require "common/header.html" ?>
 
-<body>
+<body class="d-flex flex-column h-100">
     <?php include 'common/navbar.php'; ?>
 
-    <div class="container mt-5 mb-5 pt-4">
-        <div class="mb-4">
+    <div class="flex-shrink-0 container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>I Tuoi Impegni</h2>
         </div>
 
@@ -69,7 +69,7 @@ if (function_exists('getImpegniFuturi')) {
                                                 <input type="hidden" name="data" value="<?php echo $impegno['data']; ?>">
                                                 <input type="hidden" name="ora" value="<?php echo $impegno['ora']; ?>">
                                                 <input type="hidden" name="risposta" value="rifiutato">
-                                                <input type="hidden" name="motivazione" value="Disdetta successiva dall'utente">
+                                                <input type="hidden" name="motivazione" value="Disdetta successiva dell'utente">
 
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Sei sicuro di voler disdire la partecipazione?');">
                                                     <i class="bi bi-x-circle"></i> Disdici
@@ -94,4 +94,5 @@ if (function_exists('getImpegniFuturi')) {
 
     <?php require "common/footer.html"; ?>
 </body>
+
 </html>

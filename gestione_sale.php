@@ -13,7 +13,7 @@ if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_admin'])) {
     exit;
 }
 
-// --- 2. RECUPERO DATI (TRAMITE FUNZIONI) ---
+// --- 2. RECUPERO DATI  ---
 $sale = getAllSaleGlobal($cid);
 ?>
 

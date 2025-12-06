@@ -21,68 +21,87 @@ if (function_exists('getInvitiPendenti')) {
 ?>
 
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" class="h-100">
 <?php require "common/header.html" ?>
 
-<body>
+<body class="d-flex flex-column h-100">
     <?php include 'common/navbar.php'; ?>
 
-    <div class="container mt-5 mb-5 pt-4">
-        
-        <div class="mb-4">
+    <div class="flex-shrink-0 container py-5">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Gestione Inviti</h2>
         </div>
 
-        <div class="card shadow-sm border-0 rounded-3">
-            <div class="card-header bg-warning bg-opacity-10 border-0 py-3">
-                <h5 class="mb-0 text-dark">
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+            <div class="card-header bg-warning bg-opacity-10 border-0 py-3 d-flex align-items-center">
+                <h5 class="mb-0 text-dark fw-bold">
                     Inviti in Attesa <span class="badge bg-danger rounded-pill ms-2"><?php echo count($inviti_pendenti); ?></span>
                 </h5>
             </div>
-            <div class="card-body">
+
+            <div class="card-body p-0">
                 <?php if (count($inviti_pendenti) > 0): ?>
                     <div class="table-responsive">
-                        <table class="table align-middle mb-0">
-                            <thead class="table-light">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light text-muted text-uppercase small">
                                 <tr>
-                                    <th>Attività</th>
+                                    <th class="ps-4 py-3">Attività</th>
                                     <th>Luogo e Data</th>
                                     <th>Organizzatore</th>
-                                    <th style="min-width: 200px;" class="text-end">La tua Risposta</th>
+                                    <th class="text-end pe-4" style="min-width: 250px;">La tua Risposta</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($inviti_pendenti as $invito): ?>
                                     <tr>
-                                        <td><strong><?php echo htmlspecialchars($invito['attivita']); ?></strong></td>
+                                        <td class="ps-4 fw-bold text-dark">
+                                            <?php echo htmlspecialchars($invito['attivita']); ?>
+                                        </td>
                                         <td>
-                                            <?php echo htmlspecialchars($invito['nome_sala']); ?><br>
+                                            <span class="d-block fw-bold text-secondary">
+                                                <?php echo htmlspecialchars($invito['nome_sala']); ?>
+                                            </span>
                                             <small class="text-muted">
-                                                <?php echo date("d/m/Y", strtotime($invito['data'])); ?> ore <?php echo $invito['ora']; ?>:00
+                                                <i class="bi bi-calendar-event me-1"></i>
+                                                <?php echo date("d/m/Y", strtotime($invito['data'])); ?>
+                                                <i class="bi bi-clock ms-2 me-1"></i>
+                                                <?php echo $invito['ora']; ?>:00
                                             </small>
                                         </td>
-                                        <td><?php echo htmlspecialchars($invito['nome_org'] . " " . $invito['cognome_org']); ?></td>
-                                        <td class="text-end">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="rounded-circle bg-secondary bg-opacity-10 text-secondary d-flex justify-content-center align-items-center me-2 fw-bold" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                                                    <?php echo strtoupper(substr($invito['nome_org'], 0, 1) . substr($invito['cognome_org'], 0, 1)); ?>
+                                                </div>
+                                                <span><?php echo htmlspecialchars($invito['nome_org'] . " " . $invito['cognome_org']); ?></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-end pe-4">
                                             <div class="d-flex flex-column gap-2 align-items-end">
-                                                <form action="backend/invite_reply.php" method="POST" class="w-100" style="max-width: 200px;">
+
+                                                <form action="backend/invite_reply.php" method="POST" class="w-100">
                                                     <input type="hidden" name="id_settore" value="<?php echo $invito['id_settore']; ?>">
                                                     <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($invito['nome_sala']); ?>">
                                                     <input type="hidden" name="data" value="<?php echo $invito['data']; ?>">
                                                     <input type="hidden" name="ora" value="<?php echo $invito['ora']; ?>">
                                                     <input type="hidden" name="risposta" value="accettato">
-                                                    <button type="submit" class="btn btn-success btn-sm w-100 fw-bold">Accetta</button>
+                                                    <button type="submit" class="btn btn-success btn-sm w-100 fw-bold rounded-pill shadow-sm">Accetta</button>
                                                 </form>
 
-                                                <form action="backend/invite_reply.php" method="POST" class="d-flex gap-1 w-100" style="max-width: 300px;">
+                                                <form action="backend/invite_reply.php" method="POST" class="w-100">
                                                     <input type="hidden" name="id_settore" value="<?php echo $invito['id_settore']; ?>">
                                                     <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($invito['nome_sala']); ?>">
                                                     <input type="hidden" name="data" value="<?php echo $invito['data']; ?>">
                                                     <input type="hidden" name="ora" value="<?php echo $invito['ora']; ?>">
                                                     <input type="hidden" name="risposta" value="rifiutato">
 
-                                                    <input type="text" name="motivazione" class="form-control form-control-sm" placeholder="Motivo..." required>
-                                                    <button type="submit" class="btn btn-outline-danger btn-sm">Rifiuta</button>
+                                                    <div class="d-flex gap-2">
+                                                        <input type="text" name="motivazione" class="form-control form-control-sm rounded-pill" placeholder="Motivo rifiuto..." required>
+                                                        <button class="btn btn-outline-danger btn-sm rounded-pill px-3" type="submit">Rifiuta</button>
+                                                    </div>
                                                 </form>
+
                                             </div>
                                         </td>
                                     </tr>
@@ -93,7 +112,7 @@ if (function_exists('getInvitiPendenti')) {
                 <?php else: ?>
                     <div class="text-center py-5 text-muted">
                         <i class="bi bi-envelope-open display-4 mb-3 d-block opacity-25"></i>
-                        <p class="mb-0">Non hai nuovi inviti a cui rispondere al momento.</p>
+                        <p class="mb-0 fs-5">Non hai nuovi inviti a cui rispondere al momento.</p>
                     </div>
                 <?php endif; ?>
             </div>
@@ -102,4 +121,5 @@ if (function_exists('getInvitiPendenti')) {
 
     <?php include 'common/footer.html'; ?>
 </body>
+
 </html>

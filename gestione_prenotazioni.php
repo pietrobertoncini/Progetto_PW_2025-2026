@@ -15,13 +15,12 @@ if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
 }
 
 // --- 2. RECUPERO DATI ---
-// Nota: qui serve datiUtenteCompleti per sapere id_settore
 $id_utente_loggato = $_SESSION['id_utente'];
 $dati_utente = datiUtenteCompleti($cid, $id_utente_loggato);
 $id_settore = $dati_utente['id_settore'];
 $nome_settore = $dati_utente['nome_settore'];
 
-// --- 3. RECUPERO PRENOTAZIONI (TRAMITE FUNZIONE) ---
+// --- 3. RECUPERO PRENOTAZIONI ---
 $prenotazioni = getPrenotazioniByOrganizzatore($cid, $id_settore, $id_utente_loggato);
 ?>
 

@@ -15,7 +15,7 @@ require_once __DIR__ . '/common/function.php';
 
 $id_responsabile = $_SESSION['id_utente'];
 
-// 2. RECUPERO RISPOSTE (TRAMITE FUNZIONE)
+// 2. RECUPERO RISPOSTE
 $risposte = getRisposteInvitiByResponsabile($cid, $id_responsabile);
 ?>
 

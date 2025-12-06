@@ -3,28 +3,21 @@ if (session_status() == PHP_SESSION_NONE) {
   session_start();
 }
 
-// Logica per i contatori (Inviti e Impegni)
 $num_inviti = 0;
-$num_impegni = 0;
 
 if (isset($_SESSION['id_utente'])) {
     require_once __DIR__ . '/setup.php'; 
     require_once __DIR__ . '/function.php'; 
     
-    // Recuperiamo i conteggi se la connessione e le funzioni esistono
     if (isset($cid)) {
         try {
+            // Contiamo solo gli Inviti in attesa (Per tutti)
             if (function_exists('getInvitiPendenti')) {
                 $inviti = getInvitiPendenti($cid, $_SESSION['id_utente']);
                 $num_inviti = count($inviti);
             }
-            if (function_exists('getImpegniFuturi')) {
-                $impegni = getImpegniFuturi($cid, $_SESSION['id_utente']);
-                $num_impegni = count($impegni);
-            }
         } catch (Exception $e) {
             $num_inviti = 0;
-            $num_impegni = 0;
         }
     }
 }
@@ -60,11 +53,8 @@ if (isset($_SESSION['id_utente'])) {
               </li>
 
               <li class="nav-item">
-                <a class="nav-link position-relative" href="impegni.php">
+                <a class="nav-link" href="impegni.php">
                     Impegni
-                    <?php if ($num_impegni > 0): ?>
-                        <span class="badge bg-success rounded-pill ms-1"><?php echo $num_impegni; ?></span>
-                    <?php endif; ?>
                 </a>
               </li>
 
@@ -75,10 +65,15 @@ if (isset($_SESSION['id_utente'])) {
           
           <?php if (isset($_SESSION['is_responsabile']) && $_SESSION['is_responsabile']): ?>
             <li class="nav-item">
+              <a class="nav-link" href="gestione_sale.php">Gestione Sale</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="gestione_prenotazioni.php">Gestione Prenotazioni</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="risposte_inviti.php">Esito Inviti</a>
+              <a class="nav-link" href="risposte_inviti.php">
+                  Esito Inviti
+              </a>
             </li>
           <?php endif; ?>
           
@@ -88,9 +83,6 @@ if (isset($_SESSION['id_utente'])) {
             </li>
             <li class="nav-item">
               <a class="nav-link" href="admin_utenti.php">Utenti</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="gestione_sale.php">Sale</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="admin_prenotazioni.php">Prenotazioni</a>

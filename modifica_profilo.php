@@ -38,24 +38,48 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
                         <?php endif; ?>
 
                         <form action="backend/update_profile.php" method="POST" enctype="multipart/form-data">
-                            <div class="mb-4">
-                                <label class="form-label text-muted">Foto Profilo</label>
-                                <div class="d-flex align-items-center gap-3">
+                            <div class="mb-4 text-center">
 
-                                    <?php if (!empty($dati_utente['foto'])): ?>
-                                        <img src="<?php echo htmlspecialchars($dati_utente['foto']); ?>" alt="Foto attuale" class="rounded-circle shadow-sm" style="width: 80px; height: 80px; object-fit: cover;">
+                                <?php
+                                // Recupero dati per la logica di visualizzazione
+                                $pathFoto = !empty($dati_utente['foto']) ? $dati_utente['foto'] : '';
+                                $hasFoto = !empty($pathFoto) && file_exists($pathFoto);
+                                ?>
 
-                                    <?php else: ?>
-                                        <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center shadow-sm" style="width: 80px; height: 80px;">
-                                            <i class="bi bi-person-fill fs-1"></i>
+                                <div class="d-flex flex-column align-items-center gap-3">
+                                    <div class="position-relative" style="width: 80px; height: 80px;">
+
+                                        <img id="previewImg"
+                                            src="<?php echo $hasFoto ? $pathFoto : '#'; ?>"
+                                            alt="Anteprima"
+                                            class="rounded-circle shadow-sm <?php echo $hasFoto ? '' : 'd-none'; ?>"
+                                            style="width: 80px; height: 80px; object-fit: cover;">
+
+                                        <div id="defaultIcon"
+                                            class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center shadow-sm <?php echo $hasFoto ? 'd-none' : ''; ?>"
+                                            style="width: 80px; height: 80px;">
+                                            <i class="bi bi-person-fill fs-2"></i>
                                         </div>
-                                    <?php endif; ?>
-                                    <div class="flex-grow-1">
-                                        <input type="file" class="form-control" id="foto" name="foto" accept="image/png, image/jpeg, image/gif">
-                                        <div class="form-text small">Carica un file per sostituire l'immagine attuale.</div>
+                                    </div>
+
+                                    <div class="d-flex gap-2 justify-content-center mt-3">
+                                        <label class="btn btn-sm btn-outline-primary" style="cursor: pointer;">
+                                            Cambia Foto
+                                            <input type="file" name="foto" id="fileInput" class="d-none" onchange="previewFoto(this)">
+                                        </label>
+
+                                        <?php if ($hasFoto): ?>
+                                            <a href="backend/remove_foto.php"
+                                                class="btn btn-sm btn-outline-danger"
+                                                title="Elimina foto attuale"
+                                                onclick="return confirm('Sei sicuro di voler eliminare la foto?');">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
+
                             <div class="mb-3">
                                 <label for="nome" class="form-label text-muted">Nome</label>
                                 <input type="text" class="form-control" id="nome" name="nome"
@@ -109,6 +133,31 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
     </div>
 
     <?php include 'common/footer.html'; ?>
+
+    <script>
+        function previewFoto(input) {
+            // Se l'utente ha selezionato un file
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    // Prendo i riferimenti ai due elementi HTML
+                    var imgElement = document.getElementById('previewImg');
+                    var iconElement = document.getElementById('defaultIcon');
+
+                    // Imposto la nuova immagine
+                    imgElement.src = e.target.result;
+
+                    // Mostro l'immagine e nascondo l'icona
+                    imgElement.classList.remove('d-none');
+                    iconElement.classList.add('d-none');
+                }
+
+                // Leggo il file caricato
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
 </body>
 
 </html>

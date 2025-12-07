@@ -655,3 +655,15 @@ function uploadFotoProfilo($fileInput)
 
     return null;
 }
+
+function rimuoviVecchiaFoto($pathRelativoDalDb) {
+
+    if (empty($pathRelativoDalDb)) {
+        return;
+    }
+    
+    $percorsoFisico = "../" . $pathRelativoDalDb;
+    if (!empty($pathRelativoDalDb) && file_exists($percorsoFisico)) {
+        unlink($percorsoFisico); // cancella il file
+    }
+}

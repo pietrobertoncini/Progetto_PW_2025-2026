@@ -37,10 +37,18 @@ if (!$dati_utente) {
                     <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
                         <h3 class="fw-bold mb-0 ms-2" style="color: #7A5E4E;">Il Mio Profilo</h3>
                         <div class="pe-3">
-                            <?php if (!empty($dati_utente['foto'])): ?>
-                                <img src="<?php echo htmlspecialchars($dati_utente['foto']); ?>" alt="Foto profilo" class="rounded-circle shadow-sm border" style="width: 80px; height: 80px; object-fit: cover;">
+                            <?php
+                            // Controllo se c'è il percorso e se il file esiste fisicamente
+                            $fotoPath = $dati_utente['foto'];
+                            if (!empty($fotoPath) && file_exists($fotoPath)):
+                            ?>
+                                <img src="<?php echo htmlspecialchars($fotoPath); ?>"
+                                    alt="Foto profilo"
+                                    class="rounded-circle shadow-sm border"
+                                    style="width: 80px; height: 80px; object-fit: cover;">
                             <?php else: ?>
-                                <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center shadow-sm" style="width: 80px; height: 80px;">
+                                <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center shadow-sm"
+                                    style="width: 80px; height: 80px;">
                                     <i class="bi bi-person-fill fs-2"></i>
                                 </div>
                             <?php endif; ?>

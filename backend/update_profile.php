@@ -19,11 +19,27 @@ $cognome = trim($_POST['cognome']);
 $email = trim($_POST['email']);
 $data_nascita = $_POST['data_nascita'];
 
+// recupero foto attuale
+$queryOld = "SELECT foto FROM UTENTE WHERE id_utente = '$id_utente'";
+$resOld = mysqli_query($cid, $queryOld);
+$rowOld = mysqli_fetch_assoc($resOld);
+$vecchiaFoto = $rowOld['foto'];
+
 // logica FOTO
 $percorsoFotoDB = uploadFotoProfilo($_FILES['foto'] ?? null);
 
+// Decidiamo quale percorso salvare nel DB
+if ($percorsoFotoDB != null) {
+    // CASO 1: L'utente ha caricato una nuova foto
+    $percorsoFinale = $percorsoFotoDB;
+    rimuoviVecchiaFoto($vecchiaFoto); 
+} else {
+    // CASO 2: Nessuna nuova foto caricata
+    $percorsoFinale = $vecchiaFoto;
+}
+
 try {
-    modificaUtente($cid, $id_utente, $nome, $cognome, $email, $data_nascita, $percorsoFotoDB);
+    modificaUtente($cid, $id_utente, $nome, $cognome, $email, $data_nascita, $percorsoFinale);
     
     // Aggiorniamo la sessione col nuovo nome
     $_SESSION['nome'] = $nome;

@@ -8,13 +8,13 @@ require_once '../common/function.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['is_responsabile'])) {
 
-    // --- DATI VECCHI (IDENTIFICATIVI) ---
+    // DATI VECCHI (IDENTIFICATIVI)
     $old_nome_sala = $_POST['old_nome_sala'];
     $old_data = $_POST['old_data'];
     $old_ora = (int)$_POST['old_ora'];
     $id_settore = (int)$_POST['id_settore'];
 
-    // --- DATI NUOVI (DA SALVARE) ---
+    // DATI NUOVI (DA SALVARE)
     $new_data = $_POST['new_data'];
     $new_ora = (int)$_POST['new_ora'];
     $new_durata = (int)$_POST['new_durata'];
@@ -28,14 +28,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['is_responsabile']))
         exit;
     }
 
-    // --- CONTROLLO CONFLITTI ---
+    // CONTROLLO CONFLITTI 
     if (checkSovrapposizioneModifica($cid, $id_settore, $old_nome_sala, $new_data, $new_ora, $new_durata, $old_data, $old_ora)) {
         header("Location: ../modifica_prenotazione.php?error=Conflitto! Sala già occupata nel nuovo orario.&sala=" . urlencode($old_nome_sala) . "&data=$old_data&ora=$old_ora");
         exit;
     }
-    // --- AGGIORNAMENTO DB ---
+    // AGGIORNAMENTO DB
     try {
-        // Usiamo la funzione definita in function.php
         if (aggiornaPrenotazione($cid, $new_data, $new_ora, $new_durata, $new_attivita, $id_settore, $old_nome_sala, $old_data, $old_ora)) {
             header("Location: ../gestione_prenotazioni.php?msg=Prenotazione aggiornata con successo!");
         } else {

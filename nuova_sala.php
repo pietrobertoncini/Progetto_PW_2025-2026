@@ -1,5 +1,5 @@
 <?php
-// nuova_sala.php
+
 if (session_status() == PHP_SESSION_NONE) session_start();
 require_once 'common/setup.php';
 require_once 'common/function.php';

@@ -1,18 +1,18 @@
 <?php
-// modifica_prenotazione.php
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 require_once 'common/setup.php';
 require_once 'common/function.php';
 
-// 1. Controllo Accesso
+// Controllo Accesso
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
     header('Location: dashboard.php');
     exit;
 }
 
-// 2. Recupero Parametri URL (La chiave primaria della prenotazione)
+// Recupero Parametri URL (La chiave primaria della prenotazione)
 $nome_sala = isset($_GET['sala']) ? urldecode($_GET['sala']) : null;
 $data_old = isset($_GET['data']) ? $_GET['data'] : null;
 $ora_old = isset($_GET['ora']) ? (int)$_GET['ora'] : null;
@@ -21,7 +21,7 @@ if (!$nome_sala || !$data_old || !$ora_old) {
     die("Errore: Parametri prenotazione mancanti.");
 }
 
-// 3. Recupero Dati Prenotazione dal DB
+// Recupero Dati Prenotazione dal DB
 $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
 $id_settore = $dati_utente['id_settore'];
 

@@ -1,6 +1,7 @@
 <?php
-// backend/modifica_sala_exe.php
+
 if (session_status() == PHP_SESSION_NONE) session_start();
+
 require_once '../common/setup.php';
 require_once '../common/function.php';
 
@@ -17,14 +18,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['is_responsabile']))
     try {
         $cid->begin_transaction();
 
-        // 1. Aggiorna Sala (Nome e Capienza)
+        // Aggiorna Sala (Nome e Capienza)
         // Grazie al CASCADE nel DB, se cambia il nome si aggiornano anche prenotazioni e dotazioni
         $sql = "UPDATE SALA SET nome_sala = ?, capienza_max = ? WHERE id_settore = ? AND nome_sala = ?";
         $stmt = $cid->prepare($sql);
         $stmt->bind_param("siis", $new_nome, $capienza, $id_settore, $old_nome);
         $stmt->execute();
 
-        // 2. Aggiorna Dotazioni (Metodo Remove-All + Re-Insert)
+        // Aggiorna Dotazioni
         // Cancelliamo le vecchie associazioni (usando il NUOVO nome sala, perché è appena stato aggiornato)
         $sql_del = "DELETE FROM SALA_DOTAZIONE WHERE id_settore = ? AND nome_sala = ?";
         $stmt_del = $cid->prepare($sql_del);

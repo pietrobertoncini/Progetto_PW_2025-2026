@@ -1,12 +1,12 @@
 <?php
-// admin_promuovi.php (Pagina intermedia per selezione settore)
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 require_once 'common/setup.php';
 require_once 'common/function.php';
 
-// --- SICUREZZA: SOLO ADMIN ---
+// SICUREZZA: SOLO ADMIN
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_admin'])) {
     header("Location: index.php");
     exit;
@@ -20,7 +20,6 @@ if ($id_utente_target <= 0) {
 }
 
 // Recupera i dati dell'utente per mostrarli
-// (Assumiamo che tu abbia la funzione datiUtenteCompleti in function.php, altrimenti usa una query diretta)
 $dati_utente_target = datiUtenteCompleti($cid, $id_utente_target);
 
 if (!$dati_utente_target || $dati_utente_target['is_admin'] || $dati_utente_target['is_responsabile']) {
@@ -28,7 +27,7 @@ if (!$dati_utente_target || $dati_utente_target['is_admin'] || $dati_utente_targ
     exit;
 }
 
-// Recupera i settori per il menù a tendina (Assumiamo tu abbia questa funzione fatta nel passo precedente dei settori)
+// Recupera i settori per il menù a tendina
 $elenco_settori = getAllSettoriAdmin($cid);
 ?>
 

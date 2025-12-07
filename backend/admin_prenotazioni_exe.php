@@ -6,7 +6,7 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once '../common/setup.php';
 require_once '../common/function.php';
 
-// SICUREZZA: SOLO ADMIN
+// Sicurezza: Solo Admin
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_admin'])) {
     die("Accesso negato.");
 }

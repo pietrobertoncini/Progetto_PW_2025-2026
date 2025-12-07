@@ -1,12 +1,10 @@
 <?php
-// common/setup.php
 
 $hostname = "localhost";
 $username = "root";
 $password = "";
 $dbname = "play_room_planner";
 
-// Nota: require_once assicura che function.php sia caricato PRIMA di chiamare connessione()
 require_once __DIR__ . '/function.php';
 
 // Creiamo la connessione usando la funzione definita in function.php

@@ -1,13 +1,16 @@
 <?php
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+
 require_once '../common/setup.php'; 
 require_once '../common/function.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     try {
+        
         $utente_trovato = controllaUtente($cid, $_POST["email"], $_POST["password"]);
 
         if ($utente_trovato) {

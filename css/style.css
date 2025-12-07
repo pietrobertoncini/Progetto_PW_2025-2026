@@ -9,11 +9,9 @@ html {
 body {
     background-color: #eedfcc;
     padding-top: 80px;
-    
     min-height: 100vh;      /* Forza il corpo a essere alto almeno quanto lo schermo */
     display: flex;          /* Attiva il layout flessibile */
     flex-direction: column; /* Dispone gli elementi in colonna verticale */
-    
 }
 
 footer {

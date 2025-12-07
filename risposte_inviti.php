@@ -1,10 +1,10 @@
 <?php
-// risposte_inviti.php
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// 1. Controllo Sicurezza
+//  Controllo Sicurezza
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
     header('Location: index.php');
     exit;
@@ -15,7 +15,7 @@ require_once __DIR__ . '/common/function.php';
 
 $id_responsabile = $_SESSION['id_utente'];
 
-// 2. RECUPERO RISPOSTE
+//  RECUPERO RISPOSTE
 $risposte = getRisposteInvitiByResponsabile($cid, $id_responsabile);
 ?>
 

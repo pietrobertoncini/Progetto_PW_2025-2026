@@ -6,13 +6,13 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once 'common/setup.php';
 require_once 'common/function.php';
 
-// --- SICUREZZA: SOLO ADMIN ---
+// SICUREZZA: SOLO ADMIN
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_admin'])) {
     header("Location: index.php");
     exit;
 }
 
-// --- LOGICA MODIFICA ---
+// LOGICA MODIFICA
 // Se c'è il parametro 'edit' nell'URL, stiamo modificando un settore esistente
 $settore_da_modificare = null;
 $is_editing = false;

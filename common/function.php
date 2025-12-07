@@ -1,9 +1,6 @@
 <?php
-// common/function.php
 
-/* -------------------------------------------------------------------------- */
-/* 1. CONNESSIONE E AUTENTICAZIONE                                            */
-/* -------------------------------------------------------------------------- */
+// CONNESSIONE E AUTENTICAZIONE
 
 function connessione($hostname, $username, $password, $dbname)
 {
@@ -33,11 +30,8 @@ function controllaUtente($cid, $email, $password)
     return null;
 }
 
-/* -------------------------------------------------------------------------- */
-/* 2. REGISTRAZIONE E MODIFICA UTENTE                                         */
-/* -------------------------------------------------------------------------- */
 
-
+// REGISTRAZIONE E MODIFICA UTENTE
 
 function inserisciUtente($cid, $nome, $cognome, $email, $password, $data_nascita, $ruolo, $id_settore, $foto = null)
 {
@@ -82,9 +76,8 @@ function datiUtenteCompleti($cid, $id_utente)
     return $dati;
 }
 
-/* -------------------------------------------------------------------------- */
-/* 3. NAVBAR (Inviti/Impegni)                                                 */
-/* -------------------------------------------------------------------------- */
+
+// NAVBAR
 
 function getInvitiPendenti($cid, $id_utente)
 {
@@ -124,9 +117,8 @@ function getImpegniFuturi($cid, $id_utente)
     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
-/* -------------------------------------------------------------------------- */
-/* 4. FUNZIONI PER ADMIN                                                      */
-/* -------------------------------------------------------------------------- */
+
+// FUNZIONI PER ADMIN 
 
 // Statistiche
 function getTotaleUtenti($cid)
@@ -295,9 +287,7 @@ function eliminaDotazione($cid, $id)
 }
 
 
-/* -------------------------------------------------------------------------- */
-/* 5. FUNZIONI PER RESPONSABILE E GESTIONE SALE                               */
-/* -------------------------------------------------------------------------- */
+// FUNZIONI PER RESPONSABILE E GESTIONE SALE    
 
 // Recupera TUTTE le sale con il nome del settore (Per gestione_sale.php Admin)
 function getAllSaleGlobal($cid)
@@ -361,9 +351,8 @@ function getRisposteInvitiByResponsabile($cid, $id_responsabile)
     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
-/* -------------------------------------------------------------------------- */
-/* 6. NUOVE FUNZIONI DI GESTIONE (REFACTORING & QUERY V2)                     */
-/* -------------------------------------------------------------------------- */
+
+// FUNZIONI DI GESTIONE
 
 // Recupera dati sala per modifica
 function getSalaById($cid, $id_settore, $nome_sala)
@@ -436,7 +425,7 @@ function getPrenotazioneSingola($cid, $id_settore, $nome_sala, $data, $ora)
     return $stmt->get_result()->fetch_assoc();
 }
 
-// QUERY 3: Check sovrapposizione per NUOVA prenotazione
+// Check sovrapposizione per NUOVA prenotazione
 function checkSovrapposizioneNuova($cid, $id_settore, $nome_sala, $data, $ora_nuova, $durata_nuova)
 {
     $sql = "SELECT ora FROM PRENOTAZIONE
@@ -455,7 +444,7 @@ function checkSovrapposizioneNuova($cid, $id_settore, $nome_sala, $data, $ora_nu
 function checkSovrapposizioneModifica($cid, $id_settore, $nome_sala, $new_data, $new_ora, $new_durata, $old_data, $old_ora)
 {
     // Cerchiamo prenotazioni nello stesso giorno che si sovrappongono
-    // MA escludiamo quella che ha data=old_data e ora=old_ora (cioè quella che stiamo modificando)
+    // MA escludiamo quella che stiamo modificando
     $sql = "SELECT ora FROM PRENOTAZIONE
             WHERE id_settore = ? 
               AND nome_sala = ? 
@@ -464,10 +453,7 @@ function checkSovrapposizioneModifica($cid, $id_settore, $nome_sala, $new_data, 
               AND NOT (data = ? AND ora = ?)";
 
     $stmt = $cid->prepare($sql);
-    // Parametri: 
-    // id_settore(i), nome_sala(s), new_data(s)
-    // new_ora(i), new_ora(i), new_durata(i) -> per calcolo overlap
-    // old_data(s), old_ora(i) -> per esclusione
+    
     $stmt->bind_param(
         "issiiisi",
         $id_settore,
@@ -508,7 +494,7 @@ function aggiornaPrenotazione($cid, $new_data, $new_ora, $new_durata, $new_attiv
             SET data = ?, ora = ?, durata = ?, attivita = ? 
             WHERE id_settore = ? AND nome_sala = ? AND data = ? AND ora = ?";
     $stmt = $cid->prepare($sql);
-    // Parametri bind: "siisissi" -> string, int, int, string, int, string, string, int
+    
     $stmt->bind_param("siisissi", $new_data, $new_ora, $new_durata, $new_attivita, $id_settore, $old_nome_sala, $old_data, $old_ora);
     return $stmt->execute();
 }
@@ -538,10 +524,8 @@ function getOccupazioniSettimana($cid, $nome_sala, $id_settore, $lunedi, $domeni
     return $stmt->get_result();
 }
 
-// AGGIORNATA PER FILTRI: prende anche id_settore
-function getUtentiInvitabili($cid, $id_escluso, $id_settore_corrente, $data, $ora)
+function getUtentiInvitabili($cid, $id_escluso, $data, $ora)
 {
-    // Nota: rimuoviamo il filtro "U.id_settore = ?" per permettere di invitare gente di ALTRI settori come da specifiche
     $sql = "SELECT U.id_utente, U.nome, U.cognome, U.ruolo, U.is_responsabile, 
                    U.id_settore, S.nome as nome_settore, S.tipo as tipo_settore
             FROM UTENTE U
@@ -557,7 +541,7 @@ function getUtentiInvitabili($cid, $id_escluso, $id_settore_corrente, $data, $or
     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
-// QUERY 4: Check sovrapposizione Utente (Inviti)
+// Check sovrapposizione Utente (Inviti)
 function checkSovrapposizioneUtente($cid, $id_utente_target, $data_target, $ora_target, $durata_target, $id_settore_target, $nome_sala_target)
 {
     $sql = "SELECT P.ora FROM PRENOTAZIONE P 
@@ -591,7 +575,7 @@ function getListaSettori($cid)
     return $result;
 }
 
-// ELABORA SLOT SELEZIONATI (Per prenota.php)
+// Elabora slot selezionati
 function elaboraSlotSelezionati($slots)
 {
     if (empty($slots)) {
@@ -601,7 +585,7 @@ function elaboraSlotSelezionati($slots)
     $ore_selezionate = [];
     $giorno_riferimento = null;
 
-    // 1. Parsing e controllo Giorno Unico
+    // Parsing e controllo Giorno Unico
     foreach ($slots as $slot) {
         $parts = explode('|', $slot);
         $d = $parts[0];
@@ -618,7 +602,7 @@ function elaboraSlotSelezionati($slots)
         $ore_selezionate[] = $h;
     }
 
-    // 2. Ordinamento e controllo Consecutività
+    // Ordinamento e controllo Consecutività
     sort($ore_selezionate, SORT_NUMERIC);
 
     for ($i = 0; $i < count($ore_selezionate) - 1; $i++) {
@@ -627,7 +611,7 @@ function elaboraSlotSelezionati($slots)
         }
     }
 
-    // 3. Calcolo dati finali
+    // Calcolo dati finali
     $ora_inizio = $ore_selezionate[0];
     $ultima_ora = end($ore_selezionate);
     $durata = ($ultima_ora - $ora_inizio) + 1;

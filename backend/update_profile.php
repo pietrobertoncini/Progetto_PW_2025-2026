@@ -1,5 +1,5 @@
 <?php
-// backend/update_profile.php
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -20,8 +20,8 @@ $cognome = trim($_POST['cognome']);
 $email = trim($_POST['email']);
 $data_nascita = $_POST['data_nascita'];
 
-// --- INIZIO LOGICA UPLOAD FOTO (SEMPLIFICATA) ---
-$percorsoFotoDB = null; // Di default è null (nessuna nuova foto)
+// INIZIO LOGICA UPLOAD FOTO (SEMPLIFICATA)
+$percorsoFotoDB = null; // Di base nessuna foto
 
 // Controlliamo se è stato inviato un file e se non ci sono errori
 if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
@@ -41,11 +41,9 @@ if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
         $percorsoFotoDB = "uploads/propic/" . $nomeFileUnivoco;
     }
 }
-// --- FINE LOGICA UPLOAD ---
+// FINE LOGICA UPLOAD
 
 try {
-    // --- CHIAMATA ALLA FUNZIONE NEL MODEL ---
-    // Passiamo tutti i dati, incluso il percorso della foto (che può essere null)
     modificaUtente($cid, $id_utente, $nome, $cognome, $email, $data_nascita, $percorsoFotoDB);
     
     // Aggiorniamo la sessione col nuovo nome

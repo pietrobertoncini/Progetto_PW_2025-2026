@@ -1,5 +1,5 @@
 <?php
-// admin_dotazioni.php
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }

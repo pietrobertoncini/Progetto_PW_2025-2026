@@ -1,14 +1,16 @@
 <?php
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+
 require_once '../common/setup.php';
 require_once '../common/function.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    // --- INIZIO LOGICA UPLOAD SEMPLIFICATA ---
-    $percorsoFotoDB = null; // Di base è null (nessuna foto)
+    // INIZIO LOGICA UPLOAD SEMPLIFICATA
+    $percorsoFotoDB = null; // Di base nessuna foto
 
     // Controlliamo se è stato inviato un file e se non ci sono errori (error == 0)
     if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
@@ -32,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
          // Se move_uploaded_file fallisce, $percorsoFotoDB resta null e l'utente si registra senza foto.
     }
-    // --- FINE LOGICA UPLOAD ---
+    // FINE LOGICA UPLOAD
     
     try {
         $id_nuovo_utente = inserisciUtente($cid, $_POST['nome'], $_POST['cognome'], 
@@ -48,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
 
     } catch (mysqli_sql_exception $e) {
-        if ($e->getCode() == 1062) { // 1062 è il codice MySQLi per "Duplicate entry"
+        if ($e->getCode() == 1062) {
             header('Location: ../register.php?error=Email gia in uso.');
         } else {
             header('Location: ../register.php?error=Errore del database: ' . $e->getMessage());

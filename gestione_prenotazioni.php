@@ -1,5 +1,4 @@
 <?php
-// gestione_prenotazioni.php
 
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -8,19 +7,19 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once __DIR__ . '/common/setup.php';
 require_once __DIR__ . '/common/function.php';
 
-// --- 1. SICUREZZA ---
+// SICUREZZA
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
     header('Location: index.php');
     exit;
 }
 
-// --- 2. RECUPERO DATI ---
+// RECUPERO DATI
 $id_utente_loggato = $_SESSION['id_utente'];
 $dati_utente = datiUtenteCompleti($cid, $id_utente_loggato);
 $id_settore = $dati_utente['id_settore'];
 $nome_settore = $dati_utente['nome_settore'];
 
-// --- 3. RECUPERO PRENOTAZIONI ---
+// RECUPERO PRENOTAZIONI
 $prenotazioni = getPrenotazioniByOrganizzatore($cid, $id_settore, $id_utente_loggato);
 ?>
 

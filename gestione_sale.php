@@ -1,5 +1,5 @@
 <?php
-// gestione_sale.php
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -7,13 +7,13 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once __DIR__ . '/common/setup.php';
 require_once __DIR__ . '/common/function.php';
 
-// --- 1. SICUREZZA: SOLO ADMIN ---
+// SICUREZZA: SOLO ADMIN
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_admin'])) {
     header('Location: index.php');
     exit;
 }
 
-// --- 2. RECUPERO DATI  ---
+// RECUPERO DATI
 $sale = getAllSaleGlobal($cid);
 ?>
 

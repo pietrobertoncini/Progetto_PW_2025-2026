@@ -1,7 +1,9 @@
 <?php
-// backend/elimina_prenotazione.php
+
 if (session_status() == PHP_SESSION_NONE) session_start();
+
 require_once '../common/setup.php';
+require_once '../common/function.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['is_responsabile'])) {
 

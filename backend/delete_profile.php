@@ -1,9 +1,11 @@
 <?php
-// backend/delete_profile.php
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+
 require_once '../common/setup.php';
+require_once '../common/function.php';
 
 // Verifica che l'utente sia loggato e che la richiesta sia POST (per sicurezza)
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id_utente'])) {
@@ -41,7 +43,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id_utente'])) {
         }
     }
 } else {
-    // Se provano ad accedere direttamente via URL senza POST
     header("Location: ../dashboard.php");
     exit;
 }

@@ -1,18 +1,18 @@
 <?php
-// admin_prenotazioni.php
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 require_once 'common/setup.php';
 require_once 'common/function.php';
 
-// --- SICUREZZA: SOLO ADMIN ---
+// SICUREZZA: SOLO ADMIN 
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_admin'])) {
     header("Location: index.php");
     exit;
 }
 
-// --- RECUPERO DATI ---
+// RECUPERO DATI
 $elenco_prenotazioni = getAllPrenotazioniAdmin($cid);
 ?>
 

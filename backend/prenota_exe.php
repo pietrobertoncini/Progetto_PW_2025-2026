@@ -1,5 +1,5 @@
 <?php
-// backend/prenota_exe.php
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -19,7 +19,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id_utente'])) {
 
     $ora_fine = $ora_inizio + $durata;
 
-    // CONTROLLO CAPIENZA (NOVITÀ)
     // Recuperiamo i dati della sala per sapere la capienza max
     $sala_info = getSalaById($cid, $id_settore, $nome_sala);
 
@@ -31,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id_utente'])) {
         exit;
     }
 
-    // CONTROLLO SOVRAPPOSIZIONI
+    // controllo sovrapposizioni
     if (checkSovrapposizioneNuova($cid, $id_settore, $nome_sala, $data, $ora_inizio, $durata)) {
         header("Location: ../prenota.php?error=Sala già occupata in orario sovrapposto.&sala=" . urlencode($nome_sala) . "&week=" . $data);
         exit;

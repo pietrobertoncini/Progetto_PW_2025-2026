@@ -61,6 +61,12 @@ function modificaUtente($cid, $id_utente, $nome, $cognome, $email, $data_nascita
     $stmt->close();
 }
 
+function eliminaMioProfilo($cid, $id_utente) {
+    $stmt = $cid->prepare("DELETE FROM UTENTE WHERE id_utente = ?");
+    $stmt->bind_param("i", $id_utente);
+    return $stmt->execute();
+}
+
 function datiUtenteCompleti($cid, $id_utente)
 {
     $sql = "SELECT U.*, S.nome AS nome_settore
@@ -453,7 +459,7 @@ function checkSovrapposizioneModifica($cid, $id_settore, $nome_sala, $new_data, 
               AND NOT (data = ? AND ora = ?)";
 
     $stmt = $cid->prepare($sql);
-    
+
     $stmt->bind_param(
         "issiiisi",
         $id_settore,
@@ -494,7 +500,7 @@ function aggiornaPrenotazione($cid, $new_data, $new_ora, $new_durata, $new_attiv
             SET data = ?, ora = ?, durata = ?, attivita = ? 
             WHERE id_settore = ? AND nome_sala = ? AND data = ? AND ora = ?";
     $stmt = $cid->prepare($sql);
-    
+
     $stmt->bind_param("siisissi", $new_data, $new_ora, $new_durata, $new_attivita, $id_settore, $old_nome_sala, $old_data, $old_ora);
     return $stmt->execute();
 }
@@ -622,4 +628,30 @@ function elaboraSlotSelezionati($slots)
         'ora' => $ora_inizio,
         'durata' => $durata
     ];
+}
+
+
+// GESTIONE FOTO (REGISTRA E MODIFICA PROFILO
+
+function uploadFotoProfilo($fileInput)
+{
+    // Controlli base
+    if (!isset($fileInput) || $fileInput['error'] != 0) {
+        return null; // Nessuna foto caricata o errore
+    }
+
+    // Impostazione percorsi
+    $cartellaDestinazione = "../uploads/propic/";
+
+    // Generazione nome univoco (timestamp + nome originale)
+    $nomeFileUnivoco = time() . "_" . basename($fileInput["name"]);
+    $targetFilePath = $cartellaDestinazione . $nomeFileUnivoco;
+
+    // Spostamento file
+    if (move_uploaded_file($fileInput["tmp_name"], $targetFilePath)) {
+        // Ritorna il percorso stringa da salvare nel DB
+        return "uploads/propic/" . $nomeFileUnivoco;
+    }
+
+    return null;
 }

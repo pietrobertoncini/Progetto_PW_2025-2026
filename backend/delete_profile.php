@@ -13,20 +13,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id_utente'])) {
     $id_utente = $_SESSION['id_utente'];
 
     try {
-        // Prepariamo la query di eliminazione
-        $sql = "DELETE FROM UTENTE WHERE id_utente = ?";
         
-        $stmt = $cid->prepare($sql);
-        $stmt->bind_param("i", $id_utente);
-        
-        if ($stmt->execute()) {
-            // Se l'eliminazione è andata a buon fine:
-            
-            // 1. Distruggiamo la sessione (Logout)
+        if (eliminaMioProfilo($cid, $id_utente)) {        
+            // Distruggiamo la sessione (Logout)
             $_SESSION = array();
             session_destroy();
             
-            // 2. Reindirizziamo alla home con un messaggio
+            // Reindirizziamo alla home con un messaggio
             header("Location: ../index.php?msg=Account eliminato correttamente.");
             exit;
         } else {

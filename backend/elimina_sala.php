@@ -15,11 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['is_responsabile']))
         // La cancellazione della sala eliminerà anche le dotazioni collegate (CASCADE).
         // Se nel DB "PRENOTAZIONE" ha ON DELETE NO ACTION, l'eliminazione fallirà se ci sono prenotazioni.
         
-        $sql = "DELETE FROM SALA WHERE id_settore = ? AND nome_sala = ?";
-        $stmt = $cid->prepare($sql);
-        $stmt->bind_param("is", $id_settore, $nome_sala);
-        
-        if ($stmt->execute()) {
+        if (eliminaSalaResponsabile($cid, $id_settore, $nome_sala)) {
             header("Location: ../gestione_sale.php?msg=Sala eliminata definitivamente.");
         } else {
             throw new Exception("Impossibile eliminare la sala.");

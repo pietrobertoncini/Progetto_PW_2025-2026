@@ -9,7 +9,6 @@ if ($_SERVER["REQUEST_METHOD"] != "POST" || !isset($_SESSION['id_utente'])) {
     exit;
 }
 
-// Inclusione di setup e funzioni
 require_once '../common/setup.php';
 require_once '../common/function.php';
 
@@ -20,28 +19,8 @@ $cognome = trim($_POST['cognome']);
 $email = trim($_POST['email']);
 $data_nascita = $_POST['data_nascita'];
 
-// INIZIO LOGICA UPLOAD FOTO (SEMPLIFICATA)
-$percorsoFotoDB = null; // Di base nessuna foto
-
-// Controlliamo se è stato inviato un file e se non ci sono errori
-if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
-    
-    $cartellaDestinazione = "../uploads/propic/";
-    
-    // Usiamo un trucco semplice per rendere il nome del file unico:
-    // aggiungiamo il timestamp (time()) davanti al nome originale.
-    // Es: "1715698524_miafoto.jpg"
-    $nomeFileUnivoco = time() . "_" . basename($_FILES["foto"]["name"]);
-    $targetFilePath = $cartellaDestinazione . $nomeFileUnivoco;
-
-    // Spostiamo il file dalla cartella temporanea a quella definitiva
-    if (move_uploaded_file($_FILES["foto"]["tmp_name"], $targetFilePath)) {
-        // Se lo spostamento va a buon fine, prepariamo il percorso da salvare nel DB.
-        // Deve essere relativo alla root del sito (senza i ../ iniziali)
-        $percorsoFotoDB = "uploads/propic/" . $nomeFileUnivoco;
-    }
-}
-// FINE LOGICA UPLOAD
+// logica FOTO
+$percorsoFotoDB = uploadFotoProfilo($_FILES['foto'] ?? null);
 
 try {
     modificaUtente($cid, $id_utente, $nome, $cognome, $email, $data_nascita, $percorsoFotoDB);

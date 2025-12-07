@@ -5,7 +5,7 @@ require_once 'common/setup.php';
 require_once 'common/function.php';
 
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
-    header('Location: dashboard.php'); exit;
+    header('Location: index.php'); exit;
 }
 
 // Recuperiamo la lista di tutte le dotazioni possibili per mostrarle nei checkbox

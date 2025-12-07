@@ -6,7 +6,7 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once 'common/setup.php';
 
 if (isset($_SESSION['id_utente'])) {
-    header('Location: dashboard.php');
+    header('Location: index.php');
     exit;
 }
 

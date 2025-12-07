@@ -30,6 +30,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['is_responsabile']))
         }
     }
 } else {
-    header("Location: ../dashboard.php");
+    header("Location: ../index.php");
 }
 ?>

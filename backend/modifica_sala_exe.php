@@ -29,6 +29,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['is_responsabile']))
         header("Location: ../modifica_sala.php?nome=".urlencode($old_nome)."&error=Errore: " . $e->getMessage());
     }
 } else {
-    header("Location: ../dashboard.php");
+    header("Location: ../index.php");
 }
 ?>

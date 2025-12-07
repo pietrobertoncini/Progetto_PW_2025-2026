@@ -4,7 +4,7 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 if (isset($_SESSION['id_utente'])) {
-    header('Location: dashboard.php');
+    header('Location: index.php');
     exit;
 }
 ?>

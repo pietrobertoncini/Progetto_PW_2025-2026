@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id_utente'])) {
         }
     }
 } else {
-    header("Location: ../dashboard.php");
+    header("Location: ../index.php");
     exit;
 }
 ?>

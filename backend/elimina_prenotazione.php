@@ -23,5 +23,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['is_responsabile']))
         header("Location: ../modifica_prenotazione.php?error=" . $e->getMessage() . "&sala=" . urlencode($nome_sala) . "&data=$data&ora=$ora");
     }
 } else {
-    header("Location: ../dashboard.php");
+    header("Location: ../index.php");
 }

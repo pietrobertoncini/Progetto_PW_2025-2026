@@ -8,7 +8,7 @@ require_once 'common/function.php';
 
 // Controllo Accesso
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
-    header('Location: dashboard.php');
+    header('Location: index.php');
     exit;
 }
 

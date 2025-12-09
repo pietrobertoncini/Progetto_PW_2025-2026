@@ -3,8 +3,17 @@
 // definiamo la root
 define('ROOT_PATH', dirname(__DIR__));
 
-// definiamo il path
-define('BASE_URL', '/my_dir/project/');
+// otteniamo il percorso della root del server
+$docRoot = $_SERVER['DOCUMENT_ROOT'];
+
+$docRoot = str_replace('\\', '/', $docRoot);
+$projectRoot = str_replace('\\', '/', ROOT_PATH);
+
+// sottraiamo la docRoot dal percorso del progetto
+$folder = str_replace($docRoot, '', $projectRoot);
+
+// definiamo URL base
+define('BASE_URL', $folder, '/');
 
 $hostname = "localhost";
 $username = "root";

@@ -69,6 +69,9 @@ if (isset($_SESSION['id_utente'])) {
               <a class="nav-link" href="<?php echo BASE_URL; ?>frontend/gestione_prenotazioni.php">Gestione Prenotazioni</a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" href="<?php echo BASE_URL; ?>frontend/resp_dotazioni.php">Gestione Dotazioni</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="<?php echo BASE_URL; ?>frontend/risposte_inviti.php">Stato Inviti</a>
             </li>
           <?php endif; ?>

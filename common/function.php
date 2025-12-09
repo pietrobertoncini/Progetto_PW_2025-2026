@@ -316,7 +316,7 @@ function eliminaDotazione($cid, $id)
 }
 
 
-// FUNZIONI PER RESPONSABILE E GESTIONE SALE 
+// FUNZIONI PER RESPONSABILE E GESTIONE DOTAZIONI
 
 // Recupera TUTTE le sale con il nome del settore 
 function getAllSaleGlobal($cid)
@@ -346,6 +346,34 @@ function getDotazioniSala($cid, $id_settore, $nome_sala)
         $lista[] = $row['tipo'];
     }
     return implode(", ", $lista);
+}
+
+function aggiornaDotazioniSala($cid, $id_settore, $nome_sala, $lista_id_dotazioni) {
+    $cid->begin_transaction();
+    try {
+        // Elimina TUTTE le dotazioni attuali per questa sala
+        $sqlDelete = "DELETE FROM SALA_DOTAZIONE WHERE id_settore = ? AND nome_sala = ?";
+        $stmtDel = $cid->prepare($sqlDelete);
+        $stmtDel->bind_param("is", $id_settore, $nome_sala);
+        $stmtDel->execute();
+
+        // Inserisce le NUOVE dotazioni selezionate
+        if (!empty($lista_id_dotazioni)) {
+            $sqlInsert = "INSERT INTO SALA_DOTAZIONE (id_settore, nome_sala, id_dotazione) VALUES (?, ?, ?)";
+            $stmtIns = $cid->prepare($sqlInsert);
+            
+            foreach ($lista_id_dotazioni as $id_dot) {
+                $stmtIns->bind_param("isi", $id_settore, $nome_sala, $id_dot);
+                $stmtIns->execute();
+            }
+        }
+        
+        $cid->commit();
+        return true;
+    } catch (Exception $e) {
+        $cid->rollback();
+        return false;
+    }
 }
 
 // Recupera le prenotazioni fatte dall'organizzatore (Responsabile)
@@ -580,7 +608,7 @@ function checkSovrapposizioneUtente($cid, $id_utente_target, $data_target, $ora_
             AND ((? >= P.ora AND ? < (P.ora + P.durata)) OR (P.ora >= ? AND P.ora < (? + ?)))";
 
     $stmt = $cid->prepare($sql);
-    $stmt->bind_param("isisiiiii", $id_utente_target, $data_target, $id_settore_target, $nome_sala_target, $data_target, $ora_target, $ora_target, $ora_target, $ora_target, $ora_target, $durata_target);
+    $stmt->bind_param("isissiiiiii", $id_utente_target, $data_target, $id_settore_target, $nome_sala_target, $data_target, $ora_target, $ora_target, $ora_target, $ora_target, $ora_target, $durata_target);
     $stmt->execute();
     return ($stmt->get_result()->num_rows > 0);
 }

@@ -13,7 +13,7 @@ if (!isset($_SESSION['id_utente'])) {
 require_once __DIR__ . '/../common/setup.php';
 require_once __DIR__ . '/../common/function.php';
 
-// --- GESTIONE DATE SETTIMANA ---
+// GESTIONE DATE SETTIMANA 
 $data_rif = isset($_GET['week']) ? $_GET['week'] : date('Y-m-d');
 $timestamp_rif = strtotime($data_rif);
 
@@ -23,13 +23,13 @@ $domenica_settimana = date('Y-m-d', strtotime('sunday this week', $timestamp_rif
 $prev_week = date('Y-m-d', strtotime($lunedi_settimana . ' -7 days'));
 $next_week = date('Y-m-d', strtotime($lunedi_settimana . ' +7 days'));
 
-// --- RECUPERO DATI ---
+// RECUPERO DATI 
 $impegni_lista = [];
 if (function_exists('getImpegniFuturi')) {
     $impegni_lista = getImpegniFuturi($cid, $_SESSION['id_utente']);
 }
 
-// --- ORGANIZZAZIONE DATI IN GRIGLIA ---
+// ORGANIZZAZIONE DATI IN GRIGLIA 
 $planning = [];
 
 foreach ($impegni_lista as $imp) {
@@ -109,7 +109,7 @@ foreach ($impegni_lista as $imp) {
                                         $cell = $planning[$data_curr][$ora];
                                         $info = $cell['dati'];
 
-                                        // CASO 1: È l'inizio dell'impegno -> Stampiamo la cella con ROWSPAN
+                                        // È l'inizio dell'impegno -> Stampiamo la cella con ROWSPAN
                                         if ($cell['is_start']) {
                                             $durata = $info['durata'];
                                             ?>
@@ -142,13 +142,13 @@ foreach ($impegni_lista as $imp) {
                                             </td>
                                             <?php
                                         } 
-                                        // CASO 2: È una continuazione (ore successive) -> NON stampiamo nulla (lo spazio è preso dal rowspan)
+                                        // È una continuazione (ore successive) -> NON stampiamo nulla (lo spazio è preso dal rowspan)
                                         else {
                                             // Nessun output
                                         }
 
                                     } else {
-                                        // CASO 3: Nessun impegno -> Cella vuota normale
+                                        //  Nessun impegno -> Cella vuota normale
                                         echo "<td></td>";
                                     }
                                 endfor; ?>

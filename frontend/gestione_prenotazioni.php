@@ -32,9 +32,9 @@ $prenotazioni = getPrenotazioniByOrganizzatore($cid, $id_settore, $id_utente_log
 
     <?php include ROOT_PATH . '/common/navbar.php'; ?>
 
-    <div class="container mt-5 mb-5">
+    <div class="flex-shrink-0 container py-5">
         
-        <div class="row align-items-center mb-4 mt-4">
+        <div class="row align-items-center mb-4">
             <div class="col-md-8">
                 <h2 class="mb-2">Le Mie Prenotazioni</h2>
                 <h5 class="text-muted">
@@ -55,7 +55,7 @@ $prenotazioni = getPrenotazioniByOrganizzatore($cid, $id_settore, $id_utente_log
             </div>
         <?php endif; ?>
 
-        <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
             <div class="card-header bg-primary bg-opacity-10 border-0 py-3">
                 <h5 class="mb-0 text-dark">Elenco Prenotazioni Create da Te</h5>
             </div>

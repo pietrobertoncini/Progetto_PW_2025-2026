@@ -13,10 +13,39 @@ if (!isset($_SESSION['id_utente'])) {
 require_once __DIR__ . '/../common/setup.php';
 require_once __DIR__ . '/../common/function.php';
 
-// Recupero dati
-$impegni_futuri = [];
+// --- GESTIONE DATE SETTIMANA ---
+$data_rif = isset($_GET['week']) ? $_GET['week'] : date('Y-m-d');
+$timestamp_rif = strtotime($data_rif);
+
+$lunedi_settimana = date('Y-m-d', strtotime('monday this week', $timestamp_rif));
+$domenica_settimana = date('Y-m-d', strtotime('sunday this week', $timestamp_rif));
+
+$prev_week = date('Y-m-d', strtotime($lunedi_settimana . ' -7 days'));
+$next_week = date('Y-m-d', strtotime($lunedi_settimana . ' +7 days'));
+
+// --- RECUPERO DATI ---
+$impegni_lista = [];
 if (function_exists('getImpegniFuturi')) {
-    $impegni_futuri = getImpegniFuturi($cid, $_SESSION['id_utente']);
+    $impegni_lista = getImpegniFuturi($cid, $_SESSION['id_utente']);
+}
+
+// --- ORGANIZZAZIONE DATI IN GRIGLIA ---
+$planning = [];
+
+foreach ($impegni_lista as $imp) {
+    $data_imp = $imp['data'];
+    $ora_inizio = $imp['ora'];
+    $durata = $imp['durata'];
+
+    for ($i = 0; $i < $durata; $i++) {
+        $ora_corrente = $ora_inizio + $i;
+        
+        // Salviamo i dati per ogni ora occupata
+        $planning[$data_imp][$ora_corrente] = [
+            'dati' => $imp,
+            'is_start' => ($i === 0) // True solo per la prima ora
+        ];
+    }
 }
 ?>
 
@@ -28,68 +57,112 @@ if (function_exists('getImpegniFuturi')) {
     <?php include ROOT_PATH . '/common/navbar.php'; ?>
 
     <div class="flex-shrink-0 container py-5">
+        
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>I Tuoi Impegni</h2>
         </div>
 
-        <div class="card shadow-sm border-0 overflow-hidden rounded-3">
-            <div class="card-header bg-success bg-opacity-10 border-0 py-3">
-                <h5 class="mb-0 text-dark">
-                    Calendario Attività <span class="badge bg-success rounded-pill ms-2"><?php echo count($impegni_futuri); ?></span>
-                </h5>
-            </div>
-            <div class="card-body p-0">
-                <?php if (count($impegni_futuri) > 0): ?>
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="ps-4">Data</th>
-                                    <th>Orario</th>
-                                    <th>Sala</th>
-                                    <th>Attività</th>
-                                    <th class="text-end pe-4">Gestione</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($impegni_futuri as $impegno): ?>
-                                    <tr>
-                                        <td class="ps-4 py-3"><strong><?php echo date("d/m/Y", strtotime($impegno['data'])); ?></strong></td>
-                                        <td>
-                                            <span class="badge bg-light text-dark border">
-                                                <?php echo $impegno['ora']; ?>:00 - <?php echo $impegno['ora'] + $impegno['durata']; ?>:00
-                                            </span>
-                                        </td>
-                                        <td><?php echo htmlspecialchars($impegno['nome_sala']); ?></td>
-                                        <td><?php echo htmlspecialchars($impegno['attivita']); ?></td>
-                                        <td class="text-end pe-4">
-                                            <form action="<?php echo BASE_URL; ?>backend/invite_reply.php" method="POST">
-                                                <input type="hidden" name="id_settore" value="<?php echo $impegno['id_settore']; ?>">
-                                                <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($impegno['nome_sala']); ?>">
-                                                <input type="hidden" name="data" value="<?php echo $impegno['data']; ?>">
-                                                <input type="hidden" name="ora" value="<?php echo $impegno['ora']; ?>">
-                                                <input type="hidden" name="risposta" value="rifiutato">
-                                                <input type="hidden" name="motivazione" value="Disdetta successiva dell'utente">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a href="?week=<?php echo $prev_week; ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                &larr; Settimana Prec.
+            </a>
+            <h5 class="mb-0 fw-bold text-center">
+                Dal <?php echo date('d/m', strtotime($lunedi_settimana)); ?> 
+                al <?php echo date('d/m', strtotime($domenica_settimana)); ?>
+            </h5>
+            <a href="?week=<?php echo $next_week; ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                Settimana Succ. &rarr;
+            </a>
+        </div>
 
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Sei sicuro di voler disdire la partecipazione?');">
-                                                    <i class="bi bi-x-circle"></i> Disdici
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php else: ?>
-                    <div class="text-center py-5">
-                        <i class="bi bi-calendar-check display-4 text-muted opacity-25 mb-3 d-block"></i>
-                        <p class="lead text-muted">Non hai impegni confermati in programma.</p>
-                        <p class="small text-secondary">Attendi che un responsabile ti inviti a una prova.</p>
-                    </div>
-                <?php endif; ?>
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table calendar-table mb-0 text-center table-bordered align-middle">
+                    <thead>
+                        <tr>
+                            <th class="align-middle bg-light text-dark" style="width: 60px;">Ora</th>
+                            <?php
+                            $giorni_it = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
+                            for ($i = 0; $i < 7; $i++) {
+                                $d = date('Y-m-d', strtotime($lunedi_settimana . " +$i days"));
+                                $giorno_str = date('d/m', strtotime($d));
+                                $nome_giorno = $giorni_it[$i];
+                                
+                                $class_th = ($d == date('Y-m-d')) ? 'bg-warning bg-opacity-25 text-dark' : '';
+                                
+                                echo "<th class='$class_th' style='width: 13%'>$nome_giorno<br><small class='fw-normal'>$giorno_str</small></th>";
+                            }
+                            ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php for ($ora = 9; $ora <= 23; $ora++): ?>
+                            <tr>
+                                <td class="fw-bold bg-light text-muted small"><?php echo $ora; ?>:00</td>
+                                
+                                <?php for ($i = 0; $i < 7; $i++): 
+                                    $data_curr = date('Y-m-d', strtotime($lunedi_settimana . " +$i days"));
+                                    
+                                    // Verifichiamo se c'è un impegno
+                                    if (isset($planning[$data_curr][$ora])) {
+                                        
+                                        $cell = $planning[$data_curr][$ora];
+                                        $info = $cell['dati'];
+
+                                        // CASO 1: È l'inizio dell'impegno -> Stampiamo la cella con ROWSPAN
+                                        if ($cell['is_start']) {
+                                            $durata = $info['durata'];
+                                            ?>
+                                            <td rowspan="<?php echo $durata; ?>" class="p-2 bg-success bg-opacity-10 border border-success border-opacity-25 position-relative">
+                                                <div class="d-flex flex-column justify-content-center align-items-center h-100 w-100" style="min-height: <?php echo ($durata * 40); ?>px;">
+                                                    
+                                                    <div class="fw-bold text-success lh-sm mb-1">
+                                                        <?php echo htmlspecialchars($info['attivita']); ?>
+                                                    </div>
+                                                    
+                                                    <div class="small text-muted fst-italic mb-2">
+                                                        <i class="bi bi-geo-alt-fill"></i> <?php echo htmlspecialchars($info['nome_sala']); ?>
+                                                        <br>
+                                                        (<?php echo $info['ora']; ?>:00 - <?php echo $info['ora'] + $durata; ?>:00)
+                                                    </div>
+
+                                                    <form action="<?php echo BASE_URL; ?>backend/invite_reply.php" method="POST">
+                                                        <input type="hidden" name="id_settore" value="<?php echo $info['id_settore']; ?>">
+                                                        <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($info['nome_sala']); ?>">
+                                                        <input type="hidden" name="data" value="<?php echo $info['data']; ?>">
+                                                        <input type="hidden" name="ora" value="<?php echo $info['ora']; ?>">
+                                                        <input type="hidden" name="risposta" value="rifiutato">
+                                                        <input type="hidden" name="motivazione" value="Disdetta da calendario">
+
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2 rounded-pill shadow-sm" style="font-size: 0.7rem;" onclick="return confirm('Sei sicuro di voler disdire la partecipazione?');">
+                                                            <i class="bi bi-trash3"></i> Disdici
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                            <?php
+                                        } 
+                                        // CASO 2: È una continuazione (ore successive) -> NON stampiamo nulla (lo spazio è preso dal rowspan)
+                                        else {
+                                            // Nessun output
+                                        }
+
+                                    } else {
+                                        // CASO 3: Nessun impegno -> Cella vuota normale
+                                        echo "<td></td>";
+                                    }
+                                endfor; ?>
+                            </tr>
+                        <?php endfor; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
+        
+        <div class="mt-3 text-muted small">
+            <i class="bi bi-info-circle me-1"></i> Visualizzi solo gli impegni che hai accettato.
+        </div>
+
     </div>
 
     <?php require ROOT_PATH . "/common/footer.html"; ?>

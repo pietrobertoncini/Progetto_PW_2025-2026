@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id_utente'])) {
             $durata_target = $info_pren['durata'];
 
             if (checkSovrapposizioneUtente($cid, $id_utente, $data, $ora, $durata_target, $id_settore, $nome_sala)) {
-                header("Location: ../inviti.php?error=Impossibile accettare: hai già un altro impegno accettato in questo orario.");
+                header("Location: " . BASE_URL . "frontend/inviti.php?error=Impossibile accettare: hai già un altro impegno accettato in questo orario.");
                 exit;
             }
         }
@@ -41,20 +41,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id_utente'])) {
         // Se passiamo i controlli o se rifiutiamo, eseguiamo l'update
         if (rispondiInvito($cid, $id_utente, $id_settore, $nome_sala, $data, $ora, $risposta, $motivazione)) {
             if ($risposta === 'accettato') {
-                header("Location: ../impegni.php?msg=Invito accettato con successo!");
+                header("Location: " . BASE_URL . "frontend/impegni.php?msg=Invito accettato con successo!");
             } else {
-                header("Location: ../inviti.php?msg=Invito rifiutato.");
+                header("Location: " . BASE_URL . "frontend/inviti.php?msg=Invito rifiutato.");
             }
         } else {
-            header("Location: ../inviti.php?error=Errore durante l'aggiornamento.");
+            header("Location: " . BASE_URL . "frontend/inviti.php?error=Errore durante l'aggiornamento.");
         }
         exit;
 
     } catch (Exception $e) {
-        header("Location: ../inviti.php?error=" . $e->getMessage());
+        header("Location: " . BASE_URL . "frontend/inviti.php?error=" . $e->getMessage());
         exit;
     }
 } else {
-    header("Location: ../index.php");
+    header("Location: " . BASE_URL . "index.php");
     exit;
 }

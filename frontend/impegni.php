@@ -63,7 +63,7 @@ if (function_exists('getImpegniFuturi')) {
                                         <td><?php echo htmlspecialchars($impegno['nome_sala']); ?></td>
                                         <td><?php echo htmlspecialchars($impegno['attivita']); ?></td>
                                         <td class="text-end pe-4">
-                                            <form action="backend/invite_reply.php" method="POST">
+                                            <form action="<?php echo BASE_URL; ?>backend/invite_reply.php" method="POST">
                                                 <input type="hidden" name="id_settore" value="<?php echo $impegno['id_settore']; ?>">
                                                 <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($impegno['nome_sala']); ?>">
                                                 <input type="hidden" name="data" value="<?php echo $impegno['data']; ?>">

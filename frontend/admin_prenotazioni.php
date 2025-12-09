@@ -115,7 +115,7 @@ $elenco_prenotazioni = getAllPrenotazioniAdmin($cid);
                                     </td>
 
                                     <td class="text-end pe-4">
-                                        <form action="backend/admin_prenotazioni_exe.php" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare questa prenotazione? Questa azione cancellerà anche tutti gli inviti associati.');">
+                                        <form action="<?php echo BASE_URL; ?>backend/admin_prenotazioni_exe.php" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare questa prenotazione? Questa azione cancellerà anche tutti gli inviti associati.');">
                                             <input type="hidden" name="action" value="delete">
                                             <input type="hidden" name="id_settore" value="<?php echo $p['id_settore']; ?>">
                                             <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($p['nome_sala']); ?>">

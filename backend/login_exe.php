@@ -20,19 +20,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['is_responsabile'] = (bool)$utente_trovato['is_responsabile'];
             $_SESSION['is_admin'] = (bool)$utente_trovato['is_admin'];
             
-            header('Location: ../index.php');
+            header('Location: ' . BASE_URL . 'index.php');
             exit;
         } else {
-            header('Location: ../login.php?error=Email o password non validi.');
+            header('Location: ' . BASE_URL . 'frontend/login.php?error=Email o password non validi.');
             exit;
         }
 
     } catch (mysqli_sql_exception $e) {
-        header('Location: ../login.php?error=Errore del database: ' . $e->getMessage());
+        header('Location: ' . BASE_URL . 'frontend/login.php?error=Errore del database: ' . $e->getMessage());
         exit;
     }
 } else {
-    header('Location: ../login.php');
+    header('Location: ' . BASE_URL . 'frontend/login.php');
     exit;
 }
 ?>

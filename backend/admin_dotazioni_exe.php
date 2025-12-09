@@ -20,21 +20,21 @@ switch ($action) {
         $tipo = trim($_POST['tipo'] ?? '');
 
         if (empty($tipo)) {
-            header("Location: ../admin_dotazioni.php?error=" . urlencode("Il nome della dotazione è obbligatorio."));
+            header("Location: " . BASE_URL . "frontend/admin_dotazioni.php?error=" . urlencode("Il nome della dotazione è obbligatorio."));
             exit;
         }
 
         try {
             if (creaDotazione($cid, $tipo)) {
-                header("Location: ../admin_dotazioni.php?msg=" . urlencode("Dotazione aggiunta con successo!"));
+                header("Location: " . BASE_URL . "frontend/admin_dotazioni.php?msg=" . urlencode("Dotazione aggiunta con successo!"));
             } else {
                 throw new Exception("Errore generico.");
             }
         } catch (mysqli_sql_exception $e) {
             if ($e->getCode() == 1062) { // Duplicate entry
-                header("Location: ../admin_dotazioni.php?error=" . urlencode("Esiste già una dotazione con questo nome."));
+                header("Location: " . BASE_URL . "frontend/admin_dotazioni.php?error=" . urlencode("Esiste già una dotazione con questo nome."));
             } else {
-                header("Location: ../admin_dotazioni.php?error=" . urlencode("Errore DB: " . $e->getMessage()));
+                header("Location: " . BASE_URL . "frontend/admin_dotazioni.php?error=" . urlencode("Errore DB: " . $e->getMessage()));
             }
         }
         break;
@@ -45,19 +45,19 @@ switch ($action) {
         $tipo = trim($_POST['tipo'] ?? '');
 
         if ($id_dotazione <= 0 || empty($tipo)) {
-            header("Location: ../admin_dotazioni.php?error=" . urlencode("Dati non validi."));
+            header("Location: " . BASE_URL . "frontend/admin_dotazioni.php?error=" . urlencode("Dati non validi."));
             exit;
         }
 
         try {
             if (aggiornaDotazione($cid, $id_dotazione, $tipo)) {
-                header("Location: ../admin_dotazioni.php?msg=" . urlencode("Dotazione modificata con successo!"));
+                header("Location: " . BASE_URL . "frontend/admin_dotazioni.php?msg=" . urlencode("Dotazione modificata con successo!"));
             }
         } catch (mysqli_sql_exception $e) {
              if ($e->getCode() == 1062) {
-                header("Location: ../admin_dotazioni.php?error=" . urlencode("Esiste già una dotazione con questo nome."));
+                header("Location: " . BASE_URL . "frontend/admin_dotazioni.php?error=" . urlencode("Esiste già una dotazione con questo nome."));
             } else {
-                header("Location: ../admin_dotazioni.php?error=" . urlencode("Errore: " . $e->getMessage()));
+                header("Location: " . BASE_URL . "frontend/admin_dotazioni.php?error=" . urlencode("Errore: " . $e->getMessage()));
             }
         }
         break;
@@ -67,13 +67,13 @@ switch ($action) {
         $id_dotazione = intval($_POST['id_dotazione'] ?? 0);
 
         if (eliminaDotazione($cid, $id_dotazione)) {
-            header("Location: ../admin_dotazioni.php?msg=" . urlencode("Dotazione eliminata."));
+            header("Location: " . BASE_URL . "frontend/admin_dotazioni.php?msg=" . urlencode("Dotazione eliminata."));
         } else {
-            header("Location: ../admin_dotazioni.php?error=" . urlencode("Impossibile eliminare: questa dotazione è presente in una o più sale."));
+            header("Location: " . BASE_URL . "frontend/admin_dotazioni.php?error=" . urlencode("Impossibile eliminare: questa dotazione è presente in una o più sale."));
         }
         break;
 
     default:
-        header("Location: ../admin_dotazioni.php");
+        header("Location: " . BASE_URL . "frontend/admin_dotazioni.php");
         exit;
 }

@@ -70,7 +70,7 @@ $elenco_settori = getAllSettoriAdmin($cid);
 
                     <div class="card-body p-4">
 
-                        <form action="backend/admin_settori_exe.php" method="POST">
+                        <form action="<?php echo BASE_URL; ?>backend/admin_settori_exe.php" method="POST">
                             <input type="hidden" name="action" value="<?php echo $is_editing ? 'update' : 'create'; ?>">
 
                             <?php if ($is_editing): ?>
@@ -103,7 +103,7 @@ $elenco_settori = getAllSettoriAdmin($cid);
 
                             <?php if ($is_editing): ?>
                                 <div class="text-center mt-3">
-                                    <a href="admin_settori.php" class="btn btn-outline-secondary text-decoration-none small">
+                                    <a href="<?php echo BASE_URL; ?>frontend/admin_settori.php" class="btn btn-outline-secondary text-decoration-none small">
                                         <i class="bi bi-x-circle"></i> Annulla Modifica
                                     </a>
                                 </div>
@@ -164,13 +164,13 @@ $elenco_settori = getAllSettoriAdmin($cid);
                                             </td>
                                             <td class="text-end pe-4">
                                                 <div class="d-flex justify-content-end gap-2">
-                                                    <a href="admin_settori.php?edit=<?php echo $settore['id_settore']; ?>"
+                                                    <a href="<?php echo BASE_URL; ?>frontend/admin_settori.php?edit=<?php echo $settore['id_settore']; ?>"
                                                         class="btn btn-outline-warning btn-sm rounded-pill"
                                                         title="Modifica">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
 
-                                                    <form action="backend/admin_settori_exe.php" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare il settore \'<?php echo htmlspecialchars($settore['nome']); ?>\'? Questa azione è irreversibile.');">
+                                                    <form action="<?php echo BASE_URL; ?>backend/admin_settori_exe.php" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare il settore \'<?php echo htmlspecialchars($settore['nome']); ?>\'? Questa azione è irreversibile.');">
                                                         <input type="hidden" name="action" value="delete">
                                                         <input type="hidden" name="id_settore" value="<?php echo $settore['id_settore']; ?>">
                                                         <button type="submit"

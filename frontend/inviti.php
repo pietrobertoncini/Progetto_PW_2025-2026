@@ -80,7 +80,7 @@ if (function_exists('getInvitiPendenti')) {
                                         <td class="text-end pe-4">
                                             <div class="d-flex flex-column gap-2 align-items-end">
 
-                                                <form action="backend/invite_reply.php" method="POST" class="w-100">
+                                                <form action="<?php echo BASE_URL; ?>backend/invite_reply.php" method="POST" class="w-100">
                                                     <input type="hidden" name="id_settore" value="<?php echo $invito['id_settore']; ?>">
                                                     <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($invito['nome_sala']); ?>">
                                                     <input type="hidden" name="data" value="<?php echo $invito['data']; ?>">
@@ -89,7 +89,7 @@ if (function_exists('getInvitiPendenti')) {
                                                     <button type="submit" class="btn btn-success btn-sm w-100 fw-bold rounded-pill shadow-sm">Accetta</button>
                                                 </form>
 
-                                                <form action="backend/invite_reply.php" method="POST" class="w-100">
+                                                <form action="<?php echo BASE_URL; ?>backend/invite_reply.php" method="POST" class="w-100">
                                                     <input type="hidden" name="id_settore" value="<?php echo $invito['id_settore']; ?>">
                                                     <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($invito['nome_sala']); ?>">
                                                     <input type="hidden" name="data" value="<?php echo $invito['data']; ?>">

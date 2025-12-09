@@ -82,14 +82,14 @@ $elenco_utenti = getAllUtentiAdmin($cid);
                                         <?php if (!$utente['is_admin'] && $utente['id_utente'] != $_SESSION['id_utente']): ?>
                                             <div class="d-flex justify-content-end gap-2">
                                                 <?php if ($utente['is_responsabile']): ?>
-                                                    <form action="backend/admin_utenti_exe.php" method="POST">
+                                                    <form action="<?php echo BASE_URL; ?>backend/admin_utenti_exe.php" method="POST">
                                                         <input type="hidden" name="action" value="demote"><input type="hidden" name="id_utente" value="<?php echo $utente['id_utente']; ?>">
                                                         <button type="submit" class="btn btn-outline-warning btn-sm rounded-pill fw-bold" onclick="return confirm('Retrocedere <?php echo htmlspecialchars($utente['nome']); ?>?');"><i class="bi bi-arrow-down-circle"></i> Retrocedi</button>
                                                     </form>
                                                 <?php else: ?>
-                                                    <a href="admin_promuovi.php?id=<?php echo $utente['id_utente']; ?>" class="btn btn-outline-primary btn-sm rounded-pill fw-bold"><i class="bi bi-arrow-up-circle"></i> Promuovi</a>
+                                                    <a href="<?php echo BASE_URL; ?>frontend/admin_promuovi.php?id=<?php echo $utente['id_utente']; ?>" class="btn btn-outline-primary btn-sm rounded-pill fw-bold"><i class="bi bi-arrow-up-circle"></i> Promuovi</a>
                                                 <?php endif; ?>
-                                                <form action="backend/admin_utenti_exe.php" method="POST">
+                                                <form action="<?php echo BASE_URL; ?>backend/admin_utenti_exe.php" method="POST">
                                                     <input type="hidden" name="action" value="delete"><input type="hidden" name="id_utente" value="<?php echo $utente['id_utente']; ?>">
                                                     <button type="submit" class="btn btn-outline-danger btn-sm rounded-circle" onclick="return confirm('Eliminare <?php echo htmlspecialchars($utente['nome']); ?>?');"><i class="bi bi-trash3"></i></button>
                                                 </form>

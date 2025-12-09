@@ -43,7 +43,7 @@ $prenotazioni = getPrenotazioniByOrganizzatore($cid, $id_settore, $id_utente_log
             </div>
             
             <div class="col-md-4 text-end">
-                <a href="prenota.php" class="btn btn-primary shadow-sm">
+                <a href="<?php echo BASE_URL; ?>frontend/prenota.php" class="btn btn-primary shadow-sm">
                     <i class="bi bi-plus-lg"></i> Nuova Prenotazione
                 </a>
             </div>
@@ -96,7 +96,7 @@ $prenotazioni = getPrenotazioniByOrganizzatore($cid, $id_settore, $id_utente_log
                                         </td>
 
                                         <td class="text-end pe-4">
-                                            <a href="modifica_prenotazione.php?sala=<?php echo urlencode($p['nome_sala']); ?>&data=<?php echo $p['data']; ?>&ora=<?php echo $p['ora']; ?>" 
+                                            <a href="<?php echo BASE_URL; ?>frontend/modifica_prenotazione.php?sala=<?php echo urlencode($p['nome_sala']); ?>&data=<?php echo $p['data']; ?>&ora=<?php echo $p['ora']; ?>" 
                                             class="btn btn-sm btn-secondary">
                                             <i class="bi bi-gear-fill"></i> Gestisci
                                             </a>

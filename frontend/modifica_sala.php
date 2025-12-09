@@ -39,7 +39,7 @@ $tutte_dotazioni = getAllDotazioni($cid);
                 <div class="card shadow-sm border-0 rounded-3">
                     <div class="card-header bg-secondary bg-opacity-10 border-0 py-3 d-flex justify-content-between align-items-center">
                         <h4 class="mb-0 fw-bold text-dark">Modifica Sala</h4>
-                        <a href="gestione_sale.php" class="btn btn-sm btn-outline-secondary">Annulla</a>
+                        <a href="<?php echo BASE_URL; ?>frontend/gestione_sale.php" class="btn btn-sm btn-outline-secondary">Annulla</a>
                     </div>
                     
                     <div class="card-body p-4">
@@ -47,7 +47,7 @@ $tutte_dotazioni = getAllDotazioni($cid);
                             <div class="alert alert-danger"><?php echo htmlspecialchars($_GET['error']); ?></div>
                         <?php endif; ?>
 
-                        <form action="backend/modifica_sala_exe.php" method="POST">
+                        <form action="<?php echo BASE_URL; ?>backend/modifica_sala_exe.php" method="POST">
                             <input type="hidden" name="old_nome_sala" value="<?php echo htmlspecialchars($sala['nome_sala']); ?>">
                             
                             <div class="mb-3">
@@ -86,7 +86,7 @@ $tutte_dotazioni = getAllDotazioni($cid);
                         <div class="bg-danger bg-opacity-10 p-3 rounded border border-danger border-opacity-25">
                             <h5 class="text-danger fw-bold fs-6">Zona Pericolo</h5>
                             <p class="small text-muted mb-3">Attenzione: se elimini la sala, verranno cancellate anche tutte le prenotazioni associate.</p>
-                            <form action="backend/elimina_sala.php" method="POST" onsubmit="return confirm('Sei DAVVERO sicuro? Questa azione eliminerà anche tutte le prenotazioni future per questa sala.');">
+                            <form action="<?php echo BASE_URL; ?>backend/elimina_sala.php" method="POST" onsubmit="return confirm('Sei DAVVERO sicuro? Questa azione eliminerà anche tutte le prenotazioni future per questa sala.');">
                                 <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($sala['nome_sala']); ?>">
                                 <button type="submit" class="btn btn-danger w-100">Elimina Sala</button>
                             </form>

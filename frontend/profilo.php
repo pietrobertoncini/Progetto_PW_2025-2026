@@ -111,7 +111,7 @@ if (!$dati_utente) {
                             </table>
                         </div>
                         <div class="text-center mt-3">
-                            <a href="modifica_profilo.php" class="btn btn-outline-secondary px-4">
+                            <a href="<?php echo BASE_URL; ?>frontend/modifica_profilo.php" class="btn btn-outline-secondary px-4">
                                 Modifica Dati
                             </a>
                         </div>

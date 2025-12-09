@@ -34,7 +34,7 @@ $sale = getAllSaleGlobal($cid);
             </div>
             
             <div class="col-md-4 text-end">
-                <a href="nuova_sala.php" class="btn btn-primary shadow-sm">
+                <a href="<?php echo BASE_URL; ?>frontend/nuova_sala.php" class="btn btn-primary shadow-sm">
                     <i class="bi bi-plus-lg"></i> Nuova Sala
                 </a>
             </div>
@@ -91,7 +91,7 @@ $sale = getAllSaleGlobal($cid);
                                             ?>
                                         </td>
                                         <td class="text-end pe-4">
-                                            <a href="modifica_sala.php?nome=<?php echo urlencode($s['nome_sala']); ?>&id_settore=<?php echo $s['id_settore']; ?>" class="btn btn-sm btn-outline-secondary">
+                                            <a href="<?php echo BASE_URL; ?>frontend/modifica_sala.php?nome=<?php echo urlencode($s['nome_sala']); ?>&id_settore=<?php echo $s['id_settore']; ?>" class="btn btn-sm btn-outline-secondary">
                                                 <i class="bi bi-gear-fill"></i> Gestisci
                                             </a>
                                         </td>

@@ -37,7 +37,7 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
                             <div class="alert alert-danger"><?php echo htmlspecialchars($_GET['error']); ?></div>
                         <?php endif; ?>
 
-                        <form action="backend/update_profile.php" method="POST" enctype="multipart/form-data">
+                        <form action="<?php echo BASE_URL; ?>backend/update_profile.php" method="POST" enctype="multipart/form-data">
                             <div class="mb-4 text-center">
 
                                 <?php
@@ -69,7 +69,7 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
                                         </label>
 
                                         <?php if ($hasFoto): ?>
-                                            <a href="backend/remove_foto.php"
+                                            <a href="<?php echo BASE_URL; ?>backend/remove_foto.php"
                                                 class="btn btn-sm btn-outline-danger"
                                                 title="Elimina foto attuale"
                                                 onclick="return confirm('Sei sicuro di voler eliminare la foto?');">
@@ -107,7 +107,7 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
                             <div class="text-center mt-4">
                                 <button type="submit" class="btn btn-outline-primary">Salva Modifiche</button>
                                 <div class="mt-2">
-                                    <a href="profilo.php" class="btn btn-outline-secondary">Annulla</a>
+                                    <a href="<?php echo BASE_URL; ?>frontend/profilo.php" class="btn btn-outline-secondary">Annulla</a>
                                 </div>
                             </div>
                         </form>
@@ -120,7 +120,7 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
                         <p class="card-text small text-muted">
                             L'eliminazione dell'account è irreversibile. Tutte le tue prenotazioni future verranno mantenute ma non potrai più accedere.
                         </p>
-                        <form action="backend/delete_profile.php" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare definitivamente il tuo account? Questa azione non può essere annullata.');">
+                        <form action="<?php echo BASE_URL; ?>backend/delete_profile.php" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare definitivamente il tuo account? Questa azione non può essere annullata.');">
                             <button type="submit" class="btn btn-outline-danger btn-sm">
                                 Elimina il mio account
                             </button>

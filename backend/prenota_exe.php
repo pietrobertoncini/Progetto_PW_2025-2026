@@ -26,13 +26,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id_utente'])) {
     $num_partecipanti = 1 + count($invitati);
 
     if ($sala_info && $num_partecipanti > $sala_info['capienza_max']) {
-        header("Location: ../prenota.php?error=Errore: Numero partecipanti supera la capienza della sala.&sala=" . urlencode($nome_sala) . "&week=" . $data);
+        header("Location: " . BASE_URL . "frontend/prenota.php?error=Errore: Numero partecipanti supera la capienza della sala.&sala=" . urlencode($nome_sala) . "&week=" . $data);
         exit;
     }
 
     // controllo sovrapposizioni
     if (checkSovrapposizioneNuova($cid, $id_settore, $nome_sala, $data, $ora_inizio, $durata)) {
-        header("Location: ../prenota.php?error=Sala già occupata in orario sovrapposto.&sala=" . urlencode($nome_sala) . "&week=" . $data);
+        header("Location: " . BASE_URL . "frontend/prenota.php?error=Sala già occupata in orario sovrapposto.&sala=" . urlencode($nome_sala) . "&week=" . $data);
         exit;
     }
 
@@ -44,17 +44,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id_utente'])) {
         creaPrenotazioneConInviti($cid, $id_settore, $nome_sala, $data, $ora_inizio, $durata, $attivita, $id_utente, $invitati);
 
         $cid->commit();
-        header("Location: ../gestione_prenotazioni.php?msg=Prenotazione confermata!");
+        header("Location: " . BASE_URL . "frontend/gestione_prenotazioni.php?msg=Prenotazione confermata!");
         exit;
 
     } catch (Exception $e) {
         $cid->rollback();
-        header("Location: ../prenota.php?error=Errore: " . $e->getMessage());
+        header("Location: " . BASE_URL . "frontend/prenota.php?error=Errore: " . $e->getMessage());
         exit;
     }
 
 } else {
-    header("Location: ../index.php");
+    header("Location: " . BASE_URL . "index.php");
     exit;
 }
 ?>

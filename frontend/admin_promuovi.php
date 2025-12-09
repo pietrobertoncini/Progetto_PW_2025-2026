@@ -53,7 +53,7 @@ $elenco_settori = getAllSettoriAdmin($cid);
                             </strong>
                         </p>
 
-                        <form action="backend/admin_utenti_exe.php" method="POST">
+                        <form action="<?php echo BASE_URL; ?>backend/admin_utenti_exe.php" method="POST">
                             <input type="hidden" name="action" value="promote">
                             <input type="hidden" name="id_utente" value="<?php echo $id_utente_target; ?>">
 
@@ -75,7 +75,7 @@ $elenco_settori = getAllSettoriAdmin($cid);
 
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-primary rounded-pill fw-bold py-2">Conferma</button>
-                                <a href="admin_utenti.php" class="btn btn-outline-secondary rounded-pill py-2">Annulla</a>
+                                <a href="<?php echo BASE_URL; ?>frontend/admin_utenti.php" class="btn btn-outline-secondary rounded-pill py-2">Annulla</a>
                             </div>
                         </form>
                     </div>

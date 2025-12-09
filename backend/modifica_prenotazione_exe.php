@@ -24,26 +24,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['is_responsabile']))
 
     // VALIDAZIONE ORARIO
     if ($new_ora < 9 || $new_ora_fine > 24) {
-        header("Location: ../modifica_prenotazione.php?error=Orario non valido (9-24)&sala=" . urlencode($old_nome_sala) . "&data=$old_data&ora=$old_ora");
+        header("Location: " . BASE_URL . "frontend/modifica_prenotazione.php?error=Orario non valido (9-24)&sala=" . urlencode($old_nome_sala) . "&data=$old_data&ora=$old_ora");
         exit;
     }
 
     // CONTROLLO CONFLITTI 
     if (checkSovrapposizioneModifica($cid, $id_settore, $old_nome_sala, $new_data, $new_ora, $new_durata, $old_data, $old_ora)) {
-        header("Location: ../modifica_prenotazione.php?error=Conflitto! Sala già occupata nel nuovo orario.&sala=" . urlencode($old_nome_sala) . "&data=$old_data&ora=$old_ora");
+        header("Location: " . BASE_URL . "frontend/modifica_prenotazione.php?error=Conflitto! Sala già occupata nel nuovo orario.&sala=" . urlencode($old_nome_sala) . "&data=$old_data&ora=$old_ora");
         exit;
     }
     // AGGIORNAMENTO DB
     try {
         if (aggiornaPrenotazione($cid, $new_data, $new_ora, $new_durata, $new_attivita, $id_settore, $old_nome_sala, $old_data, $old_ora)) {
-            header("Location: ../gestione_prenotazioni.php?msg=Prenotazione aggiornata con successo!");
+            header("Location: " . BASE_URL . "frontend/gestione_prenotazioni.php?msg=Prenotazione aggiornata con successo!");
         } else {
             throw new Exception("Errore generico durante l'aggiornamento.");
         }
     } catch (Exception $e) {
-        header("Location: ../modifica_prenotazione.php?error=" . $e->getMessage() . "&sala=" . urlencode($old_nome_sala) . "&data=$old_data&ora=$old_ora");
+        header("Location: " . BASE_URL . "frontend/modifica_prenotazione.php?error=" . $e->getMessage() . "&sala=" . urlencode($old_nome_sala) . "&data=$old_data&ora=$old_ora");
     }
 } else {
-    header("Location: ../index.php");
+    header("Location: " . BASE_URL . "index.php");
     exit;
 }

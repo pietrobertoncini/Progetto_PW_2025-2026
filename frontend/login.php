@@ -32,7 +32,7 @@ require_once __DIR__ . '/../common/function.php';
                             </div>
                         <?php endif; ?>
 
-                        <form action="backend/login_exe.php" method="POST">
+                        <form action="<?php echo BASE_URL; ?>backend/login_exe.php" method="POST">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="email" name="email" required>
@@ -48,7 +48,7 @@ require_once __DIR__ . '/../common/function.php';
                     </div>
                 </div>
                 <div class="text-center mt-3">
-                    <p>Non hai un account? <a href="register.php">Registrati ora</a></p>
+                    <p>Non hai un account? <a href="<?php echo BASE_URL; ?>frontend/register.php">Registrati ora</a></p>
                 </div>
             </div>
         </div>

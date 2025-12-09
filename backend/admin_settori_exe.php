@@ -22,9 +22,9 @@ switch ($action) {
         $tipo = $_POST['tipo'] ?? '';
 
         if (creaSettore($cid, $nome, $tipo)) {
-            header("Location: ../admin_settori.php?msg=" . urlencode("Settore creato con successo!"));
+            header("Location: " . BASE_URL . "frontend/admin_settori.php?msg=" . urlencode("Settore creato con successo!"));
         } else {
-            header("Location: ../admin_settori.php?error=" . urlencode("Errore durante la creazione. Il nome potrebbe essere già in uso."));
+            header("Location: " . BASE_URL . "frontend/admin_settori.php?error=" . urlencode("Errore durante la creazione. Il nome potrebbe essere già in uso."));
         }
         break;
 
@@ -35,14 +35,14 @@ switch ($action) {
         $tipo = $_POST['tipo'] ?? '';
 
         if ($id_settore <= 0 || empty($nome) || empty($tipo)) {
-            header("Location: ../admin_settori.php?error=" . urlencode("Dati non validi per l'aggiornamento."));
+            header("Location: " . BASE_URL . "frontend/admin_settori.php?error=" . urlencode("Dati non validi per l'aggiornamento."));
             exit;
         }
 
         if (aggiornaSettore($cid, $id_settore, $nome, $tipo)) {
-            header("Location: ../admin_settori.php?msg=" . urlencode("Settore aggiornato con successo!"));
+            header("Location: " . BASE_URL . "frontend/admin_settori.php?msg=" . urlencode("Settore aggiornato con successo!"));
         } else {
-            header("Location: ../admin_settori.php?error=" . urlencode("Errore durante l'aggiornamento."));
+            header("Location: " . BASE_URL . "frontend/admin_settori.php?error=" . urlencode("Errore durante l'aggiornamento."));
         }
         break;
 
@@ -51,20 +51,20 @@ switch ($action) {
         $id_settore = intval($_POST['id_settore'] ?? 0);
 
         if ($id_settore <= 0) {
-            header("Location: ../admin_settori.php?error=" . urlencode("ID settore non valido."));
+            header("Location: " . BASE_URL . "frontend/admin_settori.php?error=" . urlencode("ID settore non valido."));
             exit;
         }
 
         if (eliminaSettore($cid, $id_settore)) {
-            header("Location: ../admin_settori.php?msg=" . urlencode("Settore eliminato con successo!"));
+            header("Location: " . BASE_URL . "frontend/admin_settori.php?msg=" . urlencode("Settore eliminato con successo!"));
         } else {
             // Messaggio specifico: l'errore più probabile è che ci sono utenti iscritti
-            header("Location: ../admin_settori.php?error=" . urlencode("Impossibile eliminare: ci sono utenti o sale associate a questo settore."));
+            header("Location: " . BASE_URL . "frontend/admin_settori.php?error=" . urlencode("Impossibile eliminare: ci sono utenti o sale associate a questo settore."));
         }
         break;
 
     default:
 
-        header("Location: ../admin_settori.php");
+        header("Location: " . BASE_URL . "frontend/admin_settori.php");
         exit;
 }

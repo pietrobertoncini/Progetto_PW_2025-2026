@@ -22,13 +22,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['is_responsabile']))
         salvaSalaConDotazioni($cid, $id_settore, $new_nome, $capienza, $dotazioni, $old_nome);
 
         $cid->commit();
-        header("Location: ../gestione_sale.php?msg=Sala aggiornata con successo!");
+        header("Location: " . BASE_URL . "frontend/gestione_sale.php?msg=Sala aggiornata con successo!");
 
     } catch (Exception $e) {
         $cid->rollback();
-        header("Location: ../modifica_sala.php?nome=".urlencode($old_nome)."&error=Errore: " . $e->getMessage());
+        header("Location: " . BASE_URL . "frontend/modifica_sala.php?nome=".urlencode($old_nome)."&error=Errore: " . $e->getMessage());
     }
 } else {
-    header("Location: ../index.php");
+    header("Location: " . BASE_URL . "index.php");
 }
 ?>

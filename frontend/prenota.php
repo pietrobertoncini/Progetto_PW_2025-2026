@@ -100,7 +100,7 @@ if ($data_scelta && $ora_scelta) {
 
         <div class="card shadow-sm mb-4 border-0 rounded-5 overflow-hidden">
             <div class="card-body bg-light p-4">
-                <form action="prenota.php" method="GET" class="row g-3 align-items-end">
+                <form action="<?php echo BASE_URL; ?>frontend/prenota.php" method="GET" class="row g-3 align-items-end">
                     <input type="hidden" name="week" value="<?php echo $lunedi_settimana; ?>">
 
                     <div class="col-md-8">
@@ -127,14 +127,14 @@ if ($data_scelta && $ora_scelta) {
 
         <?php if ($id_sala_selezionata && !$data_scelta): ?>
 
-            <form action="prenota.php" method="POST">
+            <form action="<?php echo BASE_URL; ?>frontend/prenota.php" method="POST">
                 <input type="hidden" name="sala" value="<?php echo htmlspecialchars($id_sala_selezionata); ?>">
                 <input type="hidden" name="week" value="<?php echo $lunedi_settimana; ?>">
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <a href="prenota.php?sala=<?php echo urlencode($id_sala_selezionata); ?>&week=<?php echo $prev_week; ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3 me-2">&larr; Settimana Prec.</a>
+                    <a href="<?php echo BASE_URL; ?>frontend/prenota.php?sala=<?php echo urlencode($id_sala_selezionata); ?>&week=<?php echo $prev_week; ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3 me-2">&larr; Settimana Prec.</a>
                     <h5 class="mb-0 fw-bold text-center">Settimana dal <?php echo date('d/m', strtotime($lunedi_settimana)); ?> al <?php echo date('d/m', strtotime($domenica_settimana)); ?></h5>
-                    <a href="prenota.php?sala=<?php echo urlencode($id_sala_selezionata); ?>&week=<?php echo $next_week; ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3 ms-2">Settimana Succ. &rarr;</a>
+                    <a href="<?php echo BASE_URL; ?>frontend/prenota.php?sala=<?php echo urlencode($id_sala_selezionata); ?>&week=<?php echo $next_week; ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3 ms-2">Settimana Succ. &rarr;</a>
                 </div>
 
                 <div class="alert alert-info py-2 small border-0 bg-info bg-opacity-10 rounded-4 mb-3">
@@ -211,7 +211,7 @@ if ($data_scelta && $ora_scelta) {
                         </span>
                     </div>
 
-                    <form action="backend/prenota_exe.php" method="POST">
+                    <form action="<?php echo BASE_URL; ?>backend/prenota_exe.php" method="POST">
                         <input type="hidden" name="id_settore" value="<?php echo $id_settore_utente; ?>">
                         <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($id_sala_selezionata); ?>">
                         <input type="hidden" name="data" value="<?php echo $data_scelta; ?>">
@@ -317,7 +317,7 @@ if ($data_scelta && $ora_scelta) {
                         </div>
 
                         <div class="d-flex justify-content-end gap-2">
-                            <a href="prenota.php?sala=<?php echo urlencode($id_sala_selezionata); ?>&week=<?php echo $lunedi_settimana; ?>" class="btn btn-secondary rounded-pill px-4">Annulla</a>
+                            <a href="<?php echo BASE_URL; ?>frontend/prenota.php?sala=<?php echo urlencode($id_sala_selezionata); ?>&week=<?php echo $lunedi_settimana; ?>" class="btn btn-secondary rounded-pill px-4">Annulla</a>
                             <button type="submit" class="btn btn-success px-4 fw-bold rounded-pill">Conferma Prenotazione</button>
                         </div>
                     </form>

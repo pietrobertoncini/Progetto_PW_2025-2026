@@ -42,7 +42,7 @@ try {
                             </div>
                         <?php endif; ?>
 
-                        <form action="backend/register_exe.php" method="POST" enctype="multipart/form-data">
+                        <form action="<?php echo BASE_URL; ?>backend/register_exe.php" method="POST" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="nome" class="form-label">Nome</label>

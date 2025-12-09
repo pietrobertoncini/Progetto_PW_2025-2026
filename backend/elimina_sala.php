@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['is_responsabile']))
         // Se nel DB "PRENOTAZIONE" ha ON DELETE NO ACTION, l'eliminazione fallirà se ci sono prenotazioni.
         
         if (eliminaSalaResponsabile($cid, $id_settore, $nome_sala)) {
-            header("Location: ../gestione_sale.php?msg=Sala eliminata definitivamente.");
+            header("Location: " . BASE_URL . "frontend/gestione_sale.php?msg=Sala eliminata definitivamente.");
         } else {
             throw new Exception("Impossibile eliminare la sala.");
         }
@@ -24,12 +24,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['is_responsabile']))
     } catch (mysqli_sql_exception $e) {
         // Codice 1451 = Cannot delete or update a parent row: a foreign key constraint fails
         if ($e->getCode() == 1451) {
-             header("Location: ../modifica_sala.php?nome=".urlencode($nome_sala)."&error=Impossibile eliminare: ci sono prenotazioni attive per questa sala.");
+             header("Location: " . BASE_URL . "frontend/modifica_sala.php?nome=".urlencode($nome_sala)."&error=Impossibile eliminare: ci sono prenotazioni attive per questa sala.");
         } else {
-             header("Location: ../modifica_sala.php?nome=".urlencode($nome_sala)."&error=Errore DB: " . $e->getMessage());
+             header("Location: " . BASE_URL . "frontend/modifica_sala.php?nome=".urlencode($nome_sala)."&error=Errore DB: " . $e->getMessage());
         }
     }
 } else {
-    header("Location: ../index.php");
+    header("Location: " . BASE_URL . "index.php");
 }
 ?>

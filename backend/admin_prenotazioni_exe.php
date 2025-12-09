@@ -21,18 +21,18 @@ if ($action === 'delete') {
     $ora = intval($_POST['ora'] ?? 0);
 
     if ($id_settore <= 0 || empty($nome_sala) || empty($data) || $ora <= 0) {
-        header("Location: ../admin_prenotazioni.php?error=" . urlencode("Dati prenotazione non validi."));
+        header("Location: " . BASE_URL . "frontend/admin_prenotazioni.php?error=" . urlencode("Dati prenotazione non validi."));
         exit;
     }
 
     if (eliminaPrenotazioneAdmin($cid, $id_settore, $nome_sala, $data, $ora)) {
-        header("Location: ../admin_prenotazioni.php?msg=" . urlencode("Prenotazione eliminata con successo."));
+        header("Location: " . BASE_URL . "frontend/admin_prenotazioni.php?msg=" . urlencode("Prenotazione eliminata con successo."));
     } else {
-        header("Location: ../admin_prenotazioni.php?error=" . urlencode("Errore durante l'eliminazione."));
+        header("Location: " . BASE_URL . "frontend/admin_prenotazioni.php?error=" . urlencode("Errore durante l'eliminazione."));
     }
     exit;
 }
 
-header("Location: ../admin_prenotazioni.php");
+header("Location: " . BASE_URL . "frontend/admin_prenotazioni.php");
 exit;
 ?>

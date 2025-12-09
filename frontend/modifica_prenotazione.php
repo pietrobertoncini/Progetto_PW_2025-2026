@@ -46,7 +46,7 @@ if (!$prenotazione) {
                 <div class="card shadow-sm border-0 rounded-3">
                     <div class="card-header bg-secondary bg-opacity-10 border-0 py-3 d-flex justify-content-between align-items-center">
                         <h4 class="mb-0 fw-bold text-dark">Gestisci Prenotazione</h4>
-                        <a href="gestione_prenotazioni.php" class="btn btn-sm btn-outline-secondary">Annulla</a>
+                        <a href="<?php echo BASE_URL; ?>frontend/gestione_prenotazioni.php" class="btn btn-sm btn-outline-secondary">Annulla</a>
                     </div>
                     
                     <div class="card-body p-4">
@@ -55,7 +55,7 @@ if (!$prenotazione) {
                             <div class="alert alert-danger"><?php echo htmlspecialchars($_GET['error']); ?></div>
                         <?php endif; ?>
 
-                        <form action="backend/modifica_prenotazione_exe.php" method="POST">
+                        <form action="<?php echo BASE_URL; ?>backend/modifica_prenotazione_exe.php" method="POST">
                             
                             <input type="hidden" name="old_nome_sala" value="<?php echo htmlspecialchars($nome_sala); ?>">
                             <input type="hidden" name="old_data" value="<?php echo $data_old; ?>">
@@ -109,7 +109,7 @@ if (!$prenotazione) {
                             <h5 class="text-danger fw-bold fs-6">Zona Pericolo</h5>
                             <p class="small text-muted mb-3">L'eliminazione è irreversibile e cancellerà anche tutti gli inviti associati.</p>
                             
-                            <form action="backend/elimina_prenotazione.php" method="POST" onsubmit="return confirm('Sei DAVVERO sicuro di voler eliminare questa prenotazione?');">
+                            <form action="<?php echo BASE_URL; ?>backend/elimina_prenotazione.php" method="POST" onsubmit="return confirm('Sei DAVVERO sicuro di voler eliminare questa prenotazione?');">
                                 <input type="hidden" name="id_settore" value="<?php echo $id_settore; ?>">
                                 <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($nome_sala); ?>">
                                 <input type="hidden" name="data" value="<?php echo $data_old; ?>">

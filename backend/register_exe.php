@@ -22,19 +22,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['ruolo'] = $_POST["ruolo"];
         $_SESSION['is_responsabile'] = FALSE; 
 
-        header('Location: ../index.php');
+        header('Location: " . BASE_URL . "index.php');
         exit;
 
     } catch (mysqli_sql_exception $e) {
         if ($e->getCode() == 1062) {
-            header('Location: ../register.php?error=Email gia in uso.');
+            header('Location: " . BASE_URL . "frontend/register.php?error=Email gia in uso.');
         } else {
-            header('Location: ../register.php?error=Errore del database: ' . $e->getMessage());
+            header('Location: " . BASE_URL . "frontend/register.php?error=Errore del database: ' . $e->getMessage());
         }
         exit;
     }
 } else {
-    header('Location: ../register.php');
+    header('Location: " . BASE_URL . "frontend/register.php');
     exit;
 }
 ?>

@@ -5,7 +5,7 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] != "POST" || !isset($_SESSION['id_utente'])) {
-    header("Location: ../login.php");
+    header("Location: " . BASE_URL . "frontend/login.php");
     exit;
 }
 require_once __DIR__ . '/../common/setup.php';
@@ -44,21 +44,21 @@ try {
     $_SESSION['nome'] = $nome;
             
     // Torniamo al profilo con un messaggio di successo
-    header("Location: ../profilo.php?msg=Profilo aggiornato con successo!");
+    header("Location: " . BASE_URL . "frontend/profilo.php?msg=Profilo aggiornato con successo!");
     exit;
 
 } catch (mysqli_sql_exception $e) {
      // Gestione errori specifici (es. email duplicata)
     if ($e->getCode() == 1062) {
-        header("Location: ../modifica_profilo.php?error=Email già utilizzata da un altro utente.");
+        header("Location: " . BASE_URL . "frontend/modifica_profilo.php?error=Email già utilizzata da un altro utente.");
     } else {
         // Errore generico del database
-        header("Location: ../modifica_profilo.php?error=Errore del sistema: " . $e->getMessage());
+        header("Location: " . BASE_URL . "frontend/modifica_profilo.php?error=Errore del sistema: " . $e->getMessage());
     }
     exit;
 } catch (Exception $e) {
     // Altri errori generici
-    header("Location: ../modifica_profilo.php?error=Si è verificato un errore imprevisto.");
+    header("Location: " . BASE_URL . "frontend/modifica_profilo.php?error=Si è verificato un errore imprevisto.");
     exit;
 }
 ?>

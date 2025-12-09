@@ -14,14 +14,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['is_responsabile']))
 
     try {
         if (eliminaPrenotazioneResponsabile($cid, $id_settore, $nome_sala, $data, $ora)) {
-            header("Location: ../gestione_prenotazioni.php?msg=Prenotazione eliminata definitivamente.");
+            header("Location: " . BASE_URL . "frontend/gestione_prenotazioni.php?msg=Prenotazione eliminata definitivamente.");
         } else {
             throw new Exception("Impossibile eliminare la prenotazione.");
         }
     } catch (Exception $e) {
         // Se c'è un errore, torniamo alla pagina di modifica
-        header("Location: ../modifica_prenotazione.php?error=" . $e->getMessage() . "&sala=" . urlencode($nome_sala) . "&data=$data&ora=$ora");
+        header("Location: " . BASE_URL . "frontend/modifica_prenotazione.php?error=" . $e->getMessage() . "&sala=" . urlencode($nome_sala) . "&data=$data&ora=$ora");
     }
 } else {
-    header("Location: ../index.php");
+    header("Location: " . BASE_URL . "index.php");
 }

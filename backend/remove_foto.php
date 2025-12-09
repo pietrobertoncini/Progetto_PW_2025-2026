@@ -9,7 +9,7 @@ require_once __DIR__ . '/../common/function.php';
 
 // Sicurezza
 if (!isset($_SESSION['id_utente'])) {
-    header("Location: ../login.php");
+    header("Location: " . BASE_URL . "frontend/login.php");
     exit;
 }
 
@@ -34,14 +34,14 @@ if ($row && !empty($row['foto'])) {
 
     if ($stmtUpdate->execute()) {
         // Successo
-        header("Location: ../modifica_profilo.php?msg=Foto rimossa correttamente");
+        header("Location: " . BASE_URL . "frontend/modifica_profilo.php?msg=Foto rimossa correttamente");
     } else {
         // Errore SQL
-        header("Location: ../modifica_profilo.php?error=Errore durante la rimozione");
+        header("Location: " . BASE_URL . "frontend/modifica_profilo.php?error=Errore durante la rimozione");
     }
 
     $stmtUpdate->close();
 } else {
-    header("Location: ../modifica_profilo.php?msg=Foto eliminata con successo");
+    header("Location: " . BASE_URL . "frontend/modifica_profilo.php?msg=Foto eliminata con successo");
 }
 exit;

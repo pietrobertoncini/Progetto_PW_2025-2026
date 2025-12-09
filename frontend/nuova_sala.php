@@ -33,7 +33,7 @@ $dotazioni_disponibili = getAllDotazioni($cid);
                             <div class="alert alert-danger"><?php echo htmlspecialchars($_GET['error']); ?></div>
                         <?php endif; ?>
                         
-                        <form action="backend/nuova_sala_exe.php" method="POST">
+                        <form action="<?php echo BASE_URL; ?>backend/nuova_sala_exe.php" method="POST">
                             
                             <div class="mb-3">
                                 <label for="nome_sala" class="form-label fw-bold">Nome Sala</label>
@@ -61,7 +61,7 @@ $dotazioni_disponibili = getAllDotazioni($cid);
 
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-primary btn-lg">Crea Sala</button>
-                                <a href="gestione_sale.php" class="btn btn-outline-secondary">Annulla</a>
+                                <a href="<?php echo BASE_URL; ?>frontend/gestione_sale.php" class="btn btn-outline-secondary">Annulla</a>
                             </div>
 
                         </form>

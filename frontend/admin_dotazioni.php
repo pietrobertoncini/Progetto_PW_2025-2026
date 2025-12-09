@@ -62,7 +62,7 @@ $elenco_dotazioni = getAllDotazioni($cid);
                     </div>
                     <div class="card-body p-4">
 
-                        <form action="backend/admin_dotazioni_exe.php" method="POST">
+                        <form action="<?php echo BASE_URL; ?>backend/admin_dotazioni_exe.php" method="POST">
                             <input type="hidden" name="action" value="<?php echo $is_editing ? 'update' : 'create'; ?>">
 
                             <?php if ($is_editing): ?>
@@ -87,7 +87,7 @@ $elenco_dotazioni = getAllDotazioni($cid);
 
                             <?php if ($is_editing): ?>
                                 <div class="text-center mt-3">
-                                    <a href="admin_dotazioni.php" class="btn btn-outline-secondary text-decoration-none small">
+                                    <a href="<?php echo BASE_URL; ?>frontend/admin_dotazioni.php" class="btn btn-outline-secondary text-decoration-none small">
                                         <i class="bi bi-x-circle"></i> Annulla Modifica
                                     </a>
                                 </div>
@@ -119,12 +119,12 @@ $elenco_dotazioni = getAllDotazioni($cid);
                                             </td>
                                             <td class="text-end pe-4">
                                                 <div class="d-flex justify-content-end gap-2">
-                                                    <a href="admin_dotazioni.php?edit=<?php echo $d['id_dotazione']; ?>"
+                                                    <a href="<?php echo BASE_URL; ?>frontend/admin_dotazioni.php?edit=<?php echo $d['id_dotazione']; ?>"
                                                         class="btn btn-outline-info btn-sm rounded-pill" title="Modifica">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
 
-                                                    <form action="backend/admin_dotazioni_exe.php" method="POST" onsubmit="return confirm('Vuoi eliminare \'<?php echo htmlspecialchars($d['tipo']); ?>\' dal catalogo?');">
+                                                    <form action="<?php echo BASE_URL; ?>backend/admin_dotazioni_exe.php" method="POST" onsubmit="return confirm('Vuoi eliminare \'<?php echo htmlspecialchars($d['tipo']); ?>\' dal catalogo?');">
                                                         <input type="hidden" name="action" value="delete">
                                                         <input type="hidden" name="id_dotazione" value="<?php echo $d['id_dotazione']; ?>">
                                                         <button type="submit" class="btn btn-outline-danger btn-sm rounded-circle" title="Elimina">

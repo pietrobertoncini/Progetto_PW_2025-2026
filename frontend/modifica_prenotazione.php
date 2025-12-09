@@ -34,7 +34,7 @@ if (!$prenotazione) {
 
 <!DOCTYPE html>
 <html lang="it">
-<?php require ROOT_PATH . "/common/header.html" ?>
+<?php require ROOT_PATH . "/common/header.php" ?>
 
 <body>
     <?php include ROOT_PATH . '/common/navbar.php'; ?>

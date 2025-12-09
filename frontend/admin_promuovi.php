@@ -33,7 +33,7 @@ $elenco_settori = getAllSettoriAdmin($cid);
 
 <!DOCTYPE html>
 <html lang="it" class="h-100">
-<?php require ROOT_PATH . "/common/header.html" ?>
+<?php require ROOT_PATH . "/common/header.php" ?>
 
 <body class="d-flex flex-column h-100">
     <?php include ROOT_PATH . '/common/navbar.php'; ?>

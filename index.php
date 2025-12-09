@@ -28,8 +28,8 @@ require_once __DIR__ . '/common/setup.php';
 
                     <div class="d-flex justify-content-center gap-3">
                         <?php if (!isset($_SESSION['id_utente'])): ?>
-                            <a href="login.php" class="btn btn-primary btn-lg px-4 shadow-sm fw-bold">Accedi</a>
-                            <a href="register.php" class="btn btn-outline-light btn-lg px-4 fw-bold">Registrati</a>
+                            <a href="<?php echo BASE_URL; ?>frontend/login.php" class="btn btn-primary btn-lg px-4 shadow-sm fw-bold">Accedi</a>
+                            <a href="<?php echo BASE_URL; ?>frontendregister.php" class="btn btn-outline-light btn-lg px-4 fw-bold">Registrati</a>
                         <?php endif; ?>
                         
                         </div>

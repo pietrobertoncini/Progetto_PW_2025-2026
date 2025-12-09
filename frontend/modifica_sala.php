@@ -1,8 +1,9 @@
 <?php
 
 if (session_status() == PHP_SESSION_NONE) session_start();
-require_once 'common/setup.php';
-require_once 'common/function.php';
+require_once __DIR__ . '/../common/setup.php';
+require_once __DIR__ . '/../common/function.php';
+
 
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
     header('Location: index.php'); exit;
@@ -27,9 +28,9 @@ $tutte_dotazioni = getAllDotazioni($cid);
 
 <!DOCTYPE html>
 <html lang="it">
-<?php require "common/header.html" ?>
+<?php require ROOT_PATH . "/common/header.html" ?>
 <body>
-    <?php include 'common/navbar.php'; ?>
+    <?php include ROOT_PATH . '/common/navbar.php'; ?>
 
     <div class="container mt-5 mb-5">
         <div class="row justify-content-center">
@@ -95,6 +96,6 @@ $tutte_dotazioni = getAllDotazioni($cid);
             </div>
         </div>
     </div>
-    <?php include 'common/footer.html'; ?>
+    <?php include ROOT_PATH . '/common/footer.html'; ?>
 </body>
 </html>

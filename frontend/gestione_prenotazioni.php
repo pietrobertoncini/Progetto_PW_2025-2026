@@ -4,8 +4,9 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-require_once __DIR__ . '/common/setup.php';
-require_once __DIR__ . '/common/function.php';
+require_once __DIR__ . '/../common/setup.php';
+require_once __DIR__ . '/../common/function.php';
+
 
 // SICUREZZA
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
@@ -25,11 +26,11 @@ $prenotazioni = getPrenotazioniByOrganizzatore($cid, $id_settore, $id_utente_log
 
 <!DOCTYPE html>
 <html lang="it">
-<?php require "common/header.html" ?>
+<?php require ROOT_PATH . "/common/header.html" ?>
 
 <body>
 
-    <?php include 'common/navbar.php'; ?>
+    <?php include ROOT_PATH . '/common/navbar.php'; ?>
 
     <div class="container mt-5 mb-5">
         
@@ -117,6 +118,6 @@ $prenotazioni = getPrenotazioniByOrganizzatore($cid, $id_settore, $id_utente_log
         
     </div>
 
-    <?php require "common/footer.html"; ?>
+    <?php require ROOT_PATH . "/common/footer.html"; ?>
 </body>
 </html>

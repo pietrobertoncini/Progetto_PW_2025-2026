@@ -8,8 +8,8 @@ if (!isset($_SESSION["id_utente"])) {
     exit;
 }
 
-require_once 'common/setup.php';
-require_once 'common/function.php';
+require_once __DIR__ . '/../common/setup.php';
+require_once __DIR__ . '/../common/function.php';
 
 $id_utente_loggato = $_SESSION['id_utente'];
 
@@ -22,11 +22,11 @@ if (!$dati_utente) {
 
 <!DOCTYPE html>
 <html lang="it" class="h-100">
-<?php require "common/header.html" ?>
+<?php require ROOT_PATH . "/common/header.html" ?>
 
 <body>
 
-    <?php include 'common/navbar.php'; ?>
+    <?php include ROOT_PATH . '/common/navbar.php'; ?>
 
     <div class="container pt-4 mt-4 mb-5">
 
@@ -121,7 +121,7 @@ if (!$dati_utente) {
         </div>
     </div>
 
-    <?php include 'common/footer.html'; ?>
+    <?php include ROOT_PATH . '/common/footer.html'; ?>
 </body>
 
 </html>

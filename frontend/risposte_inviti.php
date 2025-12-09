@@ -10,8 +10,8 @@ if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
     exit;
 }
 
-require_once __DIR__ . '/common/setup.php';
-require_once __DIR__ . '/common/function.php';
+require_once __DIR__ . '/../common/setup.php';
+require_once __DIR__ . '/../common/function.php';
 
 $id_responsabile = $_SESSION['id_utente'];
 
@@ -21,10 +21,10 @@ $risposte = getRisposteInvitiByResponsabile($cid, $id_responsabile);
 
 <!DOCTYPE html>
 <html lang="it">
-<?php require "common/header.html" ?>
+<?php require ROOT_PATH . "/common/header.html" ?>
 
 <body>
-    <?php include 'common/navbar.php'; ?>
+    <?php include ROOT_PATH . '/common/navbar.php'; ?>
 
     <div class="container mt-5 mb-5 pt-4">
         <div class="mb-4">
@@ -105,6 +105,6 @@ $risposte = getRisposteInvitiByResponsabile($cid, $id_responsabile);
         </div>
     </div>
 
-    <?php include 'common/footer.html'; ?>
+    <?php include ROOT_PATH . '/common/footer.html'; ?>
 </body>
 </html>

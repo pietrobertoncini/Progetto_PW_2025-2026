@@ -1,5 +1,11 @@
 <?php
 
+// definiamo la root
+define('ROOT_PATH', dirname(__DIR__));
+
+// definiamo il path
+define('BASE_URL', '/my_dir/project/');
+
 $hostname = "localhost";
 $username = "root";
 $password = "";

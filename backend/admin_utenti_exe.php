@@ -3,8 +3,8 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-require_once '../common/setup.php';
-require_once '../common/function.php';
+require_once __DIR__ . '/../common/setup.php';
+require_once __DIR__ . '/../common/function.php';
 
 // Sicurezza: Solo Admin
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_admin'])) { die("Accesso negato."); }

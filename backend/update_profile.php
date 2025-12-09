@@ -8,9 +8,8 @@ if ($_SERVER["REQUEST_METHOD"] != "POST" || !isset($_SESSION['id_utente'])) {
     header("Location: ../login.php");
     exit;
 }
-
-require_once '../common/setup.php';
-require_once '../common/function.php';
+require_once __DIR__ . '/../common/setup.php';
+require_once __DIR__ . '/../common/function.php';
 
 // Recupero dati dal POST e dalla Sessione
 $id_utente = $_SESSION['id_utente'];

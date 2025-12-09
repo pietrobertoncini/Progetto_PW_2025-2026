@@ -7,14 +7,17 @@ if (isset($_SESSION['id_utente'])) {
     header('Location: index.php');
     exit;
 }
+
+require_once __DIR__ . '/../common/setup.php';
+require_once __DIR__ . '/../common/function.php';
 ?>
 
 <!DOCTYPE html>
 <html lang="it">
-<?php require "common/header.html" ?>
+<?php require ROOT_PATH . "/common/header.html" ?>
 <body>
 
-    <?php include 'common/navbar.php'; ?>
+    <?php include ROOT_PATH . '/common/navbar.php'; ?>
 
     <div class="container mt-5">
         <div class="row justify-content-center">
@@ -52,7 +55,7 @@ if (isset($_SESSION['id_utente'])) {
     </div>
 
     <?php 
-    require "common/footer.html";
+    require ROOT_PATH . "/common/footer.html";
     ?>
 
 </body>

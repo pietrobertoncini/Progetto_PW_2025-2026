@@ -10,8 +10,8 @@ if (!isset($_SESSION['id_utente'])) {
     exit;
 }
 
-require_once __DIR__ . '/common/setup.php';
-require_once __DIR__ . '/common/function.php';
+require_once __DIR__ . '/../common/setup.php';
+require_once __DIR__ . '/../common/function.php';
 
 // Recupero dati
 $impegni_futuri = [];
@@ -22,10 +22,10 @@ if (function_exists('getImpegniFuturi')) {
 
 <!DOCTYPE html>
 <html lang="it">
-<?php require "common/header.html" ?>
+<?php require ROOT_PATH . "/common/header.html" ?>
 
 <body class="d-flex flex-column h-100">
-    <?php include 'common/navbar.php'; ?>
+    <?php include ROOT_PATH . '/common/navbar.php'; ?>
 
     <div class="flex-shrink-0 container py-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -92,7 +92,7 @@ if (function_exists('getImpegniFuturi')) {
         </div>
     </div>
 
-    <?php require "common/footer.html"; ?>
+    <?php require ROOT_PATH . "/common/footer.html"; ?>
 </body>
 
 </html>

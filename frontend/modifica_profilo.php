@@ -3,8 +3,8 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-require_once 'common/setup.php';
-require_once 'common/function.php';
+require_once __DIR__ . '/../common/setup.php';
+require_once __DIR__ . '/../common/function.php';
 
 // Controllo login
 if (!isset($_SESSION['id_utente'])) {
@@ -18,10 +18,10 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
 
 <!DOCTYPE html>
 <html lang="it">
-<?php require "common/header.html" ?>
+<?php require ROOT_PATH . "/common/header.html" ?>
 
 <body>
-    <?php include 'common/navbar.php'; ?>
+    <?php include ROOT_PATH . '/common/navbar.php'; ?>
 
     <div class="container mt-5 mb-5">
         <div class="row justify-content-center">
@@ -132,7 +132,7 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
         </div>
     </div>
 
-    <?php include 'common/footer.html'; ?>
+    <?php include ROOT_PATH . '/common/footer.html'; ?>
 
     <script>
         function previewFoto(input) {

@@ -2,15 +2,18 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+
+require_once __DIR__ . '/common/setup.php';
+
 ?>
 
 <!DOCTYPE html>
 <html lang="it">
-<?php require "common/header.html" ?>
+<?php require ROOT_PATH . "/common/header.html" ?>
 
 <body>
 
-    <?php include 'common/navbar.php'; ?>
+    <?php include ROOT_PATH . '/common/navbar.php'; ?>
 
     <header class="hero-section text-center text-white d-flex align-items-center justify-content-center">
         <div class="container">
@@ -173,7 +176,7 @@ if (session_status() == PHP_SESSION_NONE) {
 
 
     <?php
-    require "common/footer.html";
+    require ROOT_PATH . "/common/footer.html";
     ?>
 
 </body>

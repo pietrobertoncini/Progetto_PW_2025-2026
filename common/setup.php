@@ -13,7 +13,7 @@ $projectRoot = str_replace('\\', '/', ROOT_PATH);
 $folder = str_replace($docRoot, '', $projectRoot);
 
 // definiamo URL base
-define('BASE_URL', $folder, '/');
+define('BASE_URL', $folder . '/');
 
 $hostname = "localhost";
 $username = "root";

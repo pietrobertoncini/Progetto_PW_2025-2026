@@ -94,20 +94,17 @@ $elenco_settori = getAllSettoriAdmin($cid);
                                 </select>
                             </div>
 
-                            <div class="d-grid">
-                                <button type="submit" class="btn rounded-pill <?php echo $is_editing ? 'btn-warning text-dark' : 'btn-primary'; ?> btn-lg fw-bold shadow-sm">
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-lg rounded-pill fw-bold shadow-sm <?php echo $is_editing ? 'btn-warning text-dark' : 'btn-primary'; ?>">
                                     <i class="bi <?php echo $is_editing ? 'bi-save' : 'bi-plus-lg'; ?> me-2"></i>
                                     <?php echo $is_editing ? 'Salva Modifiche' : 'Crea Settore'; ?>
                                 </button>
+
+                                <?php if ($is_editing): ?>
+                                    <a href="<?php echo BASE_URL; ?>frontend/admin_settori.php" class="btn btn-outline-secondary rounded-pill">Annulla</a>
+                                <?php endif; ?>
                             </div>
 
-                            <?php if ($is_editing): ?>
-                                <div class="text-center mt-3">
-                                    <a href="<?php echo BASE_URL; ?>frontend/admin_settori.php" class="btn btn-outline-secondary text-decoration-none small">
-                                        <i class="bi bi-x-circle"></i> Annulla Modifica
-                                    </a>
-                                </div>
-                            <?php endif; ?>
 
                         </form>
                     </div>

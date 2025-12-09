@@ -78,6 +78,9 @@ if (isset($_SESSION['id_utente'])) {
               <a class="nav-link" href="<?php echo BASE_URL; ?>frontend/admin_settori.php">Settori</a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" href="<?php echo BASE_URL; ?>frontend/admin_sale.php">Sale</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="<?php echo BASE_URL; ?>frontend/admin_utenti.php">Utenti</a>
             </li>
             <li class="nav-item">

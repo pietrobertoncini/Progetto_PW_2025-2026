@@ -180,6 +180,29 @@ function eliminaSettore($cid, $id)
     }
 }
 
+// Sale
+function creaSala($cid, $id_settore, $nome, $capienza) {
+    $stmt = $cid->prepare("INSERT INTO SALA (id_settore, nome_sala, capienza_max) VALUES (?, ?, ?)");
+    $stmt->bind_param("isi", $id_settore, $nome, $capienza);
+    return $stmt->execute();
+}
+
+function aggiornaSala($cid, $old_id_settore, $old_nome, $new_id_settore, $new_nome, $new_capienza) {
+    // Aggiorniamo anche id_settore e nome_sala che sono chiavi primarie
+    $sql = "UPDATE SALA 
+            SET id_settore = ?, nome_sala = ?, capienza_max = ? 
+            WHERE id_settore = ? AND nome_sala = ?";
+    $stmt = $cid->prepare($sql);
+    $stmt->bind_param("isisis", $new_id_settore, $new_nome, $new_capienza, $old_id_settore, $old_nome);
+    return $stmt->execute();
+}
+
+function eliminaSala($cid, $id_settore, $nome) {
+    $stmt = $cid->prepare("DELETE FROM SALA WHERE id_settore = ? AND nome_sala = ?");
+    $stmt->bind_param("is", $id_settore, $nome);
+    return $stmt->execute();
+}
+
 // Utenti
 function getAllUtentiAdmin($cid)
 {
@@ -293,12 +316,12 @@ function eliminaDotazione($cid, $id)
 }
 
 
-// FUNZIONI PER RESPONSABILE E GESTIONE SALE    
+// FUNZIONI PER RESPONSABILE E GESTIONE SALE 
 
-// Recupera TUTTE le sale con il nome del settore (Per gestione_sale.php Admin)
+// Recupera TUTTE le sale con il nome del settore 
 function getAllSaleGlobal($cid)
 {
-    $sql = "SELECT S.*, SETT.nome AS nome_settore 
+    $sql = "SELECT S.*, SETT.nome AS nome_settore, SETT.tipo
              FROM SALA S 
              JOIN SETTORE SETT ON S.id_settore = SETT.id_settore 
              ORDER BY SETT.nome ASC, S.nome_sala ASC";

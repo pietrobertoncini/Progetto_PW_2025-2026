@@ -56,7 +56,7 @@ $elenco_dotazioni = getAllDotazioni($cid);
 
             <div class="col-lg-4">
                 <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-                    <div class="card-header py-3 text-dark fw-bold <?php echo $is_editing ? 'bg-info bg-opacity-25' : 'bg-warning bg-opacity-25'; ?>">
+                    <div class="card-header py-3 text-dark fw-bold <?php echo $is_editing ? 'bg-warning text-dark' : 'bg-primary text-white'; ?>">
                         <i class="bi <?php echo $is_editing ? 'bi-pencil-square' : 'bi-plus-lg'; ?> me-2"></i>
                         <?php echo $is_editing ? 'Modifica Dotazione' : 'Nuova Dotazione'; ?>
                     </div>
@@ -79,19 +79,16 @@ $elenco_dotazioni = getAllDotazioni($cid);
                                 </div>
                             </div>
 
-                            <div class="d-grid">
-                                <button type="submit" class="btn <?php echo $is_editing ? 'btn-info text-white' : 'btn-warning text-dark'; ?> btn-lg rounded-pill fw-bold shadow-sm">
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn <?php echo $is_editing ? 'btn-warning text-dark' : 'btn-primary'; ?> btn-lg rounded-pill fw-bold shadow-sm">
+                                    <i class="bi <?php echo $is_editing ? 'bi-save' : 'bi-plus-lg'; ?> me-2"></i>
                                     <?php echo $is_editing ? 'Salva Modifiche' : 'Aggiungi al Catalogo'; ?>
                                 </button>
-                            </div>
 
-                            <?php if ($is_editing): ?>
-                                <div class="text-center mt-3">
-                                    <a href="<?php echo BASE_URL; ?>frontend/admin_dotazioni.php" class="btn btn-outline-secondary text-decoration-none small">
-                                        <i class="bi bi-x-circle"></i> Annulla Modifica
-                                    </a>
-                                </div>
-                            <?php endif; ?>
+                                <?php if ($is_editing): ?>
+                                    <a href="<?php echo BASE_URL; ?>frontend/admin_dotazioni.php" class="btn btn-outline-secondary rounded-pill">Annulla</a>
+                                <?php endif; ?>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -120,7 +117,7 @@ $elenco_dotazioni = getAllDotazioni($cid);
                                             <td class="text-end pe-4">
                                                 <div class="d-flex justify-content-end gap-2">
                                                     <a href="<?php echo BASE_URL; ?>frontend/admin_dotazioni.php?edit=<?php echo $d['id_dotazione']; ?>"
-                                                        class="btn btn-outline-info btn-sm rounded-pill" title="Modifica">
+                                                        class="btn btn-outline-warning btn-sm rounded-pill" title="Modifica">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
 

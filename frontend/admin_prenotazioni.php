@@ -29,7 +29,6 @@ $elenco_prenotazioni = getAllPrenotazioniAdmin($cid);
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h2>Prenotazioni Globali</h2>
-                <p class="text-muted small mb-0">Panoramica completa di tutte le attività in tutte le sale.</p>
             </div>
         </div>
 

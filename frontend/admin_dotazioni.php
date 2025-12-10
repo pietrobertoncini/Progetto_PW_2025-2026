@@ -56,7 +56,7 @@ $elenco_dotazioni = getAllDotazioni($cid);
 
             <div class="col-lg-4">
                 <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-                    <div class="card-header py-3 text-dark fw-bold <?php echo $is_editing ? 'bg-warning text-dark' : 'bg-primary text-white'; ?>">
+                    <div class="card-header border-0 py-3 fw-bold <?php echo $is_editing ? 'bg-warning text-dark' : 'bg-primary text-white'; ?>">
                         <i class="bi <?php echo $is_editing ? 'bi-pencil-square' : 'bi-plus-lg'; ?> me-2"></i>
                         <?php echo $is_editing ? 'Modifica Dotazione' : 'Nuova Dotazione'; ?>
                     </div>

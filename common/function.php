@@ -208,7 +208,9 @@ function eliminaSala($cid, $id_settore, $nome) {
 // Utenti
 function getAllUtentiAdmin($cid)
 {
-    $sql = "SELECT U.*, S.nome AS nome_settore FROM UTENTE U LEFT JOIN SETTORE S ON U.id_settore = S.id_settore ORDER BY U.is_admin DESC, U.is_responsabile DESC, U.cognome ASC";
+    $sql = "SELECT U.*, S.nome AS nome_settore 
+    FROM UTENTE U LEFT JOIN SETTORE S ON U.id_settore = S.id_settore 
+    ORDER BY U.is_admin DESC, U.is_responsabile DESC, U.cognome ASC";
     return $cid->query($sql)->fetch_all(MYSQLI_ASSOC);
 }
 
@@ -315,6 +317,35 @@ function eliminaDotazione($cid, $id)
     } catch (Exception $e) {
         return false;
     }
+}
+
+function getPrenotazioniGriglia($cid, $id_settore, $nome_sala, $data_inizio, $data_fine) {
+    $prenotazioni_griglia = [];
+    
+    $sql = "SELECT P.*, U.nome as nome_org, U.cognome as cognome_org 
+            FROM PRENOTAZIONE P
+            JOIN UTENTE U ON P.id_organizzatore = U.id_utente
+            WHERE P.id_settore = ? AND P.nome_sala = ? 
+            AND P.data BETWEEN ? AND ?";
+    
+    $stmt = $cid->prepare($sql);
+    $stmt->bind_param("isss", $id_settore, $nome_sala, $data_inizio, $data_fine);
+    $stmt->execute();
+    $res = $stmt->get_result();
+
+    // Mappiamo i risultati in un array [data][ora] => info
+    while ($row = $res->fetch_assoc()) {
+        for ($i = 0; $i < $row['durata']; $i++) {
+            $h = $row['ora'] + $i;
+            
+            $prenotazioni_griglia[$row['data']][$h] = [
+                'dati' => $row,      
+                'is_start' => ($i === 0)
+            ];
+        }
+    }
+    
+    return $prenotazioni_griglia;
 }
 
 

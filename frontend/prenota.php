@@ -16,11 +16,11 @@ $id_utente = $_SESSION['id_utente'];
 $dati_utente = datiUtenteCompleti($cid, $id_utente);
 $id_settore_utente = $dati_utente['id_settore'];
 
-// --- PARAMETRI URL ---
+// PARAMETRI URL
 $id_sala_selezionata = isset($_REQUEST['sala']) ? $_REQUEST['sala'] : null;
 $data_rif = isset($_REQUEST['week']) ? $_REQUEST['week'] : date('Y-m-d');
 
-// --- LOGICA POST-SELEZIONE ---
+// LOGICA POST-SELEZIONE
 $data_scelta = null;
 $ora_scelta = null;
 $durata_calcolata = 1;
@@ -38,17 +38,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['slots'])) {
     }
 }
 
-// --- RECUPERO SALE ---
+// RECUPERO SALE
 $sale = getSaleBySettore($cid, $id_settore_utente);
 
-// --- CALCOLO SETTIMANA ---
+// CALCOLO SETTIMANA
 $timestamp_rif = strtotime($data_rif);
 $lunedi_settimana = date('Y-m-d', strtotime('monday this week', $timestamp_rif));
 $domenica_settimana = date('Y-m-d', strtotime('sunday this week', $timestamp_rif));
 $prev_week = date('Y-m-d', strtotime($lunedi_settimana . ' -7 days'));
 $next_week = date('Y-m-d', strtotime($lunedi_settimana . ' +7 days'));
 
-// --- LOGICA CALENDARIO ---
+// LOGICA CALENDARIO
 $occupied = [];
 if ($id_sala_selezionata) {
     $res_p = getOccupazioniSettimana($cid, $id_sala_selezionata, $id_settore_utente, $lunedi_settimana, $domenica_settimana);

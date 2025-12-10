@@ -60,9 +60,6 @@ if (isset($_SESSION['id_utente'])) {
               </li>
 
           <?php endif; ?>
-          <li class="nav-item">
-            <a class="nav-link" href="<?php echo BASE_URL; ?>frontend/profilo.php">Profilo</a>
-          </li>
           
           <?php if (isset($_SESSION['is_responsabile']) && $_SESSION['is_responsabile']): ?>
             <li class="nav-item">
@@ -84,15 +81,18 @@ if (isset($_SESSION['id_utente'])) {
               <a class="nav-link" href="<?php echo BASE_URL; ?>frontend/admin_sale.php">Sale</a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" href="<?php echo BASE_URL; ?>frontend/admin_dotazioni.php">Dotazioni</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="<?php echo BASE_URL; ?>frontend/admin_utenti.php">Utenti</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="<?php echo BASE_URL; ?>frontend/admin_prenotazioni.php">Prenotazioni</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="<?php echo BASE_URL; ?>frontend/admin_dotazioni.php">Dotazioni</a>
-            </li>
           <?php endif; ?>
+          <li class="nav-item">
+            <a class="nav-link" href="<?php echo BASE_URL; ?>frontend/profilo.php">Profilo</a>
+          </li>
         <?php endif; ?>
       </ul>
       

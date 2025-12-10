@@ -8,7 +8,7 @@ require_once __DIR__ . '/../common/function.php';
 
 
 if (isset($_SESSION['id_utente'])) {
-    header('Location: index.php');
+    header('Location: ' . BASE_URL . 'index.php');
     exit;
 }
 

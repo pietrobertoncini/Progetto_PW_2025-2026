@@ -95,7 +95,9 @@ function getInvitiPendenti($cid, $id_utente)
                  AND I.ora = P.ora
             JOIN SALA S ON P.id_settore = S.id_settore AND P.nome_sala = S.nome_sala
             JOIN UTENTE U ON P.id_organizzatore = U.id_utente
-            WHERE I.id_utente = ? AND I.stato = 'invitato'
+            WHERE I.id_utente = ? 
+            AND I.stato = 'invitato'
+            AND P.data >= CURDATE()
             ORDER BY I.data ASC, I.ora ASC";
     $stmt = $cid->prepare($sql);
     $stmt->bind_param("i", $id_utente);

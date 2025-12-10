@@ -8,7 +8,7 @@ require_once __DIR__ . '/../common/function.php';
 
 // Controllo Accesso
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
-    header('Location: index.php');
+    header('Location: ' . BASE_URL . 'frontend/index.php');
     exit;
 }
 

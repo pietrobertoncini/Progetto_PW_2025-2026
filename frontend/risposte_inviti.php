@@ -6,7 +6,7 @@ if (session_status() == PHP_SESSION_NONE) {
 
 //  Controllo Sicurezza
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
-    header('Location: index.php');
+    header('Location: ' . BASE_URL . 'index.php');
     exit;
 }
 

@@ -8,7 +8,7 @@ require_once __DIR__ . '/../common/function.php';
 
 // Controllo login
 if (!isset($_SESSION['id_utente'])) {
-    header("Location: login.php");
+    header("Location: " . BASE_URL . "frontend/login.php");
     exit;
 }
 

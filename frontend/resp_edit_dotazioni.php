@@ -15,7 +15,7 @@ if (!isset($_SESSION['is_responsabile'])) {
 
 $nome_sala = isset($_GET['sala']) ? urldecode($_GET['sala']) : null;
 if (!$nome_sala) {
-    header("Location: responsabile_dotazioni.php");
+    header("Location: " . BASE_URL . "frontend/responsabile_dotazioni.php");
     exit;
 }
 

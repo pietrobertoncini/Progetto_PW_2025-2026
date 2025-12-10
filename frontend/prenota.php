@@ -54,7 +54,11 @@ if ($id_sala_selezionata) {
     $res_p = getOccupazioniSettimana($cid, $id_sala_selezionata, $id_settore_utente, $lunedi_settimana, $domenica_settimana);
     while ($row = $res_p->fetch_assoc()) {
         for ($i = 0; $i < $row['durata']; $i++) {
-            $occupied[$row['data']][$row['ora'] + $i] = true;
+            $h = $row['ora'] + $i;
+            $occupied[$row['data']][$h] = [
+                'info' => $row,
+                'is_start' => ($i === 0)
+            ];
         }
     }
 }
@@ -165,19 +169,46 @@ if ($data_scelta && $ora_scelta) {
                                             $is_occupied = isset($occupied[$data_curr][$ora]);
                                             $is_past = (strtotime($data_curr . " " . $ora . ":00") < time());
                                             $value = $data_curr . "|" . $ora;
+
+                                            if (isset($occupied[$data_curr][$ora])) {
+                                                $cell = $occupied[$data_curr][$ora];
+                                                $info = $cell['info'];
+
+                                                if ($cell['is_start']) {
+                                                    $durata = $info['durata'];
                                         ?>
-                                            <?php if ($is_occupied): ?>
-                                                <td class="cell-occupied align-middle" title="Occupato"><i class="bi bi-x-circle text-danger"></i></td>
-                                            <?php elseif ($is_past): ?>
+                                                    <td rowspan="<?php echo $durata; ?>" class="p-1 bg-danger bg-opacity-10 border border-danger border-opacity-25 align-middle">
+                                                        <div class="d-flex flex-column justify-content-center align-items-center" style="min-height: <?php echo ($durata * 30); ?>px;">
+                                                            <small class="fw-bold text-danger text-uppercase mb-1" style="font-size: 0.65rem;">Occupato</small>
+                                                            <div class="fw-bold text-dark lh-1 mb-1" style="font-size: 0.8rem;">
+                                                                <?php echo htmlspecialchars($info['attivita']); ?>
+                                                            </div>
+                                                            <div class="text-muted small" style="font-size: 0.7rem;">
+                                                                <i class="bi bi-person-fill"></i> <?php echo htmlspecialchars($info['nome'] . " " . substr($info['cognome'], 0, 1) . "."); ?>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                <?php
+                                                }
+                                                // Se non è start, è coperto dal rowspan, quindi non stampiamo TD
+
+                                                // CASO PASSATO
+                                            } elseif ($is_past) {
+                                                ?>
                                                 <td class="bg-light text-muted small align-middle">-</td>
-                                            <?php else: ?>
-                                                <td class="cell-free p-0">
-                                                    <label class="check-container">
+                                            <?php
+
+                                                // CASO LIBERO
+                                            } else {
+                                            ?>
+                                                <td class="cell-free p-0 align-middle">
+                                                    <label class="check-container d-flex justify-content-center align-items-center w-100 h-100 py-3">
                                                         <input type="checkbox" name="slots[]" value="<?php echo $value; ?>">
                                                     </label>
                                                 </td>
-                                            <?php endif; ?>
-                                        <?php endfor; ?>
+                                        <?php
+                                            }
+                                        endfor; ?>
                                     </tr>
                                 <?php endfor; ?>
                             </tbody>

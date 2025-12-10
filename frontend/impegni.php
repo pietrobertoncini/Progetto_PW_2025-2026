@@ -39,7 +39,7 @@ foreach ($impegni_lista as $imp) {
 
     for ($i = 0; $i < $durata; $i++) {
         $ora_corrente = $ora_inizio + $i;
-        
+
         // Salviamo i dati per ogni ora occupata
         $planning[$data_imp][$ora_corrente] = [
             'dati' => $imp,
@@ -57,7 +57,7 @@ foreach ($impegni_lista as $imp) {
     <?php include ROOT_PATH . '/common/navbar.php'; ?>
 
     <div class="flex-shrink-0 container py-5">
-        
+
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>I Tuoi Impegni</h2>
         </div>
@@ -67,7 +67,7 @@ foreach ($impegni_lista as $imp) {
                 &larr; Settimana Prec.
             </a>
             <h5 class="mb-0 fw-bold text-center">
-                Dal <?php echo date('d/m', strtotime($lunedi_settimana)); ?> 
+                Dal <?php echo date('d/m', strtotime($lunedi_settimana)); ?>
                 al <?php echo date('d/m', strtotime($domenica_settimana)); ?>
             </h5>
             <a href="?week=<?php echo $next_week; ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
@@ -77,19 +77,19 @@ foreach ($impegni_lista as $imp) {
 
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
             <div class="table-responsive">
-                <table class="table calendar-table mb-0 text-center table-bordered align-middle">
+                <table class="table calendar-table mb-0 text-center align-middle">
                     <thead>
                         <tr>
-                            <th class="align-middle bg-light text-dark" style="width: 60px;">Ora</th>
+                            <th class="align-middle" style="width: 60px;">Ora</th>
                             <?php
                             $giorni_it = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
                             for ($i = 0; $i < 7; $i++) {
                                 $d = date('Y-m-d', strtotime($lunedi_settimana . " +$i days"));
                                 $giorno_str = date('d/m', strtotime($d));
                                 $nome_giorno = $giorni_it[$i];
-                                
+
                                 $class_th = ($d == date('Y-m-d')) ? 'bg-warning bg-opacity-25 text-dark' : '';
-                                
+
                                 echo "<th class='$class_th' style='width: 13%'>$nome_giorno<br><small class='fw-normal'>$giorno_str</small></th>";
                             }
                             ?>
@@ -98,58 +98,60 @@ foreach ($impegni_lista as $imp) {
                     <tbody>
                         <?php for ($ora = 9; $ora <= 23; $ora++): ?>
                             <tr>
-                                <td class="fw-bold bg-light text-muted small"><?php echo $ora; ?>:00</td>
-                                
-                                <?php for ($i = 0; $i < 7; $i++): 
+                                <td class="align-middle fw-bold"><?php echo $ora; ?>:00</td>
+
+                                <?php for ($i = 0; $i < 7; $i++):
                                     $data_curr = date('Y-m-d', strtotime($lunedi_settimana . " +$i days"));
-                                    
+
                                     // Verifichiamo se c'è un impegno
                                     if (isset($planning[$data_curr][$ora])) {
-                                        
+
                                         $cell = $planning[$data_curr][$ora];
                                         $info = $cell['dati'];
 
                                         // È l'inizio dell'impegno -> Stampiamo la cella con ROWSPAN
                                         if ($cell['is_start']) {
                                             $durata = $info['durata'];
-                                            ?>
+                                ?>
                                             <td rowspan="<?php echo $durata; ?>" class="p-2 bg-success bg-opacity-10 border border-success border-opacity-25 position-relative">
                                                 <div class="d-flex flex-column justify-content-center align-items-center h-100 w-100" style="min-height: <?php echo ($durata * 40); ?>px;">
-                                                    
+
                                                     <div class="fw-bold text-success lh-sm mb-1">
                                                         <?php echo htmlspecialchars($info['attivita']); ?>
                                                     </div>
-                                                    
+
                                                     <div class="small text-muted fst-italic mb-2">
                                                         <i class="bi bi-geo-alt-fill"></i> <?php echo htmlspecialchars($info['nome_sala']); ?>
                                                         <br>
                                                         (<?php echo $info['ora']; ?>:00 - <?php echo $info['ora'] + $durata; ?>:00)
                                                     </div>
 
-                                                    <form action="<?php echo BASE_URL; ?>backend/invite_reply.php" method="POST">
-                                                        <input type="hidden" name="id_settore" value="<?php echo $info['id_settore']; ?>">
-                                                        <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($info['nome_sala']); ?>">
-                                                        <input type="hidden" name="data" value="<?php echo $info['data']; ?>">
-                                                        <input type="hidden" name="ora" value="<?php echo $info['ora']; ?>">
-                                                        <input type="hidden" name="risposta" value="rifiutato">
-                                                        <input type="hidden" name="motivazione" value="Disdetta da calendario">
+                                                    <?php if ($info['id_organizzatore'] == $_SESSION['id_utente']): ?>
+                                                        <a href="<?php echo BASE_URL; ?>frontend/modifica_prenotazione.php?sala=<?php echo urlencode($info['nome_sala']); ?>&data=<?php echo $info['data']; ?>&ora=<?php echo $info['ora']; ?>"
+                                                            class="btn btn-outline-secondary btn-sm py-0 px-2 rounded-pill shadow-sm mt-2"
+                                                            style="font-size: 0.7rem;">
+                                                            <i class="bi bi-pencil-square"></i> Gestisci
+                                                        </a>
+                                                    <?php else: ?>
+                                                        <form action="<?php echo BASE_URL; ?>backend/invite_reply.php" method="POST">
+                                                            <input type="hidden" name="id_settore" value="<?php echo $info['id_settore']; ?>">
+                                                            <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($info['nome_sala']); ?>">
+                                                            <input type="hidden" name="data" value="<?php echo $info['data']; ?>">
+                                                            <input type="hidden" name="ora" value="<?php echo $info['ora']; ?>">
+                                                            <input type="hidden" name="risposta" value="rifiutato">
+                                                            <input type="hidden" name="motivazione" value="Disdetta da calendario">
 
-                                                        <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2 rounded-pill shadow-sm" style="font-size: 0.7rem;" onclick="return confirm('Sei sicuro di voler disdire la partecipazione?');">
-                                                            <i class="bi bi-trash3"></i> Disdici
-                                                        </button>
-                                                    </form>
+                                                            <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2 rounded-pill shadow-sm" style="font-size: 0.7rem;" onclick="return confirm('Sei sicuro di voler disdire la partecipazione?');">
+                                                                <i class="bi bi-trash3"></i> Disdici
+                                                            </button>
+                                                        </form>
+                                                    <?php endif; ?>
                                                 </div>
                                             </td>
-                                            <?php
-                                        } 
-                                        // È una continuazione (ore successive) -> NON stampiamo nulla (lo spazio è preso dal rowspan)
-                                        else {
-                                            // Nessun output
+                                <?php
                                         }
-
                                     } else {
-                                        //  Nessun impegno -> Cella vuota normale
-                                        echo "<td></td>";
+                                        echo "<td>-</td>";
                                     }
                                 endfor; ?>
                             </tr>
@@ -158,7 +160,7 @@ foreach ($impegni_lista as $imp) {
                 </table>
             </div>
         </div>
-        
+
         <div class="mt-3 text-muted small">
             <i class="bi bi-info-circle me-1"></i> Visualizzi solo gli impegni che hai accettato.
         </div>

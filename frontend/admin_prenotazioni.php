@@ -124,7 +124,7 @@ if ($filtro_sala) {
                     <table class="table calendar-table mb-0 text-center align-middle">
                         <thead>
                             <tr>
-                                <th class="align-middle bg-light text-dark border-bottom" style="width: 60px;">Ora</th>
+                                <th class="align-middle" style="width: 60px;">Ora</th>
                                 <?php
                                 $giorni_it = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
                                 for ($i = 0; $i < 7; $i++) {
@@ -141,7 +141,7 @@ if ($filtro_sala) {
                         <tbody>
                             <?php for ($ora = 9; $ora <= 23; $ora++): ?>
                                 <tr>
-                                    <td class="fw-bold bg-light text-muted small"><?php echo $ora; ?>:00</td>
+                                    <td class="align-middle fw-bold"><?php echo $ora; ?>:00</td>
 
                                     <?php for ($i = 0; $i < 7; $i++):
                                         $data_curr = date('Y-m-d', strtotime($lunedi_settimana . " +$i days"));
@@ -149,7 +149,7 @@ if ($filtro_sala) {
                                         if (isset($prenotazioni_griglia[$data_curr][$ora])) {
 
                                             $cell = $prenotazioni_griglia[$data_curr][$ora];
-                                            $info = $cell['dati']; // Nota: qui la funzione ritorna 'dati'
+                                            $info = $cell['dati'];
 
                                             // È l'inizio dell'impegno -> Stampiamo la cella con ROWSPAN
                                             if ($cell['is_start']) {
@@ -182,10 +182,8 @@ if ($filtro_sala) {
                                                 </td>
                                     <?php
                                             }
-                                            // È una continuazione -> NON stampiamo nulla
                                         } else {
-                                            // Cella vuota
-                                            echo "<td></td>";
+                                            echo "<td>-</td>";
                                         }
                                     endfor; ?>
                                 </tr>

@@ -107,7 +107,7 @@ function getInvitiPendenti($cid, $id_utente)
 
 function getImpegniFuturi($cid, $id_utente)
 {
-    $sql = "SELECT I.*, S.nome_sala, P.attivita, P.durata, U.nome as nome_org, U.cognome as cognome_org
+    $sql = "SELECT I.*, S.nome_sala, P.attivita, P.durata, P.id_organizzatore, U.nome as nome_org, U.cognome as cognome_org
             FROM INVITO I
             JOIN PRENOTAZIONE P ON I.id_settore = P.id_settore 
                  AND I.nome_sala = P.nome_sala 
@@ -441,6 +441,20 @@ function getRisposteInvitiByResponsabile($cid, $id_responsabile)
     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
+function getInvitatiPrenotazione($cid, $id_settore, $nome_sala, $data, $ora) {
+    $sql = "SELECT U.nome, U.cognome, U.email, I.stato, I.motivazione, U.ruolo
+            FROM INVITO I
+            JOIN UTENTE U ON I.id_utente = U.id_utente
+            WHERE I.id_settore = ? AND I.nome_sala = ? AND I.data = ? AND I.ora = ?
+            -- Escludiamo l'organizzatore dalla lista visuale degli 'invitati'
+            AND I.id_utente != (SELECT id_organizzatore FROM PRENOTAZIONE WHERE id_settore=? AND nome_sala=? AND data=? AND ora=?)
+            ORDER BY U.cognome";
+    
+    $stmt = $cid->prepare($sql);
+    $stmt->bind_param("isssisss", $id_settore, $nome_sala, $data, $ora, $id_settore, $nome_sala, $data, $ora);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+}
 
 // FUNZIONI DI GESTIONE
 
@@ -566,11 +580,18 @@ function creaPrenotazioneConInviti($cid, $id_settore, $nome_sala, $data, $ora, $
     $stmt->bind_param("ississi", $id_settore, $nome_sala, $data, $ora, $durata, $attivita, $id_organizzatore);
     $stmt->execute();
 
+    $stmt_inv = $cid->prepare("INSERT INTO INVITO (id_utente, id_settore, nome_sala, data, ora, stato) VALUES (?, ?, ?, ?, ?, ?)");
+
+    // Inseriamo l'organizzatore come 'accettato'
+    $stato_org = 'accettato';
+    $stmt_inv->bind_param("iissis", $id_organizzatore, $id_settore, $nome_sala, $data, $ora, $stato_org);
+    $stmt_inv->execute();
+
     if (!empty($invitati)) {
-        $stmt_inv = $cid->prepare("INSERT INTO INVITO (id_utente, id_settore, nome_sala, data, ora, stato) VALUES (?, ?, ?, ?, ?, 'invitato')");
+        $stato_inv = 'invitato';
         foreach ($invitati as $id_invitato) {
             if ($id_invitato == $id_organizzatore) continue;
-            $stmt_inv->bind_param("iissi", $id_invitato, $id_settore, $nome_sala, $data, $ora);
+            $stmt_inv->bind_param("iissis", $id_invitato, $id_settore, $nome_sala, $data, $ora, $stato_inv);
             $stmt_inv->execute();
         }
     }
@@ -607,7 +628,11 @@ function getSaleBySettore($cid, $id_settore)
 
 function getOccupazioniSettimana($cid, $nome_sala, $id_settore, $lunedi, $domenica)
 {
-    $sql = "SELECT data, ora, durata FROM PRENOTAZIONE WHERE nome_sala = ? AND id_settore = ? AND data BETWEEN ? AND ?";
+    $sql = "SELECT P.data, P.ora, P.durata, P.attivita, U.nome, U.cognome 
+            FROM PRENOTAZIONE P
+            JOIN UTENTE U ON P.id_organizzatore = U.id_utente
+            WHERE P.nome_sala = ? AND P.id_settore = ? 
+            AND P.data BETWEEN ? AND ?";
     $stmt = $cid->prepare($sql);
     $stmt->bind_param("siss", $nome_sala, $id_settore, $lunedi, $domenica);
     $stmt->execute();

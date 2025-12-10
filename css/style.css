@@ -80,6 +80,7 @@ html, body {
 .calendar-table tbody td {
     text-align: center;
     vertical-align: middle;
+    height: 55px;
 }
 
 .calendar-table tbody td.cell-free {
@@ -89,12 +90,6 @@ html, body {
 
 .calendar-table tbody td.cell-free:hover {
     background-color: #b2dbbb;
-}
-
-.calendar-table tbody td.cell-occupied {
-    background-color: #f8d7da;
-    color: #721c24;
-    cursor: not-allowed;
 }
 
 .check-container {

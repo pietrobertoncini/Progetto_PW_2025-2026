@@ -79,7 +79,7 @@ $lista_invitati = getInvitatiPrenotazione($cid, $id_settore, $nome_sala, $data_o
                                 <div class="col-md-6 mb-3">
                                     <label for="ora" class="form-label fw-bold">Ora Inizio</label>
                                     <select class="form-select" id="ora" name="new_ora" required>
-                                        <?php for ($i = 9; $i <= 23; $i++): ?>
+                                        <?php for ($i = 9; $i < 23; $i++): ?>
                                             <option value="<?php echo $i; ?>" <?php echo ($i == $prenotazione['ora']) ? 'selected' : ''; ?>>
                                                 <?php echo $i; ?>:00
                                             </option>
@@ -138,7 +138,7 @@ $lista_invitati = getInvitatiPrenotazione($cid, $id_settore, $nome_sala, $data_o
     <div class="modal fade" id="modalInvitati" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content border-0 shadow rounded-4" style="background-color: transparent;">
-                <div class="modal-header bg-secondary text-white">
+                <div class="modal-header bg-secondary text-white border-0">
                     <h5 class="modal-title fw-bold"><i class="bi bi-people me-2"></i> Lista Partecipanti</h5>
                     <button type="button" class="btn-close btn-close-white me-2" data-bs-dismiss="modal" aria-label="Chiudi"></button>
                 </div>
@@ -174,7 +174,7 @@ $lista_invitati = getInvitatiPrenotazione($cid, $id_settore, $nome_sala, $data_o
                         </ul>
                     <?php else: ?>
                         <div class="text-center py-5">
-                            <i class="bi bi-person-slash display-4 text-muted opacity-25"></i>
+                            <i class="bi bi-person-slash display-4 text-muted opacity-50"></i>
                             <p class="mt-3 text-muted fw-bold">Nessun invitato per questa prenotazione.</p>
                         </div>
                     <?php endif; ?>

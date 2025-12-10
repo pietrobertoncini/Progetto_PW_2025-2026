@@ -47,6 +47,7 @@ foreach ($impegni_lista as $imp) {
         ];
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -96,7 +97,7 @@ foreach ($impegni_lista as $imp) {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php for ($ora = 9; $ora <= 23; $ora++): ?>
+                        <?php for ($ora = 9; $ora < 23; $ora++): ?>
                             <tr>
                                 <td class="align-middle fw-bold"><?php echo $ora; ?>:00</td>
 
@@ -113,39 +114,95 @@ foreach ($impegni_lista as $imp) {
                                         if ($cell['is_start']) {
                                             $durata = $info['durata'];
                                 ?>
-                                            <td rowspan="<?php echo $durata; ?>" class="p-2 bg-success bg-opacity-10 border border-success border-opacity-25 position-relative">
-                                                <div class="d-flex flex-column justify-content-center align-items-center h-100 w-100" style="min-height: <?php echo ($durata * 40); ?>px;">
+                                            <td rowspan="<?php echo $durata; ?>" class="p-0 border border-success border-opacity-25 position-relative align-middle bg-success bg-opacity-10">
 
-                                                    <div class="fw-bold text-success lh-sm mb-1">
-                                                        <?php echo htmlspecialchars($info['attivita']); ?>
-                                                    </div>
+                                                <div class="d-flex flex-column justify-content-center align-items-center w-100 h-100"
+                                                    style="min-height: <?php echo ($durata * 60); ?>px;">
 
-                                                    <div class="small text-muted fst-italic mb-2">
-                                                        <i class="bi bi-geo-alt-fill"></i> <?php echo htmlspecialchars($info['nome_sala']); ?>
-                                                        <br>
-                                                        (<?php echo $info['ora']; ?>:00 - <?php echo $info['ora'] + $durata; ?>:00)
-                                                    </div>
+                                                    <?php if ($durata == 1): ?>
+                                                        <div class="dropdown w-100 h-100 d-flex align-items-center justify-content-between px-2">
 
-                                                    <?php if ($info['id_organizzatore'] == $_SESSION['id_utente']): ?>
-                                                        <a href="<?php echo BASE_URL; ?>frontend/modifica_prenotazione.php?sala=<?php echo urlencode($info['nome_sala']); ?>&data=<?php echo $info['data']; ?>&ora=<?php echo $info['ora']; ?>"
-                                                            class="btn btn-outline-secondary btn-sm py-0 px-2 rounded-pill shadow-sm mt-2"
-                                                            style="font-size: 0.7rem;">
-                                                            <i class="bi bi-pencil-square"></i> Gestisci
-                                                        </a>
-                                                    <?php else: ?>
-                                                        <form action="<?php echo BASE_URL; ?>backend/invite_reply.php" method="POST">
-                                                            <input type="hidden" name="id_settore" value="<?php echo $info['id_settore']; ?>">
-                                                            <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($info['nome_sala']); ?>">
-                                                            <input type="hidden" name="data" value="<?php echo $info['data']; ?>">
-                                                            <input type="hidden" name="ora" value="<?php echo $info['ora']; ?>">
-                                                            <input type="hidden" name="risposta" value="rifiutato">
-                                                            <input type="hidden" name="motivazione" value="Disdetta da calendario">
+                                                            <span class="fw-bold text-success small text-truncate text-start" style="max-width: 80%;">
+                                                                <?php echo htmlspecialchars($info['attivita']); ?>
+                                                            </span>
 
-                                                            <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2 rounded-pill shadow-sm" style="font-size: 0.7rem;" onclick="return confirm('Sei sicuro di voler disdire la partecipazione?');">
-                                                                <i class="bi bi-trash3"></i> Disdici
+                                                            <button class="btn btn-sm btn-link text-success p-0 text-decoration-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                <i class="bi bi-three-dots-vertical me-1"></i>
                                                             </button>
-                                                        </form>
+
+                                                            <ul class="dropdown-menu shadow border-0">
+                                                                <li class="px-3 py-2">
+                                                                    <h6 class="dropdown-header p-0 fw-bold text-dark">Dettagli</h6>
+                                                                    <div class="small text-muted fst-italic" style="min-width: 200px;">
+                                                                        <?php echo htmlspecialchars($info['nome_sala']); ?><br>
+                                                                        (<?php echo $info['ora']; ?>:00 - <?php echo $info['ora'] + $durata; ?>:00)<br>
+                                                                        <i class="bi bi-calendar me-1"></i> <?php echo date("d/m/Y", strtotime($info['data'])); ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <hr class="dropdown-divider">
+                                                                </li>
+                                                                <li>
+                                                                    <?php if (!empty($_SESSION['is_responsabile']) && $_SESSION['is_responsabile']): ?>
+                                                                        <div class="d-flex justify-content-center">
+                                                                            <a href="<?php echo BASE_URL; ?>frontend/modifica_prenotazione.php?sala=<?php echo urlencode($info['nome_sala']); ?>&data=<?php echo $info['data']; ?>&ora=<?php echo $info['ora']; ?>"
+                                                                                class="btn btn-outline-secondary btn-sm py-0 px-2 rounded-pill shadow-sm">
+                                                                                <i class="bi bi-gear-fill"></i> Gestisci
+                                                                            </a>
+                                                                        </div>
+                                                                    <?php else: ?>
+                                                                        <div class="d-flex justify-content-center">
+                                                                            <form action="<?php echo BASE_URL; ?>backend/invite_reply.php" method="POST" class="px-2 pb-1">
+                                                                                <input type="hidden" name="id_settore" value="<?php echo $info['id_settore']; ?>">
+                                                                                <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($info['nome_sala']); ?>">
+                                                                                <input type="hidden" name="data" value="<?php echo $info['data']; ?>">
+                                                                                <input type="hidden" name="ora" value="<?php echo $info['ora']; ?>">
+                                                                                <input type="hidden" name="risposta" value="rifiutato">
+                                                                                <input type="hidden" name="motivazione" value="Disdetta manuale">
+
+                                                                                <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2 rounded-pill shadow-sm" onclick="return confirm('Vuoi davvero disdire?');">
+                                                                                    <i class="bi bi-trash3"></i> Disdici
+                                                                                </button>
+                                                                            </form>
+                                                                        </div>
+                                                                    <?php endif; ?>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+
+                                                    <?php else: ?>
+                                                        <div class="p-2 text-center w-100">
+                                                            <div class="fw-bold text-success lh-sm mb-1 text-truncate px-1">
+                                                                <?php echo htmlspecialchars($info['attivita']); ?>
+                                                            </div>
+
+                                                            <div class="small text-muted fst-italic mb-2">
+                                                                <span class="d-block text-truncate"><?php echo htmlspecialchars($info['nome_sala']); ?></span>
+                                                                (<?php echo $info['ora']; ?>:00 - <?php echo $info['ora'] + $durata; ?>:00)
+                                                            </div>
+
+                                                            <?php if (!empty($_SESSION['is_responsabile']) && $_SESSION['is_responsabile']): ?>
+                                                                <a href="<?php echo BASE_URL; ?>frontend/modifica_prenotazione.php?sala=<?php echo urlencode($info['nome_sala']); ?>&data=<?php echo $info['data']; ?>&ora=<?php echo $info['ora']; ?>"
+                                                                    class="btn btn-outline-secondary btn-sm py-0 px-2 rounded-pill shadow-sm">
+                                                                    <i class="bi bi-gear-fill"></i> Gestisci
+                                                                </a>
+                                                            <?php else: ?>
+                                                                <form action="<?php echo BASE_URL; ?>backend/invite_reply.php" method="POST" class="px-2 pb-1">
+                                                                    <input type="hidden" name="id_settore" value="<?php echo $info['id_settore']; ?>">
+                                                                    <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($info['nome_sala']); ?>">
+                                                                    <input type="hidden" name="data" value="<?php echo $info['data']; ?>">
+                                                                    <input type="hidden" name="ora" value="<?php echo $info['ora']; ?>">
+                                                                    <input type="hidden" name="risposta" value="rifiutato">
+                                                                    <input type="hidden" name="motivazione" value="Disdetta manuale">
+
+                                                                    <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2 rounded-pill shadow-sm" onclick="return confirm('Vuoi davvero disdire?');">
+                                                                        <i class="bi bi-trash3"></i> Disdici
+                                                                    </button>
+                                                                </form>
+                                                            <?php endif; ?>
+                                                        </div>
                                                     <?php endif; ?>
+
                                                 </div>
                                             </td>
                                 <?php

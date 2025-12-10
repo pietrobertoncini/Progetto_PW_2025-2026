@@ -80,7 +80,7 @@ html, body {
 .calendar-table tbody td {
     text-align: center;
     vertical-align: middle;
-    height: 55px;
+    height: 60px;
 }
 
 .calendar-table tbody td.cell-free {

@@ -161,7 +161,7 @@ if ($data_scelta && $ora_scelta) {
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php for ($ora = 9; $ora <= 23; $ora++): ?>
+                                <?php for ($ora = 9; $ora < 23; $ora++): ?>
                                     <tr>
                                         <td class="fw-bold align-middle"><?php echo $ora; ?>:00</td>
                                         <?php for ($i = 0; $i < 7; $i++):

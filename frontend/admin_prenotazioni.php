@@ -156,7 +156,7 @@ if ($filtro_sala) {
                                                 $durata = $info['durata'];
                                     ?>
                                                 <td rowspan="<?php echo $durata; ?>" class="p-2 bg-info bg-opacity-10 border border-info border-opacity-25 position-relative">
-                                                    <div class="d-flex flex-column justify-content-center align-items-center h-100 w-100" style="min-height: <?php echo ($durata * 40); ?>px;">
+                                                    <div class="d-flex flex-column justify-content-center align-items-center h-100 w-100" style="min-height: <?php echo ($durata * 60); ?>px;">
 
                                                         <div class="fw-bold text-dark lh-sm mb-1">
                                                             <?php echo htmlspecialchars($info['attivita']); ?>

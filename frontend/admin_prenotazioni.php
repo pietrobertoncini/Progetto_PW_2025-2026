@@ -139,7 +139,7 @@ if ($filtro_sala) {
                             </tr>
                         </thead>
                         <tbody>
-                            <?php for ($ora = 9; $ora <= 23; $ora++): ?>
+                            <?php for ($ora = 9; $ora < 23; $ora++): ?>
                                 <tr>
                                     <td class="align-middle fw-bold"><?php echo $ora; ?>:00</td>
 

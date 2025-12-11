@@ -124,7 +124,7 @@ if ($filtro_sala) {
                     <table class="table calendar-table mb-0 text-center align-middle">
                         <thead>
                             <tr>
-                                <th class="align-middle" style="width: 60px;">Ora</th>
+                                <th class="align-middle" style="width: 40px;">Ora</th>
                                 <?php
                                 $giorni_it = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
                                 for ($i = 0; $i < 7; $i++) {
@@ -156,28 +156,70 @@ if ($filtro_sala) {
                                                 $durata = $info['durata'];
                                     ?>
                                                 <td rowspan="<?php echo $durata; ?>" class="p-2 bg-info bg-opacity-10 border border-info border-opacity-25 position-relative">
-                                                    <div class="d-flex flex-column justify-content-center align-items-center h-100 w-100" style="min-height: <?php echo ($durata * 60); ?>px;">
+                                                    <div class="d-flex flex-column justify-content-center align-items-center h-100 w-100" style="min-height: <?php echo ($durata * 40); ?>px;">
 
-                                                        <div class="fw-bold text-dark lh-sm mb-1">
-                                                            <?php echo htmlspecialchars($info['attivita']); ?>
-                                                        </div>
+                                                        <?php if ($durata == 1): ?>
+                                                            <div class="dropdown w-100 h-100 d-flex align-items-center justify-content-between px-2">
 
-                                                        <div class="small text-muted mb-2">
-                                                            <i class="bi bi-person-fill"></i>
-                                                            <?php echo htmlspecialchars($info['nome_org'] . ' ' . substr($info['cognome_org'], 0, 1) . '.'); ?>
-                                                        </div>
+                                                                <span class="fw-bold text-dark small text-truncate text-start" style="max-width: 80%;">
+                                                                    <?php echo htmlspecialchars($info['attivita']); ?>
+                                                                </span>
 
-                                                        <form action="<?php echo BASE_URL; ?>backend/admin_prenotazioni_exe.php" method="POST" onsubmit="return confirm('Eliminare questa prenotazione?');">
-                                                            <input type="hidden" name="action" value="delete">
-                                                            <input type="hidden" name="id_settore" value="<?php echo $info['id_settore']; ?>">
-                                                            <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($info['nome_sala']); ?>">
-                                                            <input type="hidden" name="data" value="<?php echo $info['data']; ?>">
-                                                            <input type="hidden" name="ora" value="<?php echo $info['ora']; ?>">
+                                                                <button class="btn btn-sm btn-link text-dark p-0 text-decoration-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    <i class="bi bi-three-dots-vertical"></i>
+                                                                </button>
 
-                                                            <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2 rounded-pill shadow-sm" style="font-size: 0.7rem;">
-                                                                <i class="bi bi-trash3"></i> Elimina
-                                                            </button>
-                                                        </form>
+                                                                <ul class="dropdown-menu shadow border-0">
+                                                                    <li class="px-3 py-2">
+                                                                        <h6 class="dropdown-header p-0 fw-bold text-dark">Dettagli Prenotazione</h6>
+                                                                        <div class="small text-muted" style="min-width: 200px;">
+                                                                            <i class="bi bi-person-fill"></i> Org: <?php echo htmlspecialchars($info['nome_org'] . ' ' . $info['cognome_org']); ?><br>
+                                                                            <i class="bi bi-clock"></i> <?php echo $info['ora']; ?>:00 - <?php echo $info['ora'] + $durata; ?>:00
+                                                                        </div>
+                                                                    </li>
+                                                                    <li>
+                                                                        <hr class="dropdown-divider">
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="d-flex justify-content-center">
+                                                                            <form action="<?php echo BASE_URL; ?>backend/admin_prenotazioni_exe.php" method="POST" class="px-2 pb-1" onsubmit="return confirm('Eliminare questa prenotazione?');">
+                                                                                <input type="hidden" name="action" value="delete">
+                                                                                <input type="hidden" name="id_settore" value="<?php echo $info['id_settore']; ?>">
+                                                                                <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($info['nome_sala']); ?>">
+                                                                                <input type="hidden" name="data" value="<?php echo $info['data']; ?>">
+                                                                                <input type="hidden" name="ora" value="<?php echo $info['ora']; ?>">
+
+                                                                                <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2 rounded-pill shadow-sm">
+                                                                                    <i class="bi bi-trash3"></i> Elimina
+                                                                                </button>
+                                                                            </form>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+
+                                                        <?php else: ?>
+                                                            <div class="fw-bold text-dark lh-sm mb-1 text-truncate px-1" style="max-width: 100%;">
+                                                                <?php echo htmlspecialchars($info['attivita']); ?>
+                                                            </div>
+
+                                                            <div class="small text-muted mb-2">
+                                                                <i class="bi bi-person-fill"></i>
+                                                                <?php echo htmlspecialchars($info['nome_org'] . ' ' . substr($info['cognome_org'], 0, 1) . '.'); ?>
+                                                            </div>
+
+                                                            <form action="<?php echo BASE_URL; ?>backend/admin_prenotazioni_exe.php" method="POST" onsubmit="return confirm('Eliminare questa prenotazione?');">
+                                                                <input type="hidden" name="action" value="delete">
+                                                                <input type="hidden" name="id_settore" value="<?php echo $info['id_settore']; ?>">
+                                                                <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($info['nome_sala']); ?>">
+                                                                <input type="hidden" name="data" value="<?php echo $info['data']; ?>">
+                                                                <input type="hidden" name="ora" value="<?php echo $info['ora']; ?>">
+
+                                                                <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2 rounded-pill shadow-sm" style="font-size: 0.7rem;">
+                                                                    <i class="bi bi-trash3"></i> Elimina
+                                                                </button>
+                                                            </form>
+                                                        <?php endif; ?>
                                                     </div>
                                                 </td>
                                     <?php

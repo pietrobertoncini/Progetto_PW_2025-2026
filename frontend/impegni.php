@@ -81,7 +81,7 @@ foreach ($impegni_lista as $imp) {
                 <table class="table calendar-table mb-0 text-center align-middle">
                     <thead>
                         <tr>
-                            <th class="align-middle" style="width: 60px;">Ora</th>
+                            <th class="align-middle" style="width: 40px;">Ora</th>
                             <?php
                             $giorni_it = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
                             for ($i = 0; $i < 7; $i++) {
@@ -117,7 +117,7 @@ foreach ($impegni_lista as $imp) {
                                             <td rowspan="<?php echo $durata; ?>" class="p-0 border border-success border-opacity-25 position-relative align-middle bg-success bg-opacity-10">
 
                                                 <div class="d-flex flex-column justify-content-center align-items-center w-100 h-100"
-                                                    style="min-height: <?php echo ($durata * 60); ?>px;">
+                                                    style="min-height: <?php echo ($durata * 40); ?>px;">
 
                                                     <?php if ($durata == 1): ?>
                                                         <div class="dropdown w-100 h-100 d-flex align-items-center justify-content-between px-2">

@@ -26,7 +26,7 @@ $risposte = getRisposteInvitiByResponsabile($cid, $id_responsabile);
 <body>
     <?php include ROOT_PATH . '/common/navbar.php'; ?>
 
-    <div class="container mt-5 mb-5 pt-4">
+    <div class="container mt-5 mb-5">
         <div class="mb-4">
             <h2>Esito Inviti Inviati</h2>
         </div>

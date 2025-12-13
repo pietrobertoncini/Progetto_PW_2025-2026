@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id_utente'])) {
             session_destroy();
             
             // Reindirizziamo alla home con un messaggio
-            header("Location: " . BASE_URL . "frontend/index.php?msg=Account eliminato correttamente.");
+            header("Location: " . BASE_URL . "/index.php?msg=Account eliminato correttamente.");
             exit;
         } else {
             throw new Exception("Impossibile eliminare l'utente.");

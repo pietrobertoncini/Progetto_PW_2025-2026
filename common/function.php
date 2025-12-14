@@ -776,3 +776,28 @@ function rimuoviVecchiaFoto($pathRelativoDalDb) {
         unlink($percorsoFisico); // cancella il file
     }
 }
+
+// FUNZIONI PER HOMEPAGE
+// conta il numero di settori per tipo ('musica', 'teatro', 'ballo')
+function getNumeroSettoriPerTipo($cid, $tipo) {
+    $stmt = $cid->prepare("SELECT COUNT(*) as num FROM SETTORE WHERE tipo = ?");
+    $stmt->bind_param("s", $tipo);
+    $stmt->execute();
+    $res = $stmt->get_result()->fetch_assoc();
+    return $res['num'];
+}
+
+// conta il numero di sale che appartengono a un settore di un determinato tipo
+function getNumeroSalePerTipo($cid, $tipo) {
+    $sql = "SELECT COUNT(*) as num 
+            FROM SALA S
+            JOIN SETTORE SETT ON S.id_settore = SETT.id_settore
+            WHERE SETT.tipo = ?";
+    $stmt = $cid->prepare($sql);
+    $stmt->bind_param("s", $tipo);
+    $stmt->execute();
+    $res = $stmt->get_result()->fetch_assoc();
+    return $res['num'];
+}
+
+

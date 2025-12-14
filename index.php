@@ -24,7 +24,7 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
 <html lang="it">
 <?php require ROOT_PATH . "/common/header.php" ?>
 
-<body>
+<body class="homepage-body">
 
     <?php include ROOT_PATH . '/common/navbar.php'; ?>
 
@@ -40,7 +40,7 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                     </p>
 
                     <div class="d-flex justify-content-center gap-3">
-                        <a href="#musica" class="btn btn-primary btn-lg px-5 shadow-sm fw-bold rounded-pill">
+                        <a href="#musica" class="btn btn-home-primary btn-lg px-5 shadow-sm fw-bold rounded-pill">
                             Scopri <i class="bi bi-arrow-down-short"></i>
                         </a>
                     </div>
@@ -51,12 +51,12 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
 
     <div class="sezioni">
 
-        <section id="musica" class="py-5 border-top border-1 border-secondary-subtle">
+        <section id="musica" class="py-5 section-white section-spacious first-section-overlap">
             <div class="container-xl my-4">
                 <div class="row gy-4 gx-lg-5 align-items-center">
 
                     <div class="col-lg-6 px-4 px-lg-0">
-                        <h2 class="display-6 fw-bold mb-3">Musica</h2>
+                        <h2 class="display-6 fw-bold mb-3 section-title">Musica</h2>
 
                         <p class="text-muted mb-5 fs-6">
                             Immergiti in ambienti progettati per il suono puro senza compromessi.
@@ -66,13 +66,13 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                         <div class="row g-4 justify-content-center">
                             <div class="col-auto">
                                 <div class="p-3 bg-white rounded-4 text-center shadow-sm border h-100 d-flex flex-column justify-content-center stat-card" style="min-width: 120px;">
-                                    <span class="d-block h4 fw-bold mb-0"><?php echo $num_settori_musica; ?></span>
+                                    <span class="d-block h4 fw-bold mb-0 section-title"><?php echo $num_settori_musica; ?></span>
                                     <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Settore</small>
                                 </div>
                             </div>
                             <div class="col-auto">
                                 <div class="p-3 bg-white rounded-4 text-center shadow-sm border h-100 d-flex flex-column justify-content-center stat-card" style="min-width: 120px;">
-                                    <span class="d-block h4 fw-bold mb-0"><?php echo $num_sale_musica; ?></span>
+                                    <span class="d-block h4 fw-bold mb-0 section-title"><?php echo $num_sale_musica; ?></span>
                                     <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Sale Totali</small>
                                 </div>
                             </div>
@@ -82,25 +82,25 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                     <div class="col-lg-6 mt-5 mt-lg-0 px-4">
                         <img src="images/musica.jpg"
                             alt="Sala Musica"
-                            class="img-fluid rounded-4 shadow-lg w-100"
-                            style="object-fit: cover; min-height: 350px;">
+                            class="img-fluid rounded-4 shadow-lg w-100 d-flex align-items-center justify-content-center"
+                            style="object-fit: cover; width: 100%; max-height: 500px;">
                     </div>
                 </div>
 
                 <div class="row mt-5">
                     <div class="col-12 col-lg-6 text-center">
-                        <a href="#" class="btn btn-outline-secondary px-5 rounded-pill shadow-sm">Scopri le sale</a>
+                        <a href="#" class="btn btn-home-outline px-5 rounded-pill shadow-sm">Scopri le sale</a>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="teatro" class="py-5 border-top border-1 border-secondary-subtle">
+        <section id="teatro" class="py-5 section-cream section-spacious">
             <div class="container-xl my-4">
                 <div class="row gy-4 gx-lg-5 align-items-center">
 
                     <div class="col-lg-6 px-4 px-lg-0 order-1 order-lg-2">
-                        <h2 class="display-6 fw-bold mb-3">Teatro</h2>
+                        <h2 class="display-6 fw-bold mb-3 section-title">Teatro</h2>
 
                         <p class="text-muted mb-5 fs-6">
                             Dai vita alle tue storie sul palcoscenico. I nostri spazi teatrali sono versatili e modulari, adatti per prove di recitazione, workshop intensivi e piccole messe in scena.
@@ -110,13 +110,13 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                         <div class="row g-4 justify-content-center">
                             <div class="col-auto">
                                 <div class="p-3 bg-white rounded-4 text-center shadow-sm border h-100 d-flex flex-column justify-content-center stat-card" style="min-width: 120px;">
-                                    <span class="d-block h4 fw-bold mb-0"><?php echo $num_settori_teatro; ?></span>
+                                    <span class="d-block h4 fw-bold mb-0 section-title"><?php echo $num_settori_teatro; ?></span>
                                     <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Settore</small>
                                 </div>
                             </div>
                             <div class="col-auto">
                                 <div class="p-3 bg-white rounded-4 text-center shadow-sm border h-100 d-flex flex-column justify-content-center stat-card" style="min-width: 120px;">
-                                    <span class="d-block h4 fw-bold mb-0"><?php echo $num_sale_teatro; ?></span>
+                                    <span class="d-block h4 fw-bold mb-0 section-title"><?php echo $num_sale_teatro; ?></span>
                                     <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Sale Totali</small>
                                 </div>
                             </div>
@@ -126,26 +126,26 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                     <div class="col-lg-6 mt-5 mt-lg-0 order-2 order-lg-1 px-4">
                         <img src="images/teatro.jpg"
                             alt="Sala Teatro"
-                            class="img-fluid rounded-4 shadow-lg w-100"
-                            style="object-fit: cover; min-height: 350px;">
+                            class="img-fluid rounded-4 shadow-lg w-100 d-flex align-items-center justify-content-center"
+                            style="object-fit: cover; width: 100%; max-height: 500px;">
                     </div>
                 </div>
 
                 <div class="row mt-5 order-3">
                     <div class="col-12 col-lg-6"></div>
                     <div class="col-12 col-lg-6 text-center">
-                        <a href="#" class="btn btn-outline-secondary px-5 rounded-pill shadow-sm">Scopri le sale</a>
+                        <a href="#" class="btn btn-home-outline px-5 rounded-pill shadow-sm">Scopri le sale</a>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="ballo" class="py-5 border-top border-1 border-secondary-subtle">
+        <section id="ballo" class="py-5 section-white section-spacious section-before-footer" style="padding-bottom: 200px;">
             <div class="container-xl my-4">
                 <div class="row gy-4 gx-lg-5 align-items-center">
 
                     <div class="col-lg-6 px-4 px-lg-0">
-                        <h2 class="display-6 fw-bold mb-3">Ballo</h2>
+                        <h2 class="display-6 fw-bold mb-3 section-title">Ballo</h2>
 
                         <p class="text-muted mb-5 fs-6">
                             Libera il movimento in spazi ampi e luminosi. Le nostre sale da ballo sono dotate di pavimentazioni specifiche ammortizzanti, pareti a specchio su tutta la lunghezza e sbarre per la danza classica.
@@ -155,13 +155,13 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                         <div class="row g-4 justify-content-center">
                             <div class="col-auto">
                                 <div class="p-3 bg-white rounded-4 text-center shadow-sm border h-100 d-flex flex-column justify-content-center stat-card" style="min-width: 120px;">
-                                    <span class="d-block h4 fw-bold mb-0"><?php echo $num_settori_ballo; ?></span>
+                                    <span class="d-block h4 fw-bold mb-0 section-title"><?php echo $num_settori_ballo; ?></span>
                                     <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Settore</small>
                                 </div>
                             </div>
                             <div class="col-auto">
                                 <div class="p-3 bg-white rounded-4 text-center shadow-sm border h-100 d-flex flex-column justify-content-center stat-card" style="min-width: 120px;">
-                                    <span class="d-block h4 fw-bold mb-0"><?php echo $num_sale_ballo; ?></span>
+                                    <span class="d-block h4 fw-bold mb-0 section-title"><?php echo $num_sale_ballo; ?></span>
                                     <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Sale Totali</small>
                                 </div>
                             </div>
@@ -171,14 +171,14 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                     <div class="col-lg-6 mt-5 mt-lg-0 px-4">
                         <img src="images/ballo.jpg"
                             alt="Sala Ballo"
-                            class="img-fluid rounded-4 shadow-lg w-100"
-                            style="object-fit: cover; min-height: 350px;">
+                            class="img-fluid rounded-4 shadow-lg w-100 d-flex align-items-center justify-content-center"
+                            style="object-fit: cover; width: 100%; max-height: 500px;">
                     </div>
                 </div>
 
                 <div class="row mt-5">
                     <div class="col-12 col-lg-6 text-center">
-                        <a href="#" class="btn btn-outline-secondary px-5 rounded-pill shadow-sm">Scopri le sale</a>
+                        <a href="#" class="btn btn-home-outline px-5 rounded-pill shadow-sm">Scopri le sale</a>
                     </div>
                 </div>
             </div>

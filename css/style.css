@@ -7,7 +7,7 @@ html {
 }
 
 body {
-    background-color: #eedfcc;
+    background-color: #FAF7F2;
     padding-top: 80px;
     min-height: 100vh;
     /* Forza il corpo a essere alto almeno quanto lo schermo */
@@ -27,6 +27,58 @@ body {
     overscroll-behavior-y: none;
 }
 
+
+/* BOTTONI INDEX */
+/* Sostituisce il primary blu solo dove applichi questa classe */
+.btn-home-primary {
+    background-color: #7A5E4E;
+    border-color: #7A5E4E;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-home-primary:hover {
+    background-color: #5e463a;
+    /* Marrone più scuro */
+    border-color: #5e463a;
+    transform: translateY(-2px);
+    /* Piccolo effetto salita */
+}
+
+/* Sostituisce l'outline secondary grigio */
+.btn-home-outline {
+    color: #7A5E4E;
+    border: 2px solid #7A5E4E;
+    /* Bordo un po' più evidente */
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-home-outline:hover {
+    background-color: #7A5E4E;
+    color: white;
+}
+
+/* SEZIONI E SFONDI */
+
+.sezioni {
+    background-color: transparent;
+    position: relative;
+    z-index: 2;
+    /* Per stare sopra eventuali elementi */
+}
+
+/* Sezione Bianca */
+.section-white {
+    background-color: #FFFFFF;
+}
+
+/* Sezione Crema */
+.section-cream {
+    background-color: #FAF7F2;
+}
+
+/* Miglioramento Hero per l'aggancio */
 .hero-section {
     background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../images/hero.png');
     background-size: cover;
@@ -38,6 +90,10 @@ body {
     padding-bottom: 80px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     margin-bottom: 3rem;
+    margin-bottom: 0;
+    /* Rimuoviamo il margine sotto per attaccare le sezioni */
+    padding-bottom: 100px;
+    /* Più spazio sotto per l'effetto sovrapposizione */
 }
 
 .hero-section h1 {
@@ -50,8 +106,48 @@ body {
     font-size: 1.25rem;
 }
 
-.sezioni {
-    background-color: #F3EADF;
+/* Effetto sovrapposizione per la prima sezione */
+.first-section-overlap {
+    margin-top: -50px;
+    /* Sale sopra la Hero */
+    border-top-left-radius: 40px;
+    border-top-right-radius: 40px;
+    padding-top: 60px;
+    /* Compensa la salita */
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.05);
+    /* Ombra leggera sopra */
+    border-top: none;
+}
+
+/* Titoli delle sezioni colorati */
+.section-title {
+    color: #7A5E4E;
+}
+
+/* Le immagini si ingrandiscono leggermente e diventano più luminose */
+.img-fluid {
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.img-fluid:hover {
+    transform: scale(1.02);
+    /* Zoom leggero */
+    filter: brightness(1.1);
+    /* Leggermente più luminosa */
+}
+
+/* Le card dei numeri si sollevano */
+.stat-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    /* Si alza di 5px */
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    /* Ombra più forte */
+    border-color: #7A5E4E !important;
+    /* Bordo colorato (opzionale) */
 }
 
 .navbar-nav .nav-link {
@@ -126,30 +222,72 @@ body {
     accent-color: #198754;
 }
 
-/* Le immagini si ingrandiscono leggermente e diventano più luminose */
-.img-fluid {
-    transition: transform 0.3s ease, filter 0.3s ease;
+/* FOOTER */
+.footer-vintage {
+    background-color: #e3d0bc;
+    color: #7A5E4E;
+    padding-top: 3rem;
+    padding-bottom: 1.5rem;
+    border-top: 1px solid rgba(122, 94, 78, 0.15);
+    margin-top: 0;
+    /* Nessun margine negativo di default! */
+    border-radius: 0;
+    /* Nessuna curva di default */
 }
 
-.img-fluid:hover {
-    transform: scale(1.02);
-    /* Zoom leggero */
-    filter: brightness(1.1);
-    /* Leggermente più luminosa */
+/* Stile link e hr (comune a tutti) */
+.footer-vintage a {
+    color: #7A5E4E;
+    transition: all 0.2s ease;
 }
 
-/* Le card dei numeri si sollevano */
-.stat-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+.footer-vintage a:hover {
+    color: #5e463a;
+    text-decoration: underline !important;
+    font-weight: bold;
 }
 
-.stat-card:hover {
-    transform: translateY(-5px);
-    /* Si alza di 5px */
-    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.15) !important;
-    /* Ombra più forte */
-    border-color: var(--bs-primary) !important;
-    /* Bordo colorato (opzionale) */
+.footer-vintage hr {
+    border-color: rgba(122, 94, 78, 0.3);
+    opacity: 1;
+}
+
+
+/* --- 2. FOOTER SOLO PER HOMEPAGE (Curvo e Sovrapposto) --- */
+/* Queste regole si attivano SOLO se nel body c'è la classe 'homepage-body' */
+
+.homepage-body .footer-vintage {
+    margin-top: -60px;
+    /* Sale sopra */
+    padding-top: 80px;
+    /* Spazio interno extra */
+    border-top-left-radius: 60px;
+    /* Curva */
+    border-top-right-radius: 60px;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.08);
+    /* Ombra per staccare dal bianco */
+    position: relative;
+    z-index: 10;
+}
+
+/* --- 3. SPAZIATURE SEZIONI --- */
+
+/* Classe per dare aria alle sezioni (musica, teatro, ballo) */
+.section-spacious {
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+
+/* Classe ESCLUSIVA per l'ultima sezione della Home (Ballo) */
+/* Serve a creare lo spazio vuoto che verrà coperto dal footer */
+.homepage-body .section-before-footer {
+    padding-bottom: 140px !important;
+    /* Ridotto da 180 a 140 per avvicinare il footer */
+}
+
+/* Fix per centrare verticalmente le immagini se la colonna testo è più corta */
+.row.align-items-center {
+    min-height: 100%;
 }
 
 /* Navbar scrollabile su mobile */

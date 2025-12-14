@@ -55,8 +55,8 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
             <div class="container-xl my-4">
                 <div class="row gy-4 gx-lg-5 align-items-center">
 
-                    <div class="col-lg-6 px-4 px-lg-0">
-                        <h2 class="display-6 fw-bold mb-3 section-title">Musica</h2>
+                    <div class="col-lg-6 px-4 text-up-fix">
+                        <h2 class="display-6 fw-bold mb-4 section-title text-center">Musica</h2>
 
                         <p class="text-muted mb-5 fs-6">
                             Immergiti in ambienti progettati per il suono puro senza compromessi.
@@ -82,7 +82,7 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                     <div class="col-lg-6 mt-5 mt-lg-0 px-4">
                         <img src="images/musica.jpg"
                             alt="Sala Musica"
-                            class="img-fluid rounded-4 shadow-lg w-100 d-flex align-items-center justify-content-center"
+                            class="img-fluid rounded-4 shadow-lg w-100 img-column-center"
                             style="object-fit: cover; width: 100%; max-height: 500px;">
                     </div>
                 </div>
@@ -99,8 +99,8 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
             <div class="container-xl my-4">
                 <div class="row gy-4 gx-lg-5 align-items-center">
 
-                    <div class="col-lg-6 px-4 px-lg-0 order-1 order-lg-2">
-                        <h2 class="display-6 fw-bold mb-3 section-title">Teatro</h2>
+                    <div class="col-lg-6 px-4 order-1 order-lg-2 text-up-fix">
+                        <h2 class="display-6 fw-bold mb-4 section-title text-center">Teatro</h2>
 
                         <p class="text-muted mb-5 fs-6">
                             Dai vita alle tue storie sul palcoscenico. I nostri spazi teatrali sono versatili e modulari, adatti per prove di recitazione, workshop intensivi e piccole messe in scena.
@@ -126,7 +126,7 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                     <div class="col-lg-6 mt-5 mt-lg-0 order-2 order-lg-1 px-4">
                         <img src="images/teatro.jpg"
                             alt="Sala Teatro"
-                            class="img-fluid rounded-4 shadow-lg w-100 d-flex align-items-center justify-content-center"
+                            class="img-fluid rounded-4 shadow-lg w-100 img-column-center"
                             style="object-fit: cover; width: 100%; max-height: 500px;">
                     </div>
                 </div>
@@ -144,8 +144,8 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
             <div class="container-xl my-4">
                 <div class="row gy-4 gx-lg-5 align-items-center">
 
-                    <div class="col-lg-6 px-4 px-lg-0">
-                        <h2 class="display-6 fw-bold mb-3 section-title">Ballo</h2>
+                    <div class="col-lg-6 px-4 text-up-fix">
+                        <h2 class="display-6 fw-bold mb-4 section-title text-center">Ballo</h2>
 
                         <p class="text-muted mb-5 fs-6">
                             Libera il movimento in spazi ampi e luminosi. Le nostre sale da ballo sono dotate di pavimentazioni specifiche ammortizzanti, pareti a specchio su tutta la lunghezza e sbarre per la danza classica.
@@ -171,7 +171,7 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                     <div class="col-lg-6 mt-5 mt-lg-0 px-4">
                         <img src="images/ballo.jpg"
                             alt="Sala Ballo"
-                            class="img-fluid rounded-4 shadow-lg w-100 d-flex align-items-center justify-content-center"
+                            class="img-fluid rounded-4 shadow-lg w-100 img-column-center"
                             style="object-fit: cover; width: 100%; max-height: 500px;">
                     </div>
                 </div>

@@ -68,6 +68,13 @@ body {
     /* Per stare sopra eventuali elementi */
 }
 
+/* tira su il testo nelle sezioni */
+@media (min-width: 992px) {
+    .text-up-fix {
+        margin-top: -20px; 
+    }
+}
+
 /* Sezione Bianca */
 .section-white {
     background-color: #FFFFFF;
@@ -108,7 +115,7 @@ body {
 
 /* Effetto sovrapposizione per la prima sezione */
 .first-section-overlap {
-    margin-top: -50px;
+    margin-top: -40px;
     /* Sale sopra la Hero */
     border-top-left-radius: 40px;
     border-top-right-radius: 40px;
@@ -226,68 +233,54 @@ body {
 .footer-vintage {
     background-color: #e3d0bc;
     color: #7A5E4E;
-    padding-top: 3rem;
-    padding-bottom: 1.5rem;
-    border-top: 1px solid rgba(122, 94, 78, 0.15);
-    margin-top: 0;
-    /* Nessun margine negativo di default! */
-    border-radius: 0;
-    /* Nessuna curva di default */
-}
-
-/* Stile link e hr (comune a tutti) */
-.footer-vintage a {
-    color: #7A5E4E;
-    transition: all 0.2s ease;
-}
-
-.footer-vintage a:hover {
-    color: #5e463a;
-    text-decoration: underline !important;
-    font-weight: bold;
-}
-
-.footer-vintage hr {
-    border-color: rgba(122, 94, 78, 0.3);
-    opacity: 1;
-}
-
-
-/* --- 2. FOOTER SOLO PER HOMEPAGE (Curvo e Sovrapposto) --- */
-/* Queste regole si attivano SOLO se nel body c'è la classe 'homepage-body' */
-
-.homepage-body .footer-vintage {
-    margin-top: -60px;
-    /* Sale sopra */
-    padding-top: 80px;
-    /* Spazio interno extra */
+    
+    /* CURVA SEMPRE PRESENTE */
     border-top-left-radius: 60px;
-    /* Curva */
     border-top-right-radius: 60px;
+    
+    /* Bordo e Ombra */
+    border-top: 1px solid rgba(122, 94, 78, 0.15);
     box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.08);
-    /* Ombra per staccare dal bianco */
+    
     position: relative;
     z-index: 10;
+    
+    /* Padding standard interno al footer */
+    padding-top: 60px;
+    padding-bottom: 40px;
 }
 
-/* --- 3. SPAZIATURE SEZIONI --- */
+/* Stile Link */
+.footer-vintage a { color: #7A5E4E; transition: all 0.2s ease; }
+.footer-vintage a:hover { color: #5e463a; text-decoration: underline !important; font-weight: bold; }
+.footer-vintage hr { border-color: rgba(122, 94, 78, 0.3); opacity: 1; }
 
-/* Classe per dare aria alle sezioni (musica, teatro, ballo) */
+/* --- 2. SOVRAPPOSIZIONE (Solo per la Homepage) --- */
+/* Sulla Home il footer "sale" sopra lo spazio vuoto. 
+   Sulle altre pagine NO, così non copre nulla. */
+.homepage-body .footer-vintage {
+    margin-top: -80px; /* Sale di 80px */
+}
+
+/* --- 3. SPAZIATURE SEZIONI (Ripristinato padding abbondante) --- */
 .section-spacious {
-    padding-top: 100px;
-    padding-bottom: 100px;
+    padding-top: 110px !important;    /* Tanta aria sopra */
+    padding-bottom: 70px !important; /* Tanta aria sotto */
 }
 
-/* Classe ESCLUSIVA per l'ultima sezione della Home (Ballo) */
-/* Serve a creare lo spazio vuoto che verrà coperto dal footer */
+/* Spazio EXTRA solo per l'ultima sezione della Home per permettere al footer di salire */
 .homepage-body .section-before-footer {
-    padding-bottom: 140px !important;
-    /* Ridotto da 180 a 140 per avvicinare il footer */
+    padding-bottom: 150px !important; /* 200px totali: 80px mangiati dal footer, 120px visibili */
 }
 
-/* Fix per centrare verticalmente le immagini se la colonna testo è più corta */
-.row.align-items-center {
-    min-height: 100%;
+/* --- 4. CENTRATURA IMMAGINI INFALLIBILE --- */
+/* Aggiungi questa classe alla COLONNA che contiene l'immagine (col-lg-6) */
+.img-column-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centra verticalmente */
+    align-items: center;     /* Centra orizzontalmente */
+    height: 100%;            /* Occupa tutta l'altezza della riga */
 }
 
 /* Navbar scrollabile su mobile */

@@ -266,16 +266,6 @@ body {
     padding-bottom: 150px !important; /* 200px totali: 80px mangiati dal footer, 120px visibili */
 }
 
-/* --- 4. CENTRATURA IMMAGINI INFALLIBILE --- */
-/* Aggiungi questa classe alla COLONNA che contiene l'immagine (col-lg-6) */
-.img-column-center {
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Centra verticalmente */
-    align-items: center;     /* Centra orizzontalmente */
-    height: 100%;            /* Occupa tutta l'altezza della riga */
-}
-
 /* Navbar scrollabile su mobile */
 @media (max-width: 991.98px) {
     .navbar-collapse {

@@ -82,7 +82,7 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                     <div class="col-lg-6 mt-5 mt-lg-0 px-4">
                         <img src="images/musica.jpg"
                             alt="Sala Musica"
-                            class="img-fluid rounded-4 shadow-lg w-100 img-column-center"
+                            class="img-fluid rounded-4 shadow-lg"
                             style="object-fit: cover; width: 100%; max-height: 500px;">
                     </div>
                 </div>
@@ -126,7 +126,7 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                     <div class="col-lg-6 mt-5 mt-lg-0 order-2 order-lg-1 px-4">
                         <img src="images/teatro.jpg"
                             alt="Sala Teatro"
-                            class="img-fluid rounded-4 shadow-lg w-100 img-column-center"
+                            class="img-fluid rounded-4 shadow-lg"
                             style="object-fit: cover; width: 100%; max-height: 500px;">
                     </div>
                 </div>
@@ -171,7 +171,7 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                     <div class="col-lg-6 mt-5 mt-lg-0 px-4">
                         <img src="images/ballo.jpg"
                             alt="Sala Ballo"
-                            class="img-fluid rounded-4 shadow-lg w-100 img-column-center"
+                            class="img-fluid rounded-4 shadow-lg"
                             style="object-fit: cover; width: 100%; max-height: 500px;">
                     </div>
                 </div>

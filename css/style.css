@@ -224,7 +224,7 @@ body {
 
 /* FOOTER */
 .footer-vintage {
-    background-color: #e3d0bc;
+    background-color: #EDE2D5;
     color: #7A5E4E;
     
     /* CURVA SEMPRE PRESENTE */
@@ -241,11 +241,10 @@ body {
     /* Padding standard interno al footer */
     padding-top: 60px;
     padding-bottom: 40px;
+     margin-top: 20px;
 }
 
 /* Stile Link */
-.footer-vintage a { color: #7A5E4E; transition: all 0.2s ease; }
-.footer-vintage a:hover { color: #5e463a; text-decoration: underline !important; font-weight: bold; }
 .footer-vintage hr { border-color: rgba(122, 94, 78, 0.3); opacity: 1; }
 
 /* --- 2. SOVRAPPOSIZIONE (Solo per la Homepage) --- */

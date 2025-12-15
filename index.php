@@ -55,7 +55,7 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
             <div class="container-xl my-4">
                 <div class="row gy-4 gx-lg-5 align-items-center">
 
-                    <div class="col-lg-6 px-4 text-up-fix">
+                    <div class="col-lg-6 px-4">
                         <h2 class="display-6 fw-bold mb-4 section-title text-center">Musica</h2>
 
                         <p class="text-muted mb-5 fs-6">
@@ -99,7 +99,7 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
             <div class="container-xl my-4">
                 <div class="row gy-4 gx-lg-5 align-items-center">
 
-                    <div class="col-lg-6 px-4 order-1 order-lg-2 text-up-fix">
+                    <div class="col-lg-6 px-4 order-1 order-lg-2">
                         <h2 class="display-6 fw-bold mb-4 section-title text-center">Teatro</h2>
 
                         <p class="text-muted mb-5 fs-6">
@@ -144,7 +144,7 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
             <div class="container-xl my-4">
                 <div class="row gy-4 gx-lg-5 align-items-center">
 
-                    <div class="col-lg-6 px-4 text-up-fix">
+                    <div class="col-lg-6 px-4">
                         <h2 class="display-6 fw-bold mb-4 section-title text-center">Ballo</h2>
 
                         <p class="text-muted mb-5 fs-6">

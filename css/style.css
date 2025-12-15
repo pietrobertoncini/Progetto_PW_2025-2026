@@ -68,13 +68,6 @@ body {
     /* Per stare sopra eventuali elementi */
 }
 
-/* tira su il testo nelle sezioni */
-@media (min-width: 992px) {
-    .text-up-fix {
-        margin-top: -20px; 
-    }
-}
-
 /* Sezione Bianca */
 .section-white {
     background-color: #FFFFFF;

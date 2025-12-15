@@ -25,7 +25,7 @@ if (isset($_SESSION['id_utente'])) {
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-transparent py-3">
-  <div class="container-xl bg-light shadow-sm rounded-3 px-4 py-2">
+  <div class="container-xl bg-light shadow-sm rounded-4 px-4 py-2">
     <a class="navbar-brand d-flex" href="index.php">
       <img src="<?php echo BASE_URL; ?>images/logo.png" alt="Logo" width="50px" class="rounded-pill">
     </a>

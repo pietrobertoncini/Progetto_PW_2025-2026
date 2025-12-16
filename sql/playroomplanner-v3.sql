@@ -125,7 +125,7 @@ INSERT INTO SETTORE (id_settore, nome, tipo, num_iscritti, id_responsabile) VALU
 
 INSERT INTO UTENTE (id_utente, nome, cognome, data_nascita, ruolo, email, password_hash, foto, id_settore, is_responsabile, is_admin) VALUES
 -- ADMIN 
-(100, 'Super', 'Admin', '1980-01-01', NULL, 'admin@playroom.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, NULL, FALSE, TRUE),
+(100, 'Super', 'Admin', '1980-01-01', NULL, 'admin@playroom.it', '$2y$10$hQRtNiBLRnsp7uo4HXSVB./.arZ6Ju10C1WV4dtSFP7gmy8waLzWG', NULL, NULL, FALSE, TRUE),
 
 (101, 'Mario', 'Rossi', '1980-05-15', 'docente', 'mario.rossi@email.it', '$2y$10$hQRtNiBLRnsp7uo4HXSVB./.arZ6Ju10C1WV4dtSFP7gmy8waLzWG', NULL, 1, FALSE, FALSE),
 (102, 'Anna', 'Bianchi', '1990-07-20', 'tecnico', 'anna.bianchi@email.it', '$2y$10$hQRtNiBLRnsp7uo4HXSVB./.arZ6Ju10C1WV4dtSFP7gmy8waLzWG', NULL, 1, FALSE, FALSE),
@@ -180,6 +180,29 @@ INSERT INTO PRENOTAZIONE (id_settore, nome_sala, data, ora, durata, attivita, id
 
 INSERT INTO INVITO (id_utente, id_settore, nome_sala, data, ora, stato, motivazione, data_risposta) VALUES
 
+-- NOTA TECNICA: 
+-- L'applicazione Web crea automaticamente un record nella tabella INVITO per l'organizzatore 
+-- quando viene creata una prenotazione (per visualizzarla in "I Miei Impegni").
+-- In questo script di popolamento manuale, dobbiamo inserire esplicitamente queste righe 
+-- per replicare il comportamento del backend e garantire la coerenza dei dati visualizzati.
+
+-- AUTO-INVITI ORGANIZZATORI
+-- Mario Rossi - Musica
+(101, 1, 'Sala Prove 1', '2025-12-10', 10, 'accettato', NULL, '2025-12-01 09:00:00'),
+(101, 1, 'Aula Magna', '2025-12-15', 09, 'accettato', NULL, '2025-12-01 09:00:00'),
+(101, 1, 'Studio Registrazione', '2025-12-19', 14, 'accettato', NULL, '2025-12-10 09:00:00'),
+(101, 1, 'Sala Prove 1', '2025-12-20', 10, 'accettato', NULL, '2025-12-10 09:00:00'),
+(101, 1, 'Aula Magna', '2025-12-27', 18, 'accettato', NULL, '2025-12-10 09:00:00'),
+
+-- Paolo Gialli - Teatro
+(105, 2, 'Palco A', '2025-12-12', 15, 'accettato', NULL, '2025-12-01 09:00:00'),
+(105, 2, 'Palco A', '2025-12-23', 14, 'accettato', NULL, '2025-12-10 09:00:00'),
+
+-- Franco Miti - Ballo
+(107, 3, 'Sala Specchi', '2025-12-17', 16, 'accettato', NULL, '2025-12-10 09:00:00'),
+(107, 3, 'Sala Specchi', '2026-01-02', 10, 'accettato', NULL, '2025-12-10 09:00:00'),
+
+-- Inviti
 (103, 1, 'Sala Prove 1', '2025-12-10', 10, 'accettato', NULL, '2025-12-05 10:00:00'),
 
 (106, 2, 'Palco A', '2025-12-12', 15, 'accettato', NULL, '2025-12-08 09:15:00'),

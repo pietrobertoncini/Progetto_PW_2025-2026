@@ -32,7 +32,7 @@ try {
     <div class="container my-5">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-7">
-                <div class="card shadow-sm">
+                <div class="card shadow-sm rounded-4">
                     <div class="card-body p-4 p-md-5">
                         <h2 class="card-title text-center mb-4">Registra un nuovo account</h2>
 
@@ -91,7 +91,7 @@ try {
                                 </div>
                             </div>
                             <div class="d-grid mt-3">
-                                <button type="submit" class="btn btn-primary btn-lg">Registrati</button>
+                                <button type="submit" class="btn btn-primary btn-lg rounded-pill">Registrati</button>
                             </div>
                         </form>
                     </div>

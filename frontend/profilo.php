@@ -33,7 +33,7 @@ if (!$dati_utente) {
         <div class="row justify-content-center">
             <div class="col-lg-6 col-md-8">
 
-                <div class="card shadow-sm border-0 p-4 rounded-3">
+                <div class="card shadow-sm border-0 p-4 rounded-4 overflow-hidden">
                     <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
                         <h3 class="fw-bold mb-0 ms-2" style="color: #7A5E4E;">Il Mio Profilo</h3>
                         <div class="pe-3">
@@ -111,7 +111,7 @@ if (!$dati_utente) {
                             </table>
                         </div>
                         <div class="text-center mt-3">
-                            <a href="<?php echo BASE_URL; ?>frontend/modifica_profilo.php" class="btn btn-outline-secondary px-4">
+                            <a href="<?php echo BASE_URL; ?>frontend/modifica_profilo.php" class="btn btn-outline-secondary px-4 rounded-pill">
                                 Modifica Dati
                             </a>
                         </div>

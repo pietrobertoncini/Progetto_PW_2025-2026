@@ -48,7 +48,7 @@ $lista_invitati = getInvitatiPrenotazione($cid, $id_settore, $nome_sala, $data_o
                 <div class="card shadow-sm border-0 rounded-3">
                     <div class="card-header bg-secondary bg-opacity-10 border-0 py-3 d-flex justify-content-between align-items-center">
                         <h4 class="mb-0 fw-bold text-dark">Gestisci Prenotazione</h4>
-                        <a href="<?php echo BASE_URL; ?>frontend/gestione_prenotazioni.php" class="btn btn-sm btn-outline-secondary">Annulla</a>
+                        <a href="<?php echo BASE_URL; ?>frontend/gestione_prenotazioni.php" class="btn btn-sm btn-outline-secondary rounded-pill">Annulla</a>
                     </div>
 
                     <div class="card-body p-4">
@@ -107,7 +107,7 @@ $lista_invitati = getInvitatiPrenotazione($cid, $id_settore, $nome_sala, $data_o
                             </div>
 
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-lg">Salva Modifiche</button>
+                                <button type="submit" class="btn btn-primary btn-lg rounded-pill">Salva Modifiche</button>
                             </div>
                         </form>
 
@@ -123,7 +123,7 @@ $lista_invitati = getInvitatiPrenotazione($cid, $id_settore, $nome_sala, $data_o
                                 <input type="hidden" name="data" value="<?php echo $data_old; ?>">
                                 <input type="hidden" name="ora" value="<?php echo $ora_old; ?>">
 
-                                <button type="submit" class="btn btn-danger w-100">
+                                <button type="submit" class="btn btn-danger w-100 rounded-pill">
                                     <i class="bi bi-trash3-fill"></i> Elimina Prenotazione
                                 </button>
                             </form>

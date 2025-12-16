@@ -27,7 +27,7 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
         <div class="row justify-content-center">
             <div class="col-lg-6 col-md-8">
 
-                <div class="card shadow-sm rounded-3 p-4 mb-4 border-0">
+                <div class="card shadow-sm rounded-4 p-4 mb-4 border-0 overflow-hidden">
                     <div class="card-header bg-white border-0 text-center">
                         <h3 class="fw-bold">Modifica Profilo</h3>
                     </div>
@@ -63,7 +63,7 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
                                     </div>
 
                                     <div class="d-flex gap-2 justify-content-center mt-3">
-                                        <label class="btn btn-sm btn-outline-primary" style="cursor: pointer;">
+                                        <label class="btn btn-sm btn-outline-primary rounded-pill" style="cursor: pointer;">
                                             Cambia Foto
                                             <input type="file" name="foto" id="fileInput" class="d-none" onchange="previewFoto(this)">
                                         </label>
@@ -105,23 +105,23 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
                             </div>
 
                             <div class="text-center mt-4">
-                                <button type="submit" class="btn btn-outline-primary">Salva Modifiche</button>
+                                <button type="submit" class="btn btn-outline-primary rounded-pill">Salva Modifiche</button>
                                 <div class="mt-2">
-                                    <a href="<?php echo BASE_URL; ?>frontend/profilo.php" class="btn btn-outline-secondary">Annulla</a>
+                                    <a href="<?php echo BASE_URL; ?>frontend/profilo.php" class="btn btn-outline-secondary rounded-pill">Annulla</a>
                                 </div>
                             </div>
                         </form>
                     </div>
                 </div>
 
-                <div class="card border-danger shadow-sm">
+                <div class="card border-danger shadow-sm rounded-4">
                     <div class="card-body text-center">
                         <h5 class="card-title text-danger fw-bold">Zona Pericolo</h5>
                         <p class="card-text small text-muted">
                             L'eliminazione dell'account è irreversibile. Tutte le tue prenotazioni future verranno mantenute ma non potrai più accedere.
                         </p>
                         <form action="<?php echo BASE_URL; ?>backend/delete_profile.php" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare definitivamente il tuo account? Questa azione non può essere annullata.');">
-                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill">
                                 Elimina il mio account
                             </button>
                         </form>

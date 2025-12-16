@@ -154,52 +154,67 @@ if ($filtro_sala) {
                                             // È l'inizio dell'impegno -> Stampiamo la cella con ROWSPAN
                                             if ($cell['is_start']) {
                                                 $durata = $info['durata'];
+
+                                                // Logica passato/futuro per griglia
+                                                $ts_evento = strtotime($info['data'] . " " . $info['ora'] . ":00");
+                                                $is_passato = ($ts_evento < time());
+                                                
+                                                if ($is_passato) {
+                                                    $bg_class = "bg-secondary bg-opacity-10 border-secondary border-opacity-25"; // Grigio
+                                                    $text_class = "text-muted";
+                                                    $icon_class = "text-muted";
+                                                } else {
+                                                    $bg_class = "bg-info bg-opacity-10 border-info border-opacity-25"; // Azzurro
+                                                    $text_class = "text-dark";
+                                                    $icon_class = "text-dark";
+                                                }
                                     ?>
-                                                <td rowspan="<?php echo $durata; ?>" class="p-2 bg-info bg-opacity-10 border border-info border-opacity-25 position-relative">
+                                                <td rowspan="<?php echo $durata; ?>" class="p-0 p-lg-2 <?php echo $bg_class; ?> position-relative">
                                                     <div class="d-flex flex-column justify-content-center align-items-center h-100 w-100" style="min-height: <?php echo ($durata * 40); ?>px;">
 
                                                         <?php if ($durata == 1): ?>
                                                             <div class="dropdown w-100 h-100 d-flex align-items-center justify-content-between px-2">
 
-                                                                <span class="fw-bold text-dark small text-truncate text-start" style="max-width: 80%;">
+                                                                <span class="fw-bold small text-truncate text-start <?php echo $text_class; ?>" style="max-width: 80%;">
                                                                     <?php echo htmlspecialchars($info['attivita']); ?>
                                                                 </span>
 
-                                                                <button class="btn btn-sm btn-link text-dark p-0 text-decoration-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                <button class="btn btn-sm btn-link p-0 text-decoration-none <?php echo $icon_class; ?>" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                                     <i class="bi bi-three-dots-vertical"></i>
                                                                 </button>
 
                                                                 <ul class="dropdown-menu shadow border-0">
                                                                     <li class="px-3 py-2">
-                                                                        <h6 class="dropdown-header p-0 fw-bold text-dark">Dettagli Prenotazione</h6>
+                                                                        <h6 class="dropdown-header p-0 fw-bold text-dark">Dettagli <?php echo $is_passato ? '(Concluso)' : ''; ?></h6>
                                                                         <div class="small text-muted" style="min-width: 200px;">
                                                                             <i class="bi bi-person-fill"></i> Org: <?php echo htmlspecialchars($info['nome_org'] . ' ' . $info['cognome_org']); ?><br>
                                                                             <i class="bi bi-clock"></i> <?php echo $info['ora']; ?>:00 - <?php echo $info['ora'] + $durata; ?>:00
                                                                         </div>
                                                                     </li>
-                                                                    <li>
-                                                                        <hr class="dropdown-divider">
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="d-flex justify-content-center">
-                                                                            <form action="<?php echo BASE_URL; ?>backend/admin_prenotazioni_exe.php" method="POST" class="px-2 pb-1" onsubmit="return confirm('Eliminare questa prenotazione?');">
-                                                                                <input type="hidden" name="action" value="delete">
-                                                                                <input type="hidden" name="id_settore" value="<?php echo $info['id_settore']; ?>">
-                                                                                <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($info['nome_sala']); ?>">
-                                                                                <input type="hidden" name="data" value="<?php echo $info['data']; ?>">
-                                                                                <input type="hidden" name="ora" value="<?php echo $info['ora']; ?>">
+                                                                    
+                                                                    <?php if (!$is_passato): ?>
+                                                                        <li><hr class="dropdown-divider"></li>
+                                                                        <li>
+                                                                            <div class="d-flex justify-content-center">
+                                                                                <form action="<?php echo BASE_URL; ?>backend/admin_prenotazioni_exe.php" method="POST" class="px-2 pb-1" onsubmit="return confirm('Eliminare questa prenotazione?');">
+                                                                                    <input type="hidden" name="action" value="delete">
+                                                                                    <input type="hidden" name="id_settore" value="<?php echo $info['id_settore']; ?>">
+                                                                                    <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($info['nome_sala']); ?>">
+                                                                                    <input type="hidden" name="data" value="<?php echo $info['data']; ?>">
+                                                                                    <input type="hidden" name="ora" value="<?php echo $info['ora']; ?>">
 
-                                                                                <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2 rounded-pill shadow-sm">
-                                                                                    <i class="bi bi-trash3"></i> Elimina
-                                                                                </button>
-                                                                            </form>
-                                                                        </div>
-                                                                    </li>
+                                                                                    <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2 rounded-pill shadow-sm">
+                                                                                        <i class="bi bi-trash3"></i> Elimina
+                                                                                    </button>
+                                                                                </form>
+                                                                            </div>
+                                                                        </li>
+                                                                    <?php endif; ?>
                                                                 </ul>
                                                             </div>
 
                                                         <?php else: ?>
-                                                            <div class="fw-bold text-dark lh-sm mb-1 text-truncate px-1" style="max-width: 100%;">
+                                                            <div class="fw-bold lh-sm mb-1 text-truncate px-1 <?php echo $text_class; ?>" style="max-width: 100%;">
                                                                 <?php echo htmlspecialchars($info['attivita']); ?>
                                                             </div>
 
@@ -208,17 +223,21 @@ if ($filtro_sala) {
                                                                 <?php echo htmlspecialchars($info['nome_org'] . ' ' . substr($info['cognome_org'], 0, 1) . '.'); ?>
                                                             </div>
 
-                                                            <form action="<?php echo BASE_URL; ?>backend/admin_prenotazioni_exe.php" method="POST" onsubmit="return confirm('Eliminare questa prenotazione?');">
-                                                                <input type="hidden" name="action" value="delete">
-                                                                <input type="hidden" name="id_settore" value="<?php echo $info['id_settore']; ?>">
-                                                                <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($info['nome_sala']); ?>">
-                                                                <input type="hidden" name="data" value="<?php echo $info['data']; ?>">
-                                                                <input type="hidden" name="ora" value="<?php echo $info['ora']; ?>">
+                                                            <?php if (!$is_passato): ?>
+                                                                <form action="<?php echo BASE_URL; ?>backend/admin_prenotazioni_exe.php" method="POST" onsubmit="return confirm('Eliminare questa prenotazione?');">
+                                                                    <input type="hidden" name="action" value="delete">
+                                                                    <input type="hidden" name="id_settore" value="<?php echo $info['id_settore']; ?>">
+                                                                    <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($info['nome_sala']); ?>">
+                                                                    <input type="hidden" name="data" value="<?php echo $info['data']; ?>">
+                                                                    <input type="hidden" name="ora" value="<?php echo $info['ora']; ?>">
 
-                                                                <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2 rounded-pill shadow-sm" style="font-size: 0.7rem;">
-                                                                    <i class="bi bi-trash3"></i> Elimina
-                                                                </button>
-                                                            </form>
+                                                                    <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2 rounded-pill shadow-sm" style="font-size: 0.7rem;">
+                                                                        <i class="bi bi-trash3"></i> Elimina
+                                                                    </button>
+                                                                </form>
+                                                            <?php else: ?>
+                                                                <span class="badge bg-secondary opacity-50" style="font-size: 0.65rem;">Conclusa</span>
+                                                            <?php endif; ?>
                                                         <?php endif; ?>
                                                     </div>
                                                 </td>
@@ -255,15 +274,21 @@ if ($filtro_sala) {
                         <tbody class="border-top-0">
                             <?php if (count($elenco_lista) > 0): ?>
                                 <?php foreach ($elenco_lista as $p):
-                                    $is_passata = (strtotime($p['data']) < strtotime(date('Y-m-d')));
+                                    // LOGICA LISTA: Controllo preciso data E ora
+                                    $ts_evento = strtotime($p['data'] . " " . $p['ora'] . ":00");
+                                    $is_passata = ($ts_evento < time());
                                 ?>
                                     <tr class="<?php echo $is_passata ? 'bg-light text-muted' : ''; ?>">
                                         <td class="ps-4">
                                             <span class="fw-bold d-block"><?php echo date("d/m/Y", strtotime($p['data'])); ?></span>
                                             <small><?php echo $p['ora']; ?>:00 - <?php echo $p['ora'] + $p['durata']; ?>:00</small>
+                                            
+                                            <?php if ($is_passata): ?>
+                                                <span class="badge bg-secondary mt-1" style="font-size: 0.7em;">Conclusa</span>
+                                            <?php endif; ?>
                                         </td>
                                         <td>
-                                            <span class="d-block fw-bold" style="color: #7A5E4E;"><?php echo htmlspecialchars($p['nome_sala']); ?></span>
+                                            <span class="d-block fw-bold" style="<?php echo $is_passata ? '' : 'color: #7A5E4E;'; ?>"><?php echo htmlspecialchars($p['nome_sala']); ?></span>
                                             <small class="text-muted"><?php echo htmlspecialchars($p['nome_settore']); ?></small>
                                         </td>
                                         <td><?php echo htmlspecialchars($p['attivita']); ?></td>
@@ -277,7 +302,7 @@ if ($filtro_sala) {
                                                 <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($p['nome_sala']); ?>">
                                                 <input type="hidden" name="data" value="<?php echo $p['data']; ?>">
                                                 <input type="hidden" name="ora" value="<?php echo $p['ora']; ?>">
-                                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-circle"><i class="bi bi-trash3"></i></button>
+                                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-circle" <?php echo $is_passata ? 'disabled title="Non puoi eliminare eventi passati"' : ''; ?>><i class="bi bi-trash3"></i></button>
                                             </form>
                                         </td>
                                     </tr>

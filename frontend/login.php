@@ -22,7 +22,7 @@ require_once __DIR__ . '/../common/function.php';
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-5">
-                <div class="card shadow-sm">
+                <div class="card shadow-sm rounded-4">
                     <div class="card-body p-4">
                         <h2 class="card-title text-center mb-4">Accedi</h2>
 
@@ -42,7 +42,7 @@ require_once __DIR__ . '/../common/function.php';
                                 <input type="password" class="form-control" id="password" name="password" required>
                             </div>
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-primary btn-lg">Accedi</button>
+                                <button type="submit" class="btn btn-primary btn-lg rounded-pill">Accedi</button>
                             </div>
                         </form>
                     </div>

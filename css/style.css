@@ -147,6 +147,12 @@ body {
 }
 
 /* Calendario */
+.calendar-table {
+    table-layout: fixed;
+    width: 100%;
+    min-width: 800px;
+}
+
 .calendar-table th,
 .calendar-table td {
     border: 1px solid rgba(122, 94, 78, 0.25);

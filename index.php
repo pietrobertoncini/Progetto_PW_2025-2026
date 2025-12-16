@@ -67,13 +67,17 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                             <div class="col-auto">
                                 <div class="p-3 bg-white rounded-4 text-center shadow-sm border h-100 d-flex flex-column justify-content-center stat-card" style="min-width: 120px;">
                                     <span class="d-block h4 fw-bold mb-0 section-title"><?php echo $num_settori_musica; ?></span>
-                                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Settore</small>
+                                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">
+                                        <?php echo ($num_settori_musica == 1) ? 'Settore' : 'Settori'; ?>
+                                    </small>
                                 </div>
                             </div>
                             <div class="col-auto">
                                 <div class="p-3 bg-white rounded-4 text-center shadow-sm border h-100 d-flex flex-column justify-content-center stat-card" style="min-width: 120px;">
                                     <span class="d-block h4 fw-bold mb-0 section-title"><?php echo $num_sale_musica; ?></span>
-                                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Sale Totali</small>
+                                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">
+                                        <?php echo ($num_sale_musica == 1) ? 'Sala Totale' : 'Sale Totali'; ?>
+                                    </small>
                                 </div>
                             </div>
                         </div>
@@ -111,13 +115,17 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                             <div class="col-auto">
                                 <div class="p-3 bg-white rounded-4 text-center shadow-sm border h-100 d-flex flex-column justify-content-center stat-card" style="min-width: 120px;">
                                     <span class="d-block h4 fw-bold mb-0 section-title"><?php echo $num_settori_teatro; ?></span>
-                                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Settore</small>
+                                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">
+                                        <?php echo ($num_settori_teatro == 1) ? 'Settore' : 'Settori'; ?>
+                                    </small>
                                 </div>
                             </div>
                             <div class="col-auto">
                                 <div class="p-3 bg-white rounded-4 text-center shadow-sm border h-100 d-flex flex-column justify-content-center stat-card" style="min-width: 120px;">
                                     <span class="d-block h4 fw-bold mb-0 section-title"><?php echo $num_sale_teatro; ?></span>
-                                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Sale Totali</small>
+                                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">
+                                        <?php echo ($num_sale_teatro == 1) ? 'Sala Totale' : 'Sale Totali'; ?>
+                                    </small>
                                 </div>
                             </div>
                         </div>
@@ -156,13 +164,17 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                             <div class="col-auto">
                                 <div class="p-3 bg-white rounded-4 text-center shadow-sm border h-100 d-flex flex-column justify-content-center stat-card" style="min-width: 120px;">
                                     <span class="d-block h4 fw-bold mb-0 section-title"><?php echo $num_settori_ballo; ?></span>
-                                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Settore</small>
+                                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">
+                                        <?php echo ($num_settori_ballo == 1) ? 'Settore' : 'Settori'; ?>
+                                    </small>
                                 </div>
                             </div>
                             <div class="col-auto">
                                 <div class="p-3 bg-white rounded-4 text-center shadow-sm border h-100 d-flex flex-column justify-content-center stat-card" style="min-width: 120px;">
                                     <span class="d-block h4 fw-bold mb-0 section-title"><?php echo $num_sale_ballo; ?></span>
-                                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Sale Totali</small>
+                                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">
+                                        <?php echo ($num_sale_ballo == 1) ? 'Sala Totale' : 'Sale Totali'; ?>
+                                    </small>
                                 </div>
                             </div>
                         </div>

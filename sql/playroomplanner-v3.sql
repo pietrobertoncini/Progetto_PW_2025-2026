@@ -127,14 +127,14 @@ INSERT INTO UTENTE (id_utente, nome, cognome, data_nascita, ruolo, email, passwo
 -- ADMIN 
 (100, 'Super', 'Admin', '1980-01-01', NULL, 'admin@playroom.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, NULL, FALSE, TRUE),
 
-(101, 'Mario', 'Rossi', '1980-05-15', 'docente', 'mario.rossi@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 1, FALSE, FALSE),
-(102, 'Anna', 'Bianchi', '1990-07-20', 'tecnico', 'anna.bianchi@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 1, FALSE, FALSE),
-(103, 'Luca', 'Verdi', '2002-11-30', 'allievo', 'luca.verdi@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 1, FALSE, FALSE),
-(104, 'Giulia', 'Neri', '2003-01-10', 'allievo', 'giulia.neri@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 1, FALSE, FALSE),
-(105, 'Paolo', 'Gialli', '1975-02-05', 'docente', 'paolo.gialli@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 2, FALSE, FALSE),
-(106, 'Sara', 'Pozzi', '2001-06-25', 'allievo', 'sara.pozzi@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 2, FALSE, FALSE),
-(107, 'Franco', 'Miti', '1985-09-12', 'tecnico', 'franco.miti@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 3, FALSE, FALSE),
-(108, 'Chiara', 'Blu', '2004-03-18', 'allievo', 'chiara.blu@email.it', '$2y$10$c.GIV.a.6Uo9.xS9vIY3UuZ85y3.E0oB.d.S5YV.mKOyG0c.8dG.a', NULL, 3, FALSE, FALSE);
+(101, 'Mario', 'Rossi', '1980-05-15', 'docente', 'mario.rossi@email.it', '$2y$10$hQRtNiBLRnsp7uo4HXSVB./.arZ6Ju10C1WV4dtSFP7gmy8waLzWG', NULL, 1, FALSE, FALSE),
+(102, 'Anna', 'Bianchi', '1990-07-20', 'tecnico', 'anna.bianchi@email.it', '$2y$10$hQRtNiBLRnsp7uo4HXSVB./.arZ6Ju10C1WV4dtSFP7gmy8waLzWG', NULL, 1, FALSE, FALSE),
+(103, 'Luca', 'Verdi', '2002-11-30', 'allievo', 'luca.verdi@email.it', '$2y$10$hQRtNiBLRnsp7uo4HXSVB./.arZ6Ju10C1WV4dtSFP7gmy8waLzWG', NULL, 1, FALSE, FALSE),
+(104, 'Giulia', 'Neri', '2003-01-10', 'allievo', 'giulia.neri@email.it', '$2y$10$hQRtNiBLRnsp7uo4HXSVB./.arZ6Ju10C1WV4dtSFP7gmy8waLzWG', NULL, 1, FALSE, FALSE),
+(105, 'Paolo', 'Gialli', '1975-02-05', 'docente', 'paolo.gialli@email.it', '$2y$10$hQRtNiBLRnsp7uo4HXSVB./.arZ6Ju10C1WV4dtSFP7gmy8waLzWG', NULL, 2, FALSE, FALSE),
+(106, 'Sara', 'Pozzi', '2001-06-25', 'allievo', 'sara.pozzi@email.it', '$2y$10$hQRtNiBLRnsp7uo4HXSVB./.arZ6Ju10C1WV4dtSFP7gmy8waLzWG', NULL, 2, FALSE, FALSE),
+(107, 'Franco', 'Miti', '1985-09-12', 'tecnico', 'franco.miti@email.it', '$2y$10$hQRtNiBLRnsp7uo4HXSVB./.arZ6Ju10C1WV4dtSFP7gmy8waLzWG', NULL, 3, FALSE, FALSE),
+(108, 'Chiara', 'Blu', '2004-03-18', 'allievo', 'chiara.blu@email.it', '$2y$10$hQRtNiBLRnsp7uo4HXSVB./.arZ6Ju10C1WV4dtSFP7gmy8waLzWG', NULL, 3, FALSE, FALSE);
 
 -- Aggiornamento num_iscritti
 UPDATE SETTORE SET num_iscritti = 4 WHERE id_settore = 1;

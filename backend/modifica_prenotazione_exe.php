@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['is_responsabile']))
     $new_ora_fine = $new_ora + $new_durata;
 
     // VALIDAZIONE ORARIO
-    if ($new_ora < 9 || $new_ora_fine > 24) {
+    if ($new_ora < 9 || $new_ora_fine > 23) {
         header("Location: " . BASE_URL . "frontend/modifica_prenotazione.php?error=Orario non valido (9-23)&sala=" . urlencode($old_nome_sala) . "&data=$old_data&ora=$old_ora");
         exit;
     }

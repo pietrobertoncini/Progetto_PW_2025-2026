@@ -91,7 +91,7 @@ $lista_invitati = getInvitatiPrenotazione($cid, $id_settore, $nome_sala, $data_o
                             <div class="mb-3">
                                 <label for="durata" class="form-label fw-bold">Durata (ore)</label>
                                 <input type="number" class="form-control" id="durata" name="new_durata"
-                                    min="1" max="4" value="<?php echo $prenotazione['durata']; ?>" required>
+                                    min="1" value="<?php echo $prenotazione['durata']; ?>" required>
                             </div>
 
                             <div class="mb-4">

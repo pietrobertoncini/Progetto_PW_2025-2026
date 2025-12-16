@@ -663,7 +663,8 @@ function checkSovrapposizioneUtente($cid, $id_utente_target, $data_target, $ora_
             JOIN INVITO I ON P.id_settore = I.id_settore AND P.nome_sala = I.nome_sala AND P.data = I.data AND P.ora = I.ora
             WHERE I.id_utente = ? AND I.stato = 'accettato' AND P.data = ?
             AND NOT (P.id_settore = ? AND P.nome_sala = ? AND P.data = ? AND P.ora = ?)     
-            AND ((? >= P.ora AND ? < (P.ora + P.durata)) OR (P.ora >= ? AND P.ora < (? + ?)))";
+            AND ((? >= P.ora AND ? < (P.ora + P.durata)) 
+            OR (P.ora >= ? AND P.ora < (? + ?)))";
 
     $stmt = $cid->prepare($sql);
     $stmt->bind_param("isissiiiiii", $id_utente_target, $data_target, $id_settore_target, $nome_sala_target, $data_target, $ora_target, $ora_target, $ora_target, $ora_target, $ora_target, $durata_target);

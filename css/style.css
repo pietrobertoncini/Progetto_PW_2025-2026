@@ -226,7 +226,7 @@ body {
     /* Padding standard interno al footer */
     padding-top: 60px;
     padding-bottom: 40px;
-    margin-top: 20px;
+    margin-top: auto;
 }
 
 /* Stile Link */

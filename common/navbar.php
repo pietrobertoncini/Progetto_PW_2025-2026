@@ -26,7 +26,7 @@ if (isset($_SESSION['id_utente'])) {
 
 <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-transparent py-3">
   <div class="container-xl bg-light shadow-sm rounded-4 px-4 py-2">
-    <a class="navbar-brand d-flex" href="index.php">
+    <a class="navbar-brand d-flex" href="<?php echo BASE_URL; ?>index.php">
       <img src="<?php echo BASE_URL; ?>images/logo.png" alt="Logo" width="50px" class="rounded-pill">
     </a>
     <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

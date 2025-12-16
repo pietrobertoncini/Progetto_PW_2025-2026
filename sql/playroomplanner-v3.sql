@@ -160,39 +160,45 @@ INSERT INTO SALA (id_settore, nome_sala, capienza_max) VALUES
 
 -- (Mix di date passate e future rispetto al 16/12/2025)
 INSERT INTO PRENOTAZIONE (id_settore, nome_sala, data, ora, durata, attivita, id_organizzatore) VALUES
--- EVENTI PASSATI (Per testare lo storico e lo stato "Concluso")
-(1, 'Sala Prove 1', '2025-12-01', 10, 2, 'Prove generali Concerto Invernale', 101), -- Mario Rossi
-(2, 'Palco A', '2025-12-10', 15, 3, 'Workshop Intensivo Recitazione', 105), -- Paolo Gialli
 
--- EVENTI FUTURI (Per testare nuove prenotazioni e inviti attivi)
-(1, 'Sala Prove 1', '2026-01-12', 10, 2, 'Lezione Pianoforte Avanzato', 101), 
-(2, 'Palco A', '2026-01-14', 15, 3, 'Prove spettacolo teatrale "Amleto"', 105), 
-(1, 'Aula Magna', '2026-01-16', 9, 4, 'Conferenza Annuale Acustica Musicale', 101), 
-(1, 'Studio Registrazione', '2026-01-19', 14, 2, 'Registrazione Demo Band Rock', 101), 
-(3, 'Sala Specchi', '2026-01-21', 16, 2, 'Prove coreografia contemporanea', 107); 
+-- SETTIMANA (8-14 Dicembre)
+(1, 'Sala Prove 1', '2025-12-10', 10, 2, 'Lezione Pianoforte Base', 101),       
+(2, 'Palco A', '2025-12-12', 15, 4, 'Workshop Recitazione Intensivo', 105),    
+
+-- SETTIMANA (15-21 Dicembre) 
+(1, 'Aula Magna', '2025-12-15', 09, 4, 'Conferenza Apertura Anno', 101),       
+(3, 'Sala Specchi', '2025-12-17', 16, 2, 'Prove Saggio Natale Danza', 107),    
+(1, 'Studio Registrazione', '2025-12-19', 14, 2, 'Registrazione Podcast', 101),
+(1, 'Sala Prove 1', '2025-12-20', 10, 3, 'Prove Band Rock', 101),              
+
+-- SETTIMANA (22-28 Dicembre)
+(2, 'Palco A', '2025-12-23', 14, 5, 'Allestimento Scenografia', 105),          
+(1, 'Aula Magna', '2025-12-27', 18, 3, 'Concerto Auguri di Fine Anno', 101),   
+
+-- SETTIMANA (29 Dic - 4 Gen) 
+(3, 'Sala Specchi', '2026-01-02', 10, 2, 'Lezione Danza Contemporanea', 107); 
 
 INSERT INTO INVITO (id_utente, id_settore, nome_sala, data, ora, stato, motivazione, data_risposta) VALUES
 
--- INVITI PER EVENTI PASSATI (Già conclusi)
-(103, 1, 'Sala Prove 1', '2025-12-01', 10, 'accettato', NULL, '2025-11-28 10:00:00'), -- Luca Verdi c'era
-(106, 2, 'Palco A', '2025-12-10', 15, 'accettato', NULL, '2025-12-05 09:15:00'), -- Sara Pozzi c'era
+(103, 1, 'Sala Prove 1', '2025-12-10', 10, 'accettato', NULL, '2025-12-05 10:00:00'),
 
--- INVITI PER EVENTI FUTURI
-(103, 1, 'Sala Prove 1', '2026-01-12', 10, 'accettato', NULL, '2025-12-20 10:00:00'), 
-(104, 1, 'Sala Prove 1', '2026-01-12', 10, 'rifiutato', 'Impegno concomitante', '2025-12-21 14:30:00'), 
+(106, 2, 'Palco A', '2025-12-12', 15, 'accettato', NULL, '2025-12-08 09:15:00'),
 
-(106, 2, 'Palco A', '2026-01-14', 15, 'accettato', NULL, '2025-12-22 09:15:00'), 
+(104, 1, 'Aula Magna', '2025-12-15', 09, 'rifiutato', 'Malattia', '2025-12-14 08:00:00'),
+(103, 1, 'Aula Magna', '2025-12-15', 09, 'accettato', NULL, '2025-12-10 11:00:00'),
 
-(105, 2, 'Palco A', '2026-01-14', 15, 'accettato', NULL, '2025-12-22 09:16:00'), 
+(108, 3, 'Sala Specchi', '2025-12-17', 16, 'accettato', NULL, '2025-12-15 16:00:00'),
 
-(102, 1, 'Aula Magna', '2026-01-16', 9, 'invitato', NULL, NULL), 
-(103, 1, 'Aula Magna', '2026-01-16', 9, 'invitato', NULL, NULL), 
-(104, 1, 'Aula Magna', '2026-01-16', 9, 'accettato', NULL, '2026-01-02 11:00:00'), 
-(107, 1, 'Aula Magna', '2026-01-16', 9, 'invitato', NULL, NULL), 
+(102, 1, 'Studio Registrazione', '2025-12-19', 14, 'invitato', NULL, NULL),
 
-(103, 1, 'Studio Registrazione', '2026-01-19', 14, 'invitato', NULL, NULL), 
+(103, 1, 'Sala Prove 1', '2025-12-20', 10, 'invitato', NULL, NULL),
+(104, 1, 'Sala Prove 1', '2025-12-20', 10, 'accettato', NULL, '2025-12-16 09:30:00'),
 
-(108, 3, 'Sala Specchi', '2026-01-21', 16, 'accettato', NULL, '2026-01-05 10:30:00'); 
+(106, 2, 'Palco A', '2025-12-23', 14, 'invitato', NULL, NULL),
+
+(102, 1, 'Aula Magna', '2025-12-27', 18, 'accettato', NULL, '2025-12-16 10:00:00'),
+
+(108, 3, 'Sala Specchi', '2026-01-02', 10, 'invitato', NULL, NULL);
 
 INSERT INTO SALA_DOTAZIONE (id_settore, nome_sala, id_dotazione) VALUES
 (1, 'Aula Magna', 1),

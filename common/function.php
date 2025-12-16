@@ -43,6 +43,16 @@ function inserisciUtente($cid, $nome, $cognome, $email, $password, $data_nascita
     $stmt->execute();
     $id = $cid->insert_id;
     $stmt->close();
+
+    // aggiornamento num_iscritti
+    if ($id_settore) {
+        $sqlUpdate = "UPDATE SETTORE SET num_iscritti = num_iscritti + 1 WHERE id_settore = ?";
+        $stmtUpd = $cid->prepare($sqlUpdate);
+        $stmtUpd->bind_param("i", $id_settore);
+        $stmtUpd->execute();
+        $stmtUpd->close();
+    }
+
     return $id;
 }
 
@@ -61,10 +71,37 @@ function modificaUtente($cid, $id_utente, $nome, $cognome, $email, $data_nascita
     $stmt->close();
 }
 
-function eliminaMioProfilo($cid, $id_utente) {
+function eliminaMioProfilo($cid, $id_utente)
+{
+    // Recupero il settore dell'utente PRIMA di cancellarlo
+    $id_settore = null;
+    $stmtGet = $cid->prepare("SELECT id_settore FROM UTENTE WHERE id_utente = ?");
+    $stmtGet->bind_param("i", $id_utente);
+    $stmtGet->execute();
+    $res = $stmtGet->get_result();
+    if ($row = $res->fetch_assoc()) {
+        $id_settore = $row['id_settore'];
+    }
+    $stmtGet->close();
+
     $stmt = $cid->prepare("DELETE FROM UTENTE WHERE id_utente = ?");
     $stmt->bind_param("i", $id_utente);
-    return $stmt->execute();
+
+    try {
+        $esito = $stmt->execute();
+        $stmt->close();
+
+        // 3. Se la cancellazione è riuscita, decremento num_iscritti nel settore
+        if ($esito && $id_settore) {
+            $stmtUpd = $cid->prepare("UPDATE SETTORE SET num_iscritti = num_iscritti - 1 WHERE id_settore = ?");
+            $stmtUpd->bind_param("i", $id_settore);
+            $stmtUpd->execute();
+            $stmtUpd->close();
+        }
+        return $esito;
+    } catch (Exception $e) {
+        return false;
+    }
 }
 
 function datiUtenteCompleti($cid, $id_utente)
@@ -183,13 +220,15 @@ function eliminaSettore($cid, $id)
 }
 
 // Sale
-function creaSala($cid, $id_settore, $nome, $capienza) {
+function creaSala($cid, $id_settore, $nome, $capienza)
+{
     $stmt = $cid->prepare("INSERT INTO SALA (id_settore, nome_sala, capienza_max) VALUES (?, ?, ?)");
     $stmt->bind_param("isi", $id_settore, $nome, $capienza);
     return $stmt->execute();
 }
 
-function aggiornaSala($cid, $old_id_settore, $old_nome, $new_id_settore, $new_nome, $new_capienza) {
+function aggiornaSala($cid, $old_id_settore, $old_nome, $new_id_settore, $new_nome, $new_capienza)
+{
     // Aggiorniamo anche id_settore e nome_sala che sono chiavi primarie
     $sql = "UPDATE SALA 
             SET id_settore = ?, nome_sala = ?, capienza_max = ? 
@@ -199,7 +238,8 @@ function aggiornaSala($cid, $old_id_settore, $old_nome, $new_id_settore, $new_no
     return $stmt->execute();
 }
 
-function eliminaSala($cid, $id_settore, $nome) {
+function eliminaSala($cid, $id_settore, $nome)
+{
     $stmt = $cid->prepare("DELETE FROM SALA WHERE id_settore = ? AND nome_sala = ?");
     $stmt->bind_param("is", $id_settore, $nome);
     return $stmt->execute();
@@ -255,10 +295,33 @@ function retrocediResponsabile($cid, $id_utente)
 function eliminaUtente($cid, $id_target, $id_self)
 {
     if ($id_target == $id_self) return false;
+
+    // Recupero il settore dell'utente PRIMA di cancellarlo
+    $id_settore = null;
+    $stmtGet = $cid->prepare("SELECT id_settore FROM UTENTE WHERE id_utente = ?");
+    $stmtGet->bind_param("i", $id_target);
+    $stmtGet->execute();
+    $res = $stmtGet->get_result();
+    if ($row = $res->fetch_assoc()) {
+        $id_settore = $row['id_settore'];
+    }
+    $stmtGet->close();
+
     $stmt = $cid->prepare("DELETE FROM UTENTE WHERE id_utente = ?");
     $stmt->bind_param("i", $id_target);
     try {
-        return $stmt->execute();
+        $esito = $stmt->execute();
+        $stmt->close();
+
+        // Se cancellato con successo, decremento num_iscritti (-1)
+        if ($esito && $id_settore) {
+            $stmtUpd = $cid->prepare("UPDATE SETTORE SET num_iscritti = num_iscritti - 1 WHERE id_settore = ?");
+            $stmtUpd->bind_param("i", $id_settore);
+            $stmtUpd->execute();
+            $stmtUpd->close();
+        }
+
+        return $esito;
     } catch (Exception $e) {
         return false;
     }
@@ -319,15 +382,16 @@ function eliminaDotazione($cid, $id)
     }
 }
 
-function getPrenotazioniGriglia($cid, $id_settore, $nome_sala, $data_inizio, $data_fine) {
+function getPrenotazioniGriglia($cid, $id_settore, $nome_sala, $data_inizio, $data_fine)
+{
     $prenotazioni_griglia = [];
-    
+
     $sql = "SELECT P.*, U.nome as nome_org, U.cognome as cognome_org 
             FROM PRENOTAZIONE P
             JOIN UTENTE U ON P.id_organizzatore = U.id_utente
             WHERE P.id_settore = ? AND P.nome_sala = ? 
             AND P.data BETWEEN ? AND ?";
-    
+
     $stmt = $cid->prepare($sql);
     $stmt->bind_param("isss", $id_settore, $nome_sala, $data_inizio, $data_fine);
     $stmt->execute();
@@ -337,14 +401,14 @@ function getPrenotazioniGriglia($cid, $id_settore, $nome_sala, $data_inizio, $da
     while ($row = $res->fetch_assoc()) {
         for ($i = 0; $i < $row['durata']; $i++) {
             $h = $row['ora'] + $i;
-            
+
             $prenotazioni_griglia[$row['data']][$h] = [
-                'dati' => $row,      
+                'dati' => $row,
                 'is_start' => ($i === 0)
             ];
         }
     }
-    
+
     return $prenotazioni_griglia;
 }
 
@@ -381,7 +445,8 @@ function getDotazioniSala($cid, $id_settore, $nome_sala)
     return implode(", ", $lista);
 }
 
-function aggiornaDotazioniSala($cid, $id_settore, $nome_sala, $lista_id_dotazioni) {
+function aggiornaDotazioniSala($cid, $id_settore, $nome_sala, $lista_id_dotazioni)
+{
     $cid->begin_transaction();
     try {
         // Elimina TUTTE le dotazioni attuali per questa sala
@@ -394,13 +459,13 @@ function aggiornaDotazioniSala($cid, $id_settore, $nome_sala, $lista_id_dotazion
         if (!empty($lista_id_dotazioni)) {
             $sqlInsert = "INSERT INTO SALA_DOTAZIONE (id_settore, nome_sala, id_dotazione) VALUES (?, ?, ?)";
             $stmtIns = $cid->prepare($sqlInsert);
-            
+
             foreach ($lista_id_dotazioni as $id_dot) {
                 $stmtIns->bind_param("isi", $id_settore, $nome_sala, $id_dot);
                 $stmtIns->execute();
             }
         }
-        
+
         $cid->commit();
         return true;
     } catch (Exception $e) {
@@ -441,7 +506,8 @@ function getRisposteInvitiByResponsabile($cid, $id_responsabile)
     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
-function getInvitatiPrenotazione($cid, $id_settore, $nome_sala, $data, $ora) {
+function getInvitatiPrenotazione($cid, $id_settore, $nome_sala, $data, $ora)
+{
     $sql = "SELECT U.nome, U.cognome, U.email, I.stato, I.motivazione, U.ruolo
             FROM INVITO I
             JOIN UTENTE U ON I.id_utente = U.id_utente
@@ -449,7 +515,7 @@ function getInvitatiPrenotazione($cid, $id_settore, $nome_sala, $data, $ora) {
             -- Escludiamo l'organizzatore dalla lista visuale degli 'invitati'
             AND I.id_utente != (SELECT id_organizzatore FROM PRENOTAZIONE WHERE id_settore=? AND nome_sala=? AND data=? AND ora=?)
             ORDER BY U.cognome";
-    
+
     $stmt = $cid->prepare($sql);
     $stmt->bind_param("isssisss", $id_settore, $nome_sala, $data, $ora, $id_settore, $nome_sala, $data, $ora);
     $stmt->execute();
@@ -766,12 +832,13 @@ function uploadFotoProfilo($fileInput)
     return null;
 }
 
-function rimuoviVecchiaFoto($pathRelativoDalDb) {
+function rimuoviVecchiaFoto($pathRelativoDalDb)
+{
 
     if (empty($pathRelativoDalDb)) {
         return;
     }
-    
+
     $percorsoFisico = "../" . $pathRelativoDalDb;
     if (!empty($pathRelativoDalDb) && file_exists($percorsoFisico)) {
         unlink($percorsoFisico); // cancella il file
@@ -780,7 +847,8 @@ function rimuoviVecchiaFoto($pathRelativoDalDb) {
 
 // FUNZIONI PER HOMEPAGE
 // conta il numero di settori per tipo ('musica', 'teatro', 'ballo')
-function getNumeroSettoriPerTipo($cid, $tipo) {
+function getNumeroSettoriPerTipo($cid, $tipo)
+{
     $stmt = $cid->prepare("SELECT COUNT(*) as num FROM SETTORE WHERE tipo = ?");
     $stmt->bind_param("s", $tipo);
     $stmt->execute();
@@ -789,7 +857,8 @@ function getNumeroSettoriPerTipo($cid, $tipo) {
 }
 
 // conta il numero di sale che appartengono a un settore di un determinato tipo
-function getNumeroSalePerTipo($cid, $tipo) {
+function getNumeroSalePerTipo($cid, $tipo)
+{
     $sql = "SELECT COUNT(*) as num 
             FROM SALA S
             JOIN SETTORE SETT ON S.id_settore = SETT.id_settore
@@ -800,5 +869,3 @@ function getNumeroSalePerTipo($cid, $tipo) {
     $res = $stmt->get_result()->fetch_assoc();
     return $res['num'];
 }
-
-

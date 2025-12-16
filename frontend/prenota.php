@@ -90,7 +90,7 @@ if ($data_scelta && $ora_scelta) {
 
     <div class="container mt-5 mb-5">
 
-        <h2 class="mb-4 text-center fw-bold" style="color: #7A5E4E;">Nuova Prenotazione</h2>
+        <h2 class="mb-4 text-center fw-bold">Nuova Prenotazione</h2>
 
         <?php if ($errore_selezione): ?>
             <div class="alert alert-danger text-center shadow-sm rounded-4">

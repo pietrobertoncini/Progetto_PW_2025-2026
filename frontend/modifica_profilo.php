@@ -29,7 +29,7 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
 
                 <div class="card shadow-sm rounded-4 p-4 mb-4 border-0 overflow-hidden">
                     <div class="card-header bg-white border-0 text-center">
-                        <h3 class="fw-bold">Modifica Profilo</h3>
+                        <h2 class="fw-bold" >Modifica Profilo</h2>
                     </div>
 
                     <div class="card-body">

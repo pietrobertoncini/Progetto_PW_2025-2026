@@ -27,6 +27,9 @@ body {
     overscroll-behavior-y: none;
 }
 
+.container h2 {
+    color: #7A5E4E;
+}
 
 /* BOTTONI INDEX */
 .btn-home-primary {

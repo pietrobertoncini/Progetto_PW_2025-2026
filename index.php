@@ -90,12 +90,6 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                             style="object-fit: cover; width: 100%; max-height: 500px;">
                     </div>
                 </div>
-
-                <div class="row mt-5">
-                    <div class="col-12 col-lg-6 text-center">
-                        <a href="#" class="btn btn-home-outline px-5 rounded-pill shadow-sm">Scopri le sale</a>
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -138,13 +132,6 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                             style="object-fit: cover; width: 100%; max-height: 500px;">
                     </div>
                 </div>
-
-                <div class="row mt-5 order-3">
-                    <div class="col-12 col-lg-6"></div>
-                    <div class="col-12 col-lg-6 text-center">
-                        <a href="#" class="btn btn-home-outline px-5 rounded-pill shadow-sm">Scopri le sale</a>
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -185,12 +172,6 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                             alt="Sala Ballo"
                             class="img-fluid rounded-4 shadow-lg"
                             style="object-fit: cover; width: 100%; max-height: 500px;">
-                    </div>
-                </div>
-
-                <div class="row mt-5">
-                    <div class="col-12 col-lg-6 text-center">
-                        <a href="#" class="btn btn-home-outline px-5 rounded-pill shadow-sm">Scopri le sale</a>
                     </div>
                 </div>
             </div>

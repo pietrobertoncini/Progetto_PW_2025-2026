@@ -32,16 +32,16 @@ $risposte = getRisposteInvitiByResponsabile($cid, $id_responsabile);
         </div>
 
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-            <div class="card-header bg-info bg-opacity-10 border-0 py-3">
+            <div class="card-header bg-info bg-opacity-50 border-0 py-3">
                 <h5 class="mb-0 text-dark">
                     Stato degli inviti per i tuoi eventi
                 </h5>
             </div>
             <div class="card-body p-0">
                 <?php if (count($risposte) > 0): ?>
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
+                            <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
                                 <tr>
                                     <th class="ps-4">Evento & Data</th>
                                     <th>Invitato</th>

@@ -46,9 +46,9 @@ $elenco_utenti = getAllUtentiAdmin($cid);
 
 
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-            <div class="table-responsive">
+            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light small text-muted text-uppercase">
+                    <thead class="table-light small text-muted text-uppercase" style="position: sticky; top: 0; z-index: 1;">
                         <tr>
                             <th class="ps-4">Utente</th>
                             <th>Email</th>

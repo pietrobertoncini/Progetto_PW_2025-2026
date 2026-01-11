@@ -99,9 +99,9 @@ $elenco_dotazioni = getAllDotazioni($cid);
                     <div class="card-header bg-white py-3 fw-bold text-muted border-bottom-0">
                         Dotazioni Disponibili (<?php echo count($elenco_dotazioni); ?>)
                     </div>
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light small text-muted text-uppercase">
+                            <thead class="table-light small text-muted text-uppercase" style="position: sticky; top: 0; z-index: 1;">
                                 <tr>
                                     <th class="ps-4" style="width: 70%;">Tipologia</th>
                                     <th class="text-end pe-4">Azioni</th>

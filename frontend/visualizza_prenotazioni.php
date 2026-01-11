@@ -65,8 +65,32 @@ if ($filtro_sala) {
 
     <div class="flex-shrink-0 container py-5">
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Visualizza Prenotazioni</h2>
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+
+            <h2 class="m-0 text-nowrap">Visualizza Prenotazioni</h2>
+
+            <div class="card shadow-sm border-0 rounded-4 bg-light">
+                <div class="card-body p-2">
+                    <form method="GET" action="<?php echo BASE_URL; ?>frontend/visualizza_prenotazioni.php" class="d-flex align-items-center gap-2">
+                        <input type="hidden" name="week" value="<?php echo $lunedi_settimana; ?>">
+
+                        <label class="fw-bold text-muted m-0 text-nowrap"><i class="bi bi-funnel-fill"></i> Sala:</label>
+
+                        <select name="sala" class="form-select form-select-sm rounded-pill border-secondary" style="max-width: 300px;" onchange="this.form.submit()">
+                            <option value="">-- Tutte --</option>
+                            <?php foreach ($sale_disponibili as $s): ?>
+                                <?php
+                                $val = $s['id_settore'] . '|' . $s['nome_sala'];
+                                $selected = ($filtro_sala === $val) ? 'selected' : '';
+                                ?>
+                                <option value="<?php echo $val; ?>" <?php echo $selected; ?>>
+                                    <?php echo htmlspecialchars($s['nome_sala']); ?> (<?php echo htmlspecialchars($s['nome_settore']); ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </form>
+                </div>
+            </div>
         </div>
 
         <?php if (isset($_GET['msg'])): ?>
@@ -79,32 +103,6 @@ if ($filtro_sala) {
                 <i class="bi bi-exclamation-triangle-fill me-2"></i> <?php echo htmlspecialchars($_GET['error']); ?>
             </div>
         <?php endif; ?>
-
-        <div class="card shadow-sm border-0 rounded-4 mb-4 bg-light">
-            <div class="card-body p-3">
-                <form method="GET" action="<?php echo BASE_URL; ?>frontend/visualizza_prenotazioni.php" class="row g-3 align-items-center">
-                    <input type="hidden" name="week" value="<?php echo $lunedi_settimana; ?>">
-
-                    <div class="col-auto">
-                        <label class="fw-bold text-muted"><i class="bi bi-funnel-fill"></i> Filtra per Sala:</label>
-                    </div>
-                    <div class="col-md-5">
-                        <select name="sala" class="form-select rounded-pill border-secondary" onchange="this.form.submit()">
-                            <option value="">-- Mostra Tutte (Lista Globale) --</option>
-                            <?php foreach ($sale_disponibili as $s): ?>
-                                <?php
-                                $val = $s['id_settore'] . '|' . $s['nome_sala'];
-                                $selected = ($filtro_sala === $val) ? 'selected' : '';
-                                ?>
-                                <option value="<?php echo $val; ?>" <?php echo $selected; ?>>
-                                    <?php echo htmlspecialchars($s['nome_sala']); ?> (<?php echo htmlspecialchars($s['nome_settore']); ?>)
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </form>
-            </div>
-        </div>
 
         <?php if ($filtro_sala): ?>
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -125,7 +123,7 @@ if ($filtro_sala) {
 
             <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
                 <div class="table-responsive">
-                    <table class="table calendar-table mb-0 text-center align-middle">
+                    <table class="table table-sm calendar-table mb-0 text-center align-middle">
                         <thead>
                             <tr>
                                 <th class="align-middle" style="width: 40px;">Ora</th>
@@ -162,19 +160,19 @@ if ($filtro_sala) {
                                                 // Colore grigio se passato, azzurro se futuro
                                                 $ts_evento = strtotime($info['data'] . " " . $info['ora'] . ":00");
                                                 $is_passato = ($ts_evento < time());
-                                                
+
                                                 if ($is_passato) {
-                                                    $bg_class = "bg-secondary bg-opacity-10 border-secondary border-opacity-25"; 
+                                                    $bg_class = "bg-secondary bg-opacity-10 border-secondary border-opacity-25";
                                                     $text_class = "text-muted";
                                                     $icon_class = "text-muted";
                                                 } else {
-                                                    $bg_class = "bg-info bg-opacity-10 border-info border-opacity-25"; 
+                                                    $bg_class = "bg-info bg-opacity-10 border-info border-opacity-25";
                                                     $text_class = "text-dark";
                                                     $icon_class = "text-dark";
                                                 }
                                     ?>
                                                 <td rowspan="<?php echo $durata; ?>" class="p-0 p-lg-2 <?php echo $bg_class; ?> position-relative">
-                                                    <div class="d-flex flex-column justify-content-center align-items-center h-100 w-100" style="min-height: <?php echo ($durata * 40); ?>px;">
+                                                    <div class="d-flex flex-column justify-content-center align-items-center h-100 w-100" style="min-height: <?php echo ($durata * 35); ?>px;">
 
                                                         <?php if ($durata == 1): ?>
                                                             <div class="dropdown w-100 h-100 d-flex align-items-center justify-content-between px-2">
@@ -250,7 +248,7 @@ if ($filtro_sala) {
                                         <td class="ps-4">
                                             <span class="fw-bold d-block"><?php echo date("d/m/Y", strtotime($p['data'])); ?></span>
                                             <small><?php echo $p['ora']; ?>:00 - <?php echo $p['ora'] + $p['durata']; ?>:00</small>
-                                            
+
                                             <?php if ($is_passata): ?>
                                                 <span class="badge bg-secondary mt-1" style="font-size: 0.7em;">Conclusa</span>
                                             <?php endif; ?>

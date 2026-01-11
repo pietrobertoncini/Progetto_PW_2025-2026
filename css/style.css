@@ -154,11 +154,13 @@ body {
     table-layout: fixed;
     width: 100%;
     min-width: 800px;
+    font-size: 0.85rem;
 }
 
 .calendar-table th,
 .calendar-table td {
     border: 1px solid rgba(122, 94, 78, 0.25);
+    padding: 2px 4px !important;
 }
 
 .calendar-table thead tr:first-child th {
@@ -184,12 +186,14 @@ body {
     background-color: #7A5E4E;
     color: white;
     border-color: rgba(255, 255, 255, 0.2);
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
 }
 
 .calendar-table tbody td {
     text-align: center;
     vertical-align: middle;
-    height: 60px;
+    height: 35px;
 }
 
 .calendar-table tbody td.cell-free {

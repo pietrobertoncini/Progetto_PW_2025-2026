@@ -44,67 +44,67 @@ if (isset($_SESSION['id_utente'])) {
 
           <?php if (empty($_SESSION['is_admin'])): ?>
 
-            <?php if (isset($_SESSION['is_responsabile']) && $_SESSION['is_responsabile']) ?>
+            <?php if (isset($_SESSION['is_responsabile']) && $_SESSION['is_responsabile']): ?>
 
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle position-relative" href="#" id="dropVisualizza" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Visualizza
-                <?php if ($num_inviti > 0): ?>
-                  <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
-                <?php endif; ?>
-              </a>
-              <ul class="dropdown-menu border-0 shadow" aria-labelledby="dropVisualizza">
-                <li>
-                  <a class="dropdown-item d-flex justify-content-between align-items-center" href="<?php echo BASE_URL; ?>frontend/inviti.php">
-                    Inviti
-                    <?php if ($num_inviti > 0): ?>
-                      <span class="badge bg-danger rounded-pill"><?php echo $num_inviti; ?></span>
-                    <?php endif; ?>
-                  </a>
-                </li>
-                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>frontend/impegni.php">I Miei Impegni</a></li>
-                <li>
-                  <hr class="dropdown-divider">
-                </li>
-                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>frontend/visualizza_prenotazioni.php">Prenotazioni</a></li>
-              </ul>
-            </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle position-relative" href="#" id="dropVisualizza" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Visualizza
+                  <?php if ($num_inviti > 0): ?>
+                    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                  <?php endif; ?>
+                </a>
+                <ul class="dropdown-menu border-0 shadow" aria-labelledby="dropVisualizza">
+                  <li>
+                    <a class="dropdown-item d-flex justify-content-between align-items-center" href="<?php echo BASE_URL; ?>frontend/inviti.php">
+                      Inviti
+                      <?php if ($num_inviti > 0): ?>
+                        <span class="badge bg-danger rounded-pill"><?php echo $num_inviti; ?></span>
+                      <?php endif; ?>
+                    </a>
+                  </li>
+                  <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>frontend/impegni.php">I Miei Impegni</a></li>
+                  <li>
+                    <hr class="dropdown-divider">
+                  </li>
+                  <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>frontend/visualizza_prenotazioni.php">Prenotazioni</a></li>
+                </ul>
+              </li>
 
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="dropGestisci" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Gestisci
-              </a>
-              <ul class="dropdown-menu border-0 shadow" aria-labelledby="dropGestisci">
-                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>frontend/gestione_prenotazioni.php">Le Mie Prenotazioni</a></li>
-                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>frontend/resp_dotazioni.php">Dotazioni Sale</a></li>
-                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>frontend/risposte_inviti.php">Stato Inviti</a></li>
-              </ul>
-            </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="dropGestisci" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Gestisci
+                </a>
+                <ul class="dropdown-menu border-0 shadow" aria-labelledby="dropGestisci">
+                  <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>frontend/gestione_prenotazioni.php">Le Mie Prenotazioni</a></li>
+                  <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>frontend/resp_dotazioni.php">Dotazioni Sale</a></li>
+                  <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>frontend/risposte_inviti.php">Stato Inviti</a></li>
+                </ul>
+              </li>
 
-          <?php else: ?>
+            <?php else: ?>
 
-            <li class="nav-item">
-              <a class="nav-link position-relative" href="<?php echo BASE_URL; ?>frontend/inviti.php">
-                Inviti
-                <?php if ($num_inviti > 0): ?>
-                  <span class="badge bg-danger rounded-pill ms-1"><?php echo $num_inviti; ?></span>
-                <?php endif; ?>
-              </a>
-            </li>
+              <li class="nav-item">
+                <a class="nav-link position-relative" href="<?php echo BASE_URL; ?>frontend/inviti.php">
+                  Inviti
+                  <?php if ($num_inviti > 0): ?>
+                    <span class="badge bg-danger rounded-pill ms-1"><?php echo $num_inviti; ?></span>
+                  <?php endif; ?>
+                </a>
+              </li>
 
-            <li class="nav-item">
-              <a class="nav-link" href="<?php echo BASE_URL; ?>frontend/impegni.php">
-                Impegni
-              </a>
-            </li>
+              <li class="nav-item">
+                <a class="nav-link" href="<?php echo BASE_URL; ?>frontend/impegni.php">
+                  Impegni
+                </a>
+              </li>
 
-            <li class="nav-item">
-              <a class="nav-link" href="<?php echo BASE_URL; ?>frontend/visualizza_prenotazioni.php">
-                Prenotazioni
-              </a>
+              <li class="nav-item">
+                <a class="nav-link" href="<?php echo BASE_URL; ?>frontend/visualizza_prenotazioni.php">
+                  Prenotazioni
+                </a>
 
-            </li>
-
+              </li>
+            <?php endif; ?>
           <?php endif; ?>
 
           <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): ?>

@@ -32,7 +32,7 @@ $risposte = getRisposteInvitiByResponsabile($cid, $id_responsabile);
         </div>
 
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-            <div class="card-header bg-info bg-opacity-50 border-0 py-3">
+            <div class="card-header bg-info bg-opacity-25 border-0 py-3">
                 <h5 class="mb-0 text-dark">
                     Stato degli inviti per i tuoi eventi
                 </h5>

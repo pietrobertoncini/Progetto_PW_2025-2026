@@ -34,7 +34,7 @@ if (function_exists('getInvitiPendenti')) {
         </div>
 
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-            <div class="card-header bg-warning bg-opacity-10 border-0 py-3 d-flex align-items-center">
+            <div class="card-header bg-warning bg-opacity-50 border-0 py-3 d-flex align-items-center">
                 <h5 class="mb-0 text-dark fw-bold">
                     Inviti in Attesa <span class="badge bg-danger rounded-pill ms-2"><?php echo count($inviti_pendenti); ?></span>
                 </h5>
@@ -42,9 +42,9 @@ if (function_exists('getInvitiPendenti')) {
 
             <div class="card-body p-0">
                 <?php if (count($inviti_pendenti) > 0): ?>
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light text-muted text-uppercase small">
+                            <thead class="table-light text-muted text-uppercase small" style="position: sticky; top: 0; z-index: 1;">
                                 <tr>
                                     <th class="ps-4 py-3">Attività</th>
                                     <th>Luogo e Data</th>

@@ -59,7 +59,7 @@ foreach ($impegni_lista as $imp) {
 
     <div class="flex-shrink-0 container py-5">
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <h2>I Tuoi Impegni</h2>
         </div>
 
@@ -78,7 +78,7 @@ foreach ($impegni_lista as $imp) {
 
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
             <div class="table-responsive">
-                <table class="table calendar-table mb-0 text-center align-middle">
+                <table class="table table-sm calendar-table mb-0 text-center align-middle">
                     <thead>
                         <tr>
                             <th class="align-middle" style="width: 40px;">Ora</th>

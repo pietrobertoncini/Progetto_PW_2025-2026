@@ -85,12 +85,44 @@ if ($data_scelta && $ora_scelta) {
 <html lang="it">
 <?php require ROOT_PATH . "/common/header.php" ?>
 
-<body>
+<body class="d-flex flex-column h-100">
     <?php include ROOT_PATH . '/common/navbar.php'; ?>
 
-    <div class="container mt-5 mb-5">
+    <div class="flex-shrink-0 container py-5">
 
-        <h2 class="mb-4 text-center fw-bold">Nuova Prenotazione</h2>
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+
+            <h2 class="m-0 text-nowrap">Nuova Prenotazione</h2>
+
+            <div class="card shadow-sm border-0 rounded-4 bg-light">
+                <div class="card-body p-2">
+                    <form action="<?php echo BASE_URL; ?>frontend/prenota.php" method="GET" class="d-flex align-items-center gap-2">
+                        <input type="hidden" name="week" value="<?php echo $lunedi_settimana; ?>">
+
+                        <label for="sala" class="fw-bold text-muted m-0 text-nowrap">
+                            <i class="bi bi-geo-alt-fill"></i> Sala:
+                        </label>
+
+                        <select class="form-select form-select-sm rounded-pill border-secondary"
+                            name="sala"
+                            id="sala"
+                            onchange="this.form.submit()"
+                            style="max-width: 300px; cursor: pointer;">
+
+                            <option value="" disabled <?php echo !$id_sala_selezionata ? 'selected' : ''; ?>>-- Seleziona --</option>
+
+                            <?php foreach ($sale as $s): ?>
+                                <option value="<?php echo htmlspecialchars($s['nome_sala']); ?>"
+                                    <?php echo ($id_sala_selezionata == $s['nome_sala']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($s['nome_sala']); ?> (Cap.: <?php echo $s['capienza_max']; ?>)
+                                </option>
+                            <?php endforeach; ?>
+
+                        </select>
+                    </form>
+                </div>
+            </div>
+        </div>
 
         <?php if ($errore_selezione): ?>
             <div class="alert alert-danger text-center shadow-sm rounded-4">
@@ -102,32 +134,21 @@ if ($data_scelta && $ora_scelta) {
             <div class="alert alert-danger text-center shadow-sm rounded-4"><?php echo htmlspecialchars($_GET['error']); ?></div>
         <?php endif; ?>
 
-        <div class="card shadow-sm mb-4 border-0 rounded-5 overflow-hidden">
-            <div class="card-body bg-light p-4">
-                <form action="<?php echo BASE_URL; ?>frontend/prenota.php" method="GET" class="row g-3 align-items-end">
-                    <input type="hidden" name="week" value="<?php echo $lunedi_settimana; ?>">
+        <?php if (!$id_sala_selezionata): ?>
+            <div class="mt-3 text-center">
 
-                    <div class="col-md-8">
-                        <label for="sala" class="form-label fw-bold text-muted text-uppercase small ps-1">1. Scegli la Sala</label>
-                        <select class="form-select rounded-pill shadow-sm py-2 px-3 fw-bold text-dark" name="sala" id="sala" onchange="this.form.submit()" style="cursor: pointer; border-color: #D2B48C;">
-                            <option value="" disabled <?php echo !$id_sala_selezionata ? 'selected' : ''; ?>>-- Seleziona una sala dal menu --</option>
-                            <?php foreach ($sale as $s): ?>
-                                <option value="<?php echo htmlspecialchars($s['nome_sala']); ?>"
-                                    <?php echo ($id_sala_selezionata == $s['nome_sala']) ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($s['nome_sala']); ?> (Capienza: <?php echo $s['capienza_max']; ?>)
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+                <div class="mb-2 text-secondary" style="opacity: 0.3;">
+                    <i class="bi bi-arrow-up-circle-fill" style="font-size: 3rem;"></i>
+                </div>
 
-                    <div class="col-md-4">
-                        <button type="submit" class="btn btn-primary w-100 rounded-pill shadow-sm py-2 fw-bold">
-                            <i class="bi bi-calendar-event me-2"></i> Aggiorna Calendario
-                        </button>
-                    </div>
-                </form>
+                <h5 class="fw-bold text-secondary mb-2">Nessuna sala selezionata</h5>
+
+                <p class="text-muted text-secondary mb-0 mx-auto" style="max-width: 500px;">
+                    Per procedere con una nuova prenotazione, seleziona una sala dal menu in alto a destra.
+                </p>
+
             </div>
-        </div>
+        <?php endif; ?>
 
         <?php if ($id_sala_selezionata && !$data_scelta): ?>
 
@@ -147,7 +168,7 @@ if ($data_scelta && $ora_scelta) {
 
                 <div class="shadow-sm mb-4 rounded-4 overflow-hidden">
                     <div class="table-responsive">
-                        <table class="table calendar-table mb-0 text-center">
+                        <table class="table table-sm calendar-table mb-0 text-center">
                             <thead>
                                 <tr>
                                     <th class="align-middle" style="width: 80px;">Ora</th>

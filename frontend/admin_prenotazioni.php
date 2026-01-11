@@ -121,7 +121,7 @@ if ($filtro_sala) {
 
             <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
                 <div class="table-responsive">
-                    <table class="table calendar-table mb-0 text-center align-middle">
+                    <table class="table table-sm calendar-table mb-0 text-center align-middle">
                         <thead>
                             <tr>
                                 <th class="align-middle" style="width: 40px;">Ora</th>
@@ -170,7 +170,7 @@ if ($filtro_sala) {
                                                 }
                                     ?>
                                                 <td rowspan="<?php echo $durata; ?>" class="p-0 p-lg-2 <?php echo $bg_class; ?> position-relative">
-                                                    <div class="d-flex flex-column justify-content-center align-items-center h-100 w-100" style="min-height: <?php echo ($durata * 40); ?>px;">
+                                                    <div class="d-flex flex-column justify-content-center align-items-center h-100 w-100" style="min-height: <?php echo ($durata * 35); ?>px;">
 
                                                         <?php if ($durata == 1): ?>
                                                             <div class="dropdown w-100 h-100 d-flex align-items-center justify-content-between px-2">

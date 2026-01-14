@@ -1,5 +1,7 @@
 <?php
 
+header('Content-Type: application/json');
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -7,33 +9,42 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once __DIR__ . '/../common/setup.php';
 require_once __DIR__ . '/../common/function.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+// Array di risposta base
+$risposta = [
+    "status" => "ko",
+    "msg" => ""
+];
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    
+    // Recuperiamo i dati
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
 
     try {
-
         $utente_trovato = controllaUtente($cid, $email, $password);
 
         if ($utente_trovato) {
+
             $_SESSION['id_utente'] = $utente_trovato['id_utente'];
             $_SESSION['nome'] = $utente_trovato['nome'];
             $_SESSION['ruolo'] = $utente_trovato['ruolo'];
             $_SESSION['is_responsabile'] = (bool)$utente_trovato['is_responsabile'];
             $_SESSION['is_admin'] = (bool)$utente_trovato['is_admin'];
-
-            header('Location: ' . BASE_URL . 'index.php');
-            exit;
+            
+            $risposta["status"] = "ok";
+            $risposta["msg"] = "Login effettuato con successo!";
         } else {
-            header('Location: ' . BASE_URL . 'frontend/login.php?error=Email o password non validi.');
-            exit;
+            $risposta["msg"] = "Email o password errati.";
         }
-    } catch (mysqli_sql_exception $e) {
-        header('Location: ' . BASE_URL . 'frontend/login.php?error=Errore del database: ' . $e->getMessage());
-        exit;
+
+    } catch (Exception $e) {
+        $risposta["msg"] = "Errore di sistema: " . $e->getMessage();
     }
 } else {
-    header('Location: ' . BASE_URL . 'frontend/login.php');
-    exit;
+    $risposta["msg"] = "Metodo non consentito.";
 }
+
+// Restituiamo il JSON
+echo json_encode($risposta);
+?>

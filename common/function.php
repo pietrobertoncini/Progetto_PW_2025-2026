@@ -77,7 +77,7 @@ function eliminaMioProfilo($cid, $id_utente)
     $id_settore = null;
     $percorsoFoto = null;
 
-    $stmtGet = $cid->prepare("SELECT id_settore FROM UTENTE WHERE id_utente = ?");
+    $stmtGet = $cid->prepare("SELECT id_settore, foto FROM UTENTE WHERE id_utente = ?");
     $stmtGet->bind_param("i", $id_utente);
     $stmtGet->execute();
     $res = $stmtGet->get_result();
@@ -306,7 +306,7 @@ function eliminaUtente($cid, $id_target, $id_self)
     $id_settore = null;
     $percorsoFoto = null;
 
-    $stmtGet = $cid->prepare("SELECT id_settore FROM UTENTE WHERE id_utente = ?");
+    $stmtGet = $cid->prepare("SELECT id_settore, foto FROM UTENTE WHERE id_utente = ?");
     $stmtGet->bind_param("i", $id_target);
     $stmtGet->execute();
     $res = $stmtGet->get_result();

@@ -65,6 +65,15 @@ document.addEventListener("DOMContentLoaded", function () {
         if (dataNascita === "") {
             document.getElementById('errData').textContent = "Data richiesta";
             errori = true;
+        } else {
+            const dataInserita = new Date(dataNascita);
+            const oggi = new Date();
+            oggi.setHours(0, 0, 0, 0);
+
+            if (dataInserita > oggi) {
+                document.getElementById('errData').textContent = "Data non valida";
+                errori = true;
+            }
         }
 
         if (errori) return;

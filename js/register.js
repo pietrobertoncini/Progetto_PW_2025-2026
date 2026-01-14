@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById('registerForm');
 
     function checkStatus(response) {
@@ -6,11 +6,11 @@ document.addEventListener("DOMContentLoaded", function() {
         return response;
     }
 
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', function (e) {
         e.preventDefault();
 
         const msgDiv = document.getElementById('messaggioAjax');
-        
+
         // Reset errori visuali precedenti
         document.querySelectorAll('.text-danger-custom').forEach(el => el.textContent = '');
         msgDiv.classList.add('d-none');
@@ -20,7 +20,8 @@ document.addEventListener("DOMContentLoaded", function() {
         const cognome = document.getElementById('cognome').value.trim();
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
-        
+        const dataNascita = document.getElementById('data_nascita').value;
+
         let errori = false;
 
         // Validazione
@@ -46,9 +47,25 @@ document.addEventListener("DOMContentLoaded", function() {
             errori = true;
         }
 
+        if (dataNascita === "") {
+            document.getElementById('errData').textContent = "Seleziona una data di nascita";
+            errori = true;
+        } else {
+            // Confronto con la data di oggi
+            const dataInserita = new Date(dataNascita);
+            const oggi = new Date();
+            // Azzeriamo l'orario di oggi per confrontare solo giorno/mese/anno
+            oggi.setHours(0, 0, 0, 0);
+
+            if (dataInserita > oggi) {
+                document.getElementById('errData').textContent = "Seleziona una data valida";
+                errori = true;
+            }
+        }
+
         // Se ci sono errori, fermiamo tutto
         if (errori) {
-            return; 
+            return;
         }
 
         const formData = new FormData(form);
@@ -59,32 +76,32 @@ document.addEventListener("DOMContentLoaded", function() {
             method: 'POST',
             body: formData
         })
-        .then(checkStatus) // Controlla se il server risponde
-        .then(response => response.json()) // Decodifica il JSON
-        .then(data => {
-            // Gestione della risposta logica
-            if (data.status === 'ok') {
-                // Successo: mostriamo verde e reindirizziamo
-                msgDiv.className = 'alert alert-success';
-                msgDiv.textContent = data.msg;
-                msgDiv.classList.remove('d-none');
+            .then(checkStatus) // Controlla se il server risponde
+            .then(response => response.json()) // Decodifica il JSON
+            .then(data => {
+                // Gestione della risposta logica
+                if (data.status === 'ok') {
+                    // Successo: mostriamo verde e reindirizziamo
+                    msgDiv.className = 'alert alert-success';
+                    msgDiv.textContent = data.msg;
+                    msgDiv.classList.remove('d-none');
 
-                // Aspettiamo un secondo e mezzo e andiamo alla home
-                setTimeout(() => {
-                    window.location.href = '../index.php';
-                }, 1500);
-            } else {
-                // Errore: mostriamo rosso e restiamo qui
+                    // Aspettiamo un secondo e mezzo e andiamo alla home
+                    setTimeout(() => {
+                        window.location.href = '../index.php';
+                    }, 1500);
+                } else {
+                    // Errore: mostriamo rosso e restiamo qui
+                    msgDiv.className = 'alert alert-danger';
+                    msgDiv.textContent = data.msg;
+                    msgDiv.classList.remove('d-none');
+                }
+            })
+            .catch(error => {
+                console.error(error);
                 msgDiv.className = 'alert alert-danger';
-                msgDiv.textContent = data.msg;
+                msgDiv.textContent = "Errore tecnico nella registrazione.";
                 msgDiv.classList.remove('d-none');
-            }
-        })
-        .catch(error => {
-            console.error(error);
-            msgDiv.className = 'alert alert-danger';
-            msgDiv.textContent = "Errore tecnico nella registrazione.";
-            msgDiv.classList.remove('d-none');
-        });
+            });
     });
 });

@@ -75,14 +75,22 @@ function eliminaMioProfilo($cid, $id_utente)
 {
     // Recupero il settore dell'utente PRIMA di cancellarlo
     $id_settore = null;
+    $percorsoFoto = null;
+
     $stmtGet = $cid->prepare("SELECT id_settore FROM UTENTE WHERE id_utente = ?");
     $stmtGet->bind_param("i", $id_utente);
     $stmtGet->execute();
     $res = $stmtGet->get_result();
     if ($row = $res->fetch_assoc()) {
         $id_settore = $row['id_settore'];
+        $percorsoFoto = $row['foto']; // Salviamo il percorso
     }
     $stmtGet->close();
+
+    // Se c'è una foto, la cancelliamo fisicamente dal disco
+    if (!empty($percorsoFoto)) {
+        rimuoviVecchiaFoto($percorsoFoto);
+    }
 
     $stmt = $cid->prepare("DELETE FROM UTENTE WHERE id_utente = ?");
     $stmt->bind_param("i", $id_utente);
@@ -296,14 +304,22 @@ function eliminaUtente($cid, $id_target, $id_self)
 
     // Recupero il settore dell'utente PRIMA di cancellarlo
     $id_settore = null;
+    $percorsoFoto = null;
+
     $stmtGet = $cid->prepare("SELECT id_settore FROM UTENTE WHERE id_utente = ?");
     $stmtGet->bind_param("i", $id_target);
     $stmtGet->execute();
     $res = $stmtGet->get_result();
     if ($row = $res->fetch_assoc()) {
         $id_settore = $row['id_settore'];
+        $percorsoFoto = $row['foto']; // Salviamo il percorso
     }
     $stmtGet->close();
+
+    // Se c'è una foto, la cancelliamo fisicamente dal disco
+    if (!empty($percorsoFoto)) {
+        rimuoviVecchiaFoto($percorsoFoto); // Funzione helper già esistente
+    }
 
     $stmt = $cid->prepare("DELETE FROM UTENTE WHERE id_utente = ?");
     $stmt->bind_param("i", $id_target);
@@ -838,7 +854,11 @@ function rimuoviVecchiaFoto($pathRelativoDalDb)
         return;
     }
 
-    $percorsoFisico = "../" . $pathRelativoDalDb;
+    $percorsoFisico = dirname(__DIR__) . '/' . $pathRelativoDalDb;
+
+    // Sostituiamo gli slash per compatibilità
+    $percorsoFisico = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $percorsoFisico);
+
     if (!empty($pathRelativoDalDb) && file_exists($percorsoFisico)) {
         unlink($percorsoFisico); // cancella il file
     }

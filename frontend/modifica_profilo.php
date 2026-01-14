@@ -29,28 +29,33 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
 
                 <div class="card shadow-sm rounded-4 p-4 mb-4 border-0 overflow-hidden">
                     <div class="card-header bg-white border-0 text-center">
-                        <h2 class="fw-bold" >Modifica Profilo</h2>
+                        <h2 class="fw-bold">Modifica Profilo</h2>
                     </div>
 
                     <div class="card-body">
+
+                        <div id="messaggioAjax" class="alert d-none"></div>
+
                         <?php if (isset($_GET['error'])): ?>
                             <div class="alert alert-danger"><?php echo htmlspecialchars($_GET['error']); ?></div>
                         <?php endif; ?>
 
-                        <form action="<?php echo BASE_URL; ?>backend/update_profile.php" method="POST" enctype="multipart/form-data">
+                        <form action="<?php echo BASE_URL; ?>backend/update_profile.php" method="POST" enctype="multipart/form-data" id="updateProfileForm">
                             <div class="mb-4 text-center">
 
                                 <?php
                                 // Recupero dati per la logica di visualizzazione
-                                $pathFoto = !empty($dati_utente['foto']) ? $dati_utente['foto'] : '';
-                                $hasFoto = !empty($pathFoto) && file_exists($pathFoto);
+                                $fotoDbPath = $dati_utente['foto'];
+                                $percorsoFisico = __DIR__ . '/../' . $fotoDbPath; // Risale alla root
+                                $percorsoWeb = BASE_URL . $fotoDbPath;
+                                $hasFoto = !empty($fotoDbPath) && file_exists($percorsoFisico);
                                 ?>
 
                                 <div class="d-flex flex-column align-items-center gap-3">
                                     <div class="position-relative" style="width: 80px; height: 80px;">
 
                                         <img id="previewImg"
-                                            src="<?php echo $hasFoto ? $pathFoto : '#'; ?>"
+                                            src="<?php echo $hasFoto ? $percorsoWeb : '#'; ?>"
                                             alt="Anteprima"
                                             class="rounded-circle shadow-sm <?php echo $hasFoto ? '' : 'd-none'; ?>"
                                             style="width: 80px; height: 80px; object-fit: cover;">
@@ -84,24 +89,28 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
                                 <label for="nome" class="form-label text-muted">Nome</label>
                                 <input type="text" class="form-control" id="nome" name="nome"
                                     value="<?php echo htmlspecialchars($dati_utente['nome']); ?>" required>
+                                <span id="errNome" class="text-danger small text-danger-custom"></span>
                             </div>
 
                             <div class="mb-3">
                                 <label for="cognome" class="form-label text-muted">Cognome</label>
                                 <input type="text" class="form-control" id="cognome" name="cognome"
                                     value="<?php echo htmlspecialchars($dati_utente['cognome']); ?>" required>
+                                <span id="errCognome" class="text-danger small text-danger-custom"></span>
                             </div>
 
                             <div class="mb-3">
                                 <label for="email" class="form-label text-muted">Email</label>
                                 <input type="email" class="form-control" id="email" name="email"
                                     value="<?php echo htmlspecialchars($dati_utente['email']); ?>" required>
+                                <span id="errEmail" class="text-danger small text-danger-custom"></span>
                             </div>
 
                             <div class="mb-3">
                                 <label for="data_nascita" class="form-label text-muted">Data di Nascita</label>
                                 <input type="date" class="form-control" id="data_nascita" name="data_nascita"
                                     value="<?php echo $dati_utente['data_nascita']; ?>" required>
+                                <span id="errData" class="text-danger small text-danger-custom"></span>
                             </div>
 
                             <div class="text-center mt-4">
@@ -134,30 +143,7 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
 
     <?php include ROOT_PATH . '/common/footer.html'; ?>
 
-    <script>
-        function previewFoto(input) {
-            // Se l'utente ha selezionato un file
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-
-                reader.onload = function(e) {
-                    // Prendo i riferimenti ai due elementi HTML
-                    var imgElement = document.getElementById('previewImg');
-                    var iconElement = document.getElementById('defaultIcon');
-
-                    // Imposto la nuova immagine
-                    imgElement.src = e.target.result;
-
-                    // Mostro l'immagine e nascondo l'icona
-                    imgElement.classList.remove('d-none');
-                    iconElement.classList.add('d-none');
-                }
-
-                // Leggo il file caricato
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-    </script>
+    <script src="<?php echo BASE_URL; ?>js/modifica_profilo.js"></script>
 </body>
 
 </html>

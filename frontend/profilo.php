@@ -39,10 +39,16 @@ if (!$dati_utente) {
                         <div class="pe-3">
                             <?php
                             // Controllo se c'è il percorso e se il file esiste fisicamente
-                            $fotoPath = $dati_utente['foto'];
-                            if (!empty($fotoPath) && file_exists($fotoPath)):
+                            $fotoDbPath = $dati_utente['foto'];
+
+                            // __DIR__ (directory corrente) + sale di un livello
+                            $percorsoFisico = __DIR__ . '/../' . $fotoDbPath;
+
+                            $percorsoWeb = BASE_URL . $fotoDbPath;
+
+                            if (!empty($fotoDbPath) && file_exists($percorsoFisico)):
                             ?>
-                                <img src="<?php echo htmlspecialchars($fotoPath); ?>"
+                                <img src="<?php echo $percorsoWeb; ?>"
                                     alt="Foto profilo"
                                     class="rounded-circle shadow-sm border"
                                     style="width: 80px; height: 80px; object-fit: cover;">

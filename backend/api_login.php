@@ -47,4 +47,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 // Restituiamo il JSON
 echo json_encode($risposta);
+exit;
 ?>

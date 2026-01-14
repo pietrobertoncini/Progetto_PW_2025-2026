@@ -57,55 +57,7 @@ require_once __DIR__ . '/../common/function.php';
         </div>
     </div>
 
-    <script>
-        // Funzione standard dalle slide per gestire lo stato HTTP
-        function checkStatus(response) {
-            if (!response.ok) {
-                throw Error("Errore nella richiesta: " + response.statusText);
-            }
-            return response;
-        }
-
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // 1. Blocca il ricaricamento della pagina
-
-            const msgDiv = document.getElementById('messaggioAjax');
-            const formData = new FormData(this); // Raccoglie automaticamente i dati del form
-
-            // 2. Chiamata FETCH
-            fetch('../backend/api_login.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(checkStatus) // Controlla se il server risponde 200 OK
-                .then(resp => resp.json()) // Decodifica il JSON
-                .then(data => {
-                    // 3. Gestione della risposta logica
-                    if (data.status === 'ok') {
-                        // Successo: mostriamo verde e reindirizziamo
-                        msgDiv.className = 'alert alert-success';
-                        msgDiv.textContent = data.msg;
-                        msgDiv.classList.remove('d-none');
-
-                        // Aspettiamo un secondo e andiamo alla home
-                        setTimeout(() => {
-                            window.location.href = '../index.php';
-                        }, 1000);
-                    } else {
-                        // Errore: mostriamo rosso e restiamo qui
-                        msgDiv.className = 'alert alert-danger';
-                        msgDiv.textContent = data.msg;
-                        msgDiv.classList.remove('d-none');
-                    }
-                })
-                .catch(error => {
-                    console.error('Errore:', error);
-                    msgDiv.className = 'alert alert-danger';
-                    msgDiv.textContent = "Errore di comunicazione con il server.";
-                    msgDiv.classList.remove('d-none');
-                });
-        });
-    </script>
+    <script src="<?php echo BASE_URL; ?>js/login.js"></script>
     <?php
     require ROOT_PATH . "/common/footer.html";
     ?>

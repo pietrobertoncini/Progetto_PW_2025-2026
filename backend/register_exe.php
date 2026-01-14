@@ -13,14 +13,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $percorsoFotoDB = uploadFotoProfilo($_FILES['foto'] ?? null); // restituisce il percorso o null
 
     try {
-        $id_nuovo_utente = inserisciUtente($cid, $_POST['nome'], $_POST['cognome'], 
-                                                 $_POST['email'], $_POST['password'], $_POST['data_nascita'],
-                                                 $_POST['ruolo'], (int)$_POST['id_settore'], $percorsoFotoDB);
+        $id_nuovo_utente = inserisciUtente(
+            $cid, 
+            $_POST['nome'] ?? '', 
+            $_POST['cognome']?? '', 
+            $_POST['email'] ?? '', 
+            $_POST['password']?? '', 
+            $_POST['data_nascita'] ?? '',
+            $_POST['ruolo'] ?? 'allievo', 
+            (int)($_POST['id_settore'] ?? 0),
+            $percorsoFotoDB
+        );
 
+        // Login automatico dopo registrazione
         $_SESSION['id_utente'] = $id_nuovo_utente;
         $_SESSION['nome'] = $_POST["nome"];
         $_SESSION['ruolo'] = $_POST["ruolo"];
-        $_SESSION['is_responsabile'] = FALSE; 
+        $_SESSION['is_responsabile'] = FALSE;
+        $_SESSION['is_admin'] = FALSE; 
 
         header('Location: ' . BASE_URL . 'index.php');
         exit;

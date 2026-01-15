@@ -162,10 +162,6 @@ if ($data_scelta && $ora_scelta) {
                     <a href="<?php echo BASE_URL; ?>frontend/prenota.php?sala=<?php echo urlencode($id_sala_selezionata); ?>&week=<?php echo $next_week; ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3 ms-2">Settimana Succ. &rarr;</a>
                 </div>
 
-                <div class="alert alert-info py-2 small border-0 bg-info bg-opacity-10 rounded-4 mb-3">
-                    <i class="bi bi-info-circle-fill text-info ms-2"></i> Seleziona le caselle orarie consecutive che vuoi prenotare e premi "Procedi".
-                </div>
-
                 <div class="shadow-sm mb-4 rounded-4 overflow-hidden">
                     <div class="table-responsive">
                         <table class="table table-sm calendar-table mb-0 text-center">
@@ -235,6 +231,10 @@ if ($data_scelta && $ora_scelta) {
                             </tbody>
                         </table>
                     </div>
+                </div>
+
+                <div class="alert alert-info py-2 small border-0 bg-info bg-opacity-10 rounded-4 mb-3">
+                    <i class="bi bi-info-circle-fill text-info ms-2"></i> Seleziona le caselle orarie consecutive che vuoi prenotare e premi "Procedi".
                 </div>
 
                 <div class="text-end mb-5">

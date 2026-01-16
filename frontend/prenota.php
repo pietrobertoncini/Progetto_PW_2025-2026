@@ -50,24 +50,25 @@ $next_week = date('Y-m-d', strtotime($lunedi_settimana . ' +7 days'));
 
 // LOGICA CALENDARIO
 $occupied = [];
-if ($id_sala_selezionata) {
+if ($id_sala_selezionata && !$data_scelta) {
     $res_p = getOccupazioniSettimana($cid, $id_sala_selezionata, $id_settore_utente, $lunedi_settimana, $domenica_settimana);
-    while ($row = $res_p->fetch_assoc()) {
-        for ($i = 0; $i < $row['durata']; $i++) {
-            $h = $row['ora'] + $i;
-            $occupied[$row['data']][$h] = [
-                'info' => $row,
-                'is_start' => ($i === 0)
-            ];
+    if ($res_p) {
+        while ($row = $res_p->fetch_assoc()) {
+            for ($i = 0; $i < $row['durata']; $i++) {
+                $h = $row['ora'] + $i;
+                $occupied[$row['data']][$h] = [
+                    'info' => $row,
+                    'is_start' => ($i === 0)
+                ];
+            }
         }
     }
 }
 
-// --- LOGICA UTENTI E FILTRI ---
+// Logica per form conferma
 $utenti_invitabili = [];
 $lista_settori = [];
-$capienza_sala_corrente = 0; // variabile per la capienza
-
+$capienza_sala_corrente = 0;
 if ($data_scelta && $ora_scelta) {
     $utenti_invitabili = getUtentiInvitabili($cid, $id_utente, $id_settore_utente, $data_scelta, $ora_scelta);
     $lista_settori = getListaSettori($cid);
@@ -79,6 +80,9 @@ if ($data_scelta && $ora_scelta) {
         }
     }
 }
+
+// LOGICA VISIBILITÀ INIZIALE: Se non c'è sala, nascondiamo i tasti (d-none)
+$class_hidden = $id_sala_selezionata ? '' : 'd-none';
 ?>
 
 <!DOCTYPE html>
@@ -91,7 +95,6 @@ if ($data_scelta && $ora_scelta) {
     <div class="flex-shrink-0 container py-5">
 
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
-
             <h2 class="m-0 text-nowrap">Nuova Prenotazione</h2>
 
             <div class="card shadow-sm border-0 rounded-4 bg-light">
@@ -106,7 +109,6 @@ if ($data_scelta && $ora_scelta) {
                         <select class="form-select form-select-sm rounded-pill border-secondary"
                             name="sala"
                             id="sala"
-                            onchange="this.form.submit()"
                             style="max-width: 300px; cursor: pointer;">
 
                             <option value="" disabled <?php echo !$id_sala_selezionata ? 'selected' : ''; ?>>-- Seleziona --</option>
@@ -117,8 +119,9 @@ if ($data_scelta && $ora_scelta) {
                                     <?php echo htmlspecialchars($s['nome_sala']); ?> (Cap.: <?php echo $s['capienza_max']; ?>)
                                 </option>
                             <?php endforeach; ?>
-
                         </select>
+
+                        <noscript><button type="submit" class="btn btn-sm btn-secondary">Vai</button></noscript>
                     </form>
                 </div>
             </div>
@@ -134,110 +137,52 @@ if ($data_scelta && $ora_scelta) {
             <div class="alert alert-danger text-center shadow-sm rounded-4"><?php echo htmlspecialchars($_GET['error']); ?></div>
         <?php endif; ?>
 
-        <?php if (!$id_sala_selezionata): ?>
-            <div class="mt-3 text-center">
 
-                <div class="mb-2 text-secondary" style="opacity: 0.3;">
-                    <i class="bi bi-arrow-up-circle-fill" style="font-size: 3rem;"></i>
-                </div>
+        <?php if (!$data_scelta): ?>
 
-                <h5 class="fw-bold text-secondary mb-2">Nessuna sala selezionata</h5>
-
-                <p class="text-muted text-secondary mb-0 mx-auto" style="max-width: 500px;">
-                    Per procedere con una nuova prenotazione, seleziona una sala dal menu in alto a destra.
-                </p>
-
-            </div>
-        <?php endif; ?>
-
-        <?php if ($id_sala_selezionata && !$data_scelta): ?>
-
-            <form action="<?php echo BASE_URL; ?>frontend/prenota.php" method="POST">
-                <input type="hidden" name="sala" value="<?php echo htmlspecialchars($id_sala_selezionata); ?>">
+            <form action="<?php echo BASE_URL; ?>frontend/prenota.php" method="POST" id="form-selezione-slot">
+                <input type="hidden" name="sala" value="<?php echo htmlspecialchars($id_sala_selezionata ?? ''); ?>">
                 <input type="hidden" name="week" value="<?php echo $lunedi_settimana; ?>">
 
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <a href="<?php echo BASE_URL; ?>frontend/prenota.php?sala=<?php echo urlencode($id_sala_selezionata); ?>&week=<?php echo $prev_week; ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3 me-2">&larr; Settimana Prec.</a>
-                    <h5 class="mb-0 fw-bold text-center">Settimana dal <?php echo date('d/m', strtotime($lunedi_settimana)); ?> al <?php echo date('d/m', strtotime($domenica_settimana)); ?></h5>
-                    <a href="<?php echo BASE_URL; ?>frontend/prenota.php?sala=<?php echo urlencode($id_sala_selezionata); ?>&week=<?php echo $next_week; ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3 ms-2">Settimana Succ. &rarr;</a>
+                <div id="nav-row" class="d-flex justify-content-between align-items-center mb-3 <?php echo $class_hidden; ?>">
+                    <a href="<?php echo BASE_URL; ?>frontend/prenota.php?sala=<?php echo urlencode($id_sala_selezionata ?? ''); ?>&week=<?php echo $prev_week; ?>"
+                        class="btn btn-outline-secondary btn-sm rounded-pill px-3 me-2 nav-week-btn">&larr; Settimana Prec.</a>
+
+                    <h5 class="mb-0 fw-bold text-center">
+                        Settimana dal <?php echo date('d/m', strtotime($lunedi_settimana)); ?>
+                        al <?php echo date('d/m', strtotime($domenica_settimana)); ?>
+                    </h5>
+
+                    <a href="<?php echo BASE_URL; ?>frontend/prenota.php?sala=<?php echo urlencode($id_sala_selezionata ?? ''); ?>&week=<?php echo $next_week; ?>"
+                        class="btn btn-outline-secondary btn-sm rounded-pill px-3 ms-2 nav-week-btn">Settimana Succ. &rarr;</a>
                 </div>
 
-                <div class="shadow-sm mb-4 rounded-4 overflow-hidden">
-                    <div class="table-responsive">
-                        <table class="table table-sm calendar-table mb-0 text-center">
-                            <thead>
-                                <tr>
-                                    <th class="align-middle" style="width: 80px;">Ora</th>
-                                    <?php
-                                    $giorni = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
-                                    foreach ($giorni as $index => $giorno) {
-                                        $d = date('d/m', strtotime($lunedi_settimana . " +$index days"));
-                                        echo "<th style='width: 120px'>$giorno<br><small class='fw-normal'>$d</small></th>";
-                                    }
-                                    ?>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php for ($ora = 9; $ora < 23; $ora++): ?>
-                                    <tr>
-                                        <td class="fw-bold align-middle"><?php echo $ora; ?>:00</td>
-                                        <?php for ($i = 0; $i < 7; $i++):
-                                            $data_curr = date('Y-m-d', strtotime($lunedi_settimana . " +$i days"));
-                                            $is_occupied = isset($occupied[$data_curr][$ora]);
-                                            $is_past = (strtotime($data_curr . " " . $ora . ":00") < time());
-                                            $value = $data_curr . "|" . $ora;
+                <div id="calendario-container">
+                    <?php if ($id_sala_selezionata): ?>
+                        <?php
+                        if (function_exists('renderCalendarGrid')) {
+                            echo renderCalendarGrid($lunedi_settimana, $occupied, false, false);
+                        } else {
+                            echo "Errore funzione renderCalendarGrid";
+                        }
+                        ?>
+                    <?php else: ?>
+                        <div class="mt-3 text-center">
+                            <div class="mb-2 text-secondary" style="opacity: 0.3;">
+                                <i class="bi bi-arrow-up-circle-fill" style="font-size: 3rem;"></i>
+                            </div>
+                            <h5 class="fw-bold text-secondary mb-2">Nessuna sala selezionata</h5>
+                            <p class="text-muted text-secondary mb-0 mx-auto" style="max-width: 500px;">
+                                Seleziona una sala dal menu in alto per visualizzare il calendario.
+                            </p>
+                        </div>
+                    <?php endif; ?>
+                </div>
 
-                                            if (isset($occupied[$data_curr][$ora])) {
-                                                $cell = $occupied[$data_curr][$ora];
-                                                $info = $cell['info'];
-
-                                                if ($cell['is_start']) {
-                                                    $durata = $info['durata'];
-                                        ?>
-                                                    <td rowspan="<?php echo $durata; ?>" class="p-1 bg-danger bg-opacity-10 border border-danger border-opacity-25 align-middle">
-                                                        <div class="d-flex flex-column justify-content-center align-items-center" style="min-height: <?php echo ($durata * 30); ?>px;">
-                                                            <small class="fw-bold text-danger text-uppercase mb-1" style="font-size: 0.65rem;">Occupato</small>
-                                                            <div class="fw-bold text-dark lh-1 mb-1" style="font-size: 0.8rem;">
-                                                                <?php echo htmlspecialchars($info['attivita']); ?>
-                                                            </div>
-                                                            <div class="text-muted small" style="font-size: 0.7rem;">
-                                                                <i class="bi bi-person-fill"></i> <?php echo htmlspecialchars($info['nome'] . " " . substr($info['cognome'], 0, 1) . "."); ?>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                <?php
-                                                }
-                                                // Se non è start, è coperto dal rowspan, quindi non stampiamo TD
-
-                                                // CASO PASSATO
-                                            } elseif ($is_past) {
-                                                ?>
-                                                <td class="bg-light text-muted small align-middle">-</td>
-                                            <?php
-
-                                                // CASO LIBERO
-                                            } else {
-                                            ?>
-                                                <td class="cell-free p-0 align-middle">
-                                                    <label class="check-container d-flex justify-content-center align-items-center w-100 h-100 py-3">
-                                                        <input type="checkbox" name="slots[]" value="<?php echo $value; ?>">
-                                                    </label>
-                                                </td>
-                                        <?php
-                                            }
-                                        endfor; ?>
-                                    </tr>
-                                <?php endfor; ?>
-                            </tbody>
-                        </table>
+                <div id="btn-submit-row" class="text-end mb-5 mt-3 <?php echo $class_hidden; ?>">
+                    <div class="alert alert-info py-2 small border-0 bg-info bg-opacity-10 rounded-4 mb-3 text-start">
+                        <i class="bi bi-info-circle-fill text-info ms-2"></i> Seleziona le caselle orarie consecutive che vuoi prenotare e premi "Procedi".
                     </div>
-                </div>
-
-                <div class="alert alert-info py-2 small border-0 bg-info bg-opacity-10 rounded-4 mb-3">
-                    <i class="bi bi-info-circle-fill text-info ms-2"></i> Seleziona le caselle orarie consecutive che vuoi prenotare e premi "Procedi".
-                </div>
-
-                <div class="text-end mb-5">
                     <button type="submit" class="btn btn-success btn-lg shadow rounded-pill px-4 fw-bold">
                         Procedi con la Selezione <i class="bi bi-arrow-right"></i>
                     </button>
@@ -246,7 +191,9 @@ if ($data_scelta && $ora_scelta) {
 
         <?php endif; ?>
 
+
         <?php if ($data_scelta && $ora_scelta && $id_sala_selezionata): ?>
+
             <div id="form-prenotazione" class="card border-0 shadow rounded-4 overflow-hidden">
                 <div class="card-header bg-primary text-white py-3">
                     <h4 class="mb-0 fs-5 fw-bold ms-2">Completa Prenotazione</h4>
@@ -320,51 +267,34 @@ if ($data_scelta && $ora_scelta) {
                                 <?php foreach ($utenti_invitabili as $u):
                                     $ruolo = strtolower($u['ruolo']);
                                     $id_sett_user = $u['id_settore'];
-
                                     $badge_class = 'bg-secondary';
+                                    // ... logica badge colori ...
                                     if (isset($u['tipo_settore'])) {
-                                        switch ($u['tipo_settore']) {
-                                            case 'musica':
-                                                $badge_class = 'bg-primary';
-                                                break;
-                                            case 'teatro':
-                                                $badge_class = 'bg-danger';
-                                                break;
-                                            case 'ballo':
-                                                $badge_class = 'bg-success';
-                                                break;
-                                        }
+                                        if ($u['tipo_settore'] == 'musica') $badge_class = 'bg-primary';
+                                        if ($u['tipo_settore'] == 'teatro') $badge_class = 'bg-danger';
+                                        if ($u['tipo_settore'] == 'ballo') $badge_class = 'bg-success';
                                     }
                                 ?>
                                     <div class="col-md-6 user-item" data-id-settore="<?php echo $id_sett_user; ?>" data-ruolo="<?php echo $ruolo; ?>">
                                         <div class="form-check p-2 border rounded-3 bg-white h-100 shadow-sm d-flex align-items-center">
                                             <input class="form-check-input ms-1 me-3 my-0 user-checkbox" type="checkbox" name="invitati[]" value="<?php echo $u['id_utente']; ?>" id="user_<?php echo $u['id_utente']; ?>" style="transform: scale(1.2);" onchange="aggiornaContatore()">
-
                                             <label class="form-check-label w-100 lh-sm" style="cursor: pointer;" for="user_<?php echo $u['id_utente']; ?>">
                                                 <span class="d-block fw-bold text-dark mb-1">
                                                     <?php echo htmlspecialchars($u['nome'] . " " . $u['cognome']); ?>
                                                 </span>
                                                 <?php if ($u['is_responsabile']): ?>
-                                                    <span class="badge bg-dark border border-light me-1" style="font-size: 0.65rem;">
-                                                        <i class="bi bi-star-fill text-warning"></i> RESPONSABILE
-                                                    </span>
+                                                    <span class="badge bg-dark border border-light me-1" style="font-size: 0.65rem;"><i class="bi bi-star-fill text-warning"></i> RESPONSABILE</span>
                                                 <?php endif; ?>
-                                                <span class="badge bg-light text-secondary border me-1" style="font-size: 0.65rem;">
-                                                    <?php echo ucfirst($u['ruolo']); ?>
-                                                </span>
+                                                <span class="badge bg-light text-secondary border me-1" style="font-size: 0.65rem;"><?php echo ucfirst($u['ruolo']); ?></span>
                                                 <?php if ($u['id_settore'] != $id_settore_utente): ?>
-                                                    <span class="badge <?php echo $badge_class; ?> bg-opacity-75" style="font-size: 0.65rem;">
-                                                        <?php echo htmlspecialchars($u['nome_settore']); ?>
-                                                    </span>
+                                                    <span class="badge <?php echo $badge_class; ?> bg-opacity-75" style="font-size: 0.65rem;"><?php echo htmlspecialchars($u['nome_settore']); ?></span>
                                                 <?php endif; ?>
                                             </label>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
                             <?php else: ?>
-                                <div class="col-12 text-center py-4 text-muted">
-                                    Nessun utente disponibile in questo orario.
-                                </div>
+                                <div class="col-12 text-center py-4 text-muted">Nessun utente disponibile in questo orario.</div>
                             <?php endif; ?>
                         </div>
 
@@ -379,8 +309,9 @@ if ($data_scelta && $ora_scelta) {
 
     </div>
 
-    <?php include ROOT_PATH . '/common/footer.html'; ?>
+    <script src="<?php echo BASE_URL; ?>js/calendar.js"></script>
     <script>
+        // Funzioni per filtri utenti e contatore (Fase 3)
         function applicaFiltri() {
             const settoreSelezionato = document.getElementById('filtroSettore').value;
             const ruoloSelezionato = document.getElementById('filtroRuolo').value;
@@ -389,10 +320,8 @@ if ($data_scelta && $ora_scelta) {
             items.forEach(item => {
                 const itemSettore = item.getAttribute('data-id-settore');
                 const itemRuolo = item.getAttribute('data-ruolo');
-
                 const matchSettore = (settoreSelezionato === 'all') || (itemSettore === settoreSelezionato);
                 const matchRuolo = (ruoloSelezionato === 'all') || (itemRuolo === ruoloSelezionato);
-
                 const checkbox = item.querySelector('.user-checkbox');
 
                 if (matchSettore && matchRuolo) {
@@ -400,43 +329,41 @@ if ($data_scelta && $ora_scelta) {
                 } else {
                     item.style.display = 'none';
                     if (checkbox) {
-                        checkbox.checked = false; // Deseleziona se viene nascosto
-                        aggiornaContatore(); // Ricalcola
+                        checkbox.checked = false;
+                        aggiornaContatore();
                     }
                 }
             });
         }
 
         function aggiornaContatore() {
-            const maxCapienza = parseInt(document.getElementById('maxCapienza').value);
-            const checkboxes = document.querySelectorAll('.user-checkbox');
+            const maxCapienzaElement = document.getElementById('maxCapienza');
+            if (!maxCapienzaElement) return; // Sicurezza se non siamo in fase conferma
 
-            // Contiamo quelli checkati + 1 (l'organizzatore)
+            const maxCapienza = parseInt(maxCapienzaElement.value);
+            const checkboxes = document.querySelectorAll('.user-checkbox');
             let checkedCount = document.querySelectorAll('.user-checkbox:checked').length;
             let occupati = checkedCount + 1;
 
-            // Aggiorna testo
             const counterSpan = document.getElementById('counter-text');
-            counterSpan.innerText = occupati;
+            if (counterSpan) counterSpan.innerText = occupati;
 
-            // Logica Disabilitazione:
-            // Se siamo al limite, disabilita tutti quelli NON checkati
-            // Se siamo sotto il limite, abilita tutti
             if (occupati >= maxCapienza) {
-                counterSpan.parentElement.classList.remove('bg-primary');
-                counterSpan.parentElement.classList.add('bg-danger');
-
+                if (counterSpan) {
+                    counterSpan.parentElement.classList.remove('bg-primary');
+                    counterSpan.parentElement.classList.add('bg-danger');
+                }
                 checkboxes.forEach(cb => {
                     if (!cb.checked) {
                         cb.disabled = true;
-                        // Opzionale: visual styling per disabilitati
                         cb.closest('.form-check').classList.add('opacity-50');
                     }
                 });
             } else {
-                counterSpan.parentElement.classList.remove('bg-danger');
-                counterSpan.parentElement.classList.add('bg-primary');
-
+                if (counterSpan) {
+                    counterSpan.parentElement.classList.remove('bg-danger');
+                    counterSpan.parentElement.classList.add('bg-primary');
+                }
                 checkboxes.forEach(cb => {
                     cb.disabled = false;
                     cb.closest('.form-check').classList.remove('opacity-50');
@@ -444,42 +371,48 @@ if ($data_scelta && $ora_scelta) {
             }
         }
 
-        let tuttiSelezionati = false;
-
         function toggleSelezionaTutti() {
             const maxCapienza = parseInt(document.getElementById('maxCapienza').value);
-            // Prendi solo i visibili che non sono disabilitati
             const visibleItems = Array.from(document.querySelectorAll('.user-item')).filter(item => item.style.display !== 'none');
 
-            tuttiSelezionati = !tuttiSelezionati;
+            // Logica semplice toggle (puoi migliorarla se vuoi stato globale)
+            let anyUnchecked = visibleItems.some(item => !item.querySelector('.user-checkbox').checked);
 
-            let currentOccupati = 1; // Parti dall'organizzatore
+            let currentOccupati = 1 + document.querySelectorAll('.user-checkbox:checked').length;
+            // Reset conteggio per logica corretta sarebbe meglio ricalcolare da zero o usare variabile globale, 
+            // ma per semplicità qui proviamo a selezionare finché c'è posto.
 
-            visibleItems.forEach(item => {
-                const checkbox = item.querySelector('.user-checkbox');
-                if (checkbox) {
-                    if (tuttiSelezionati) {
-                        // Check solo se non superiamo la capienza
-                        if (currentOccupati < maxCapienza) {
-                            checkbox.checked = true;
-                            currentOccupati++;
-                        }
-                    } else {
-                        checkbox.checked = false;
+            if (anyUnchecked) {
+                // Seleziona tutti (fino a capienza)
+                // Bisogna contare quanti sono già checkati globalmente
+                let totalChecked = document.querySelectorAll('.user-checkbox:checked').length;
+                let slotsAvailable = maxCapienza - (totalChecked + 1);
+
+                visibleItems.forEach(item => {
+                    const cb = item.querySelector('.user-checkbox');
+                    if (!cb.checked && slotsAvailable > 0) {
+                        cb.checked = true;
+                        slotsAvailable--;
                     }
-                }
-            });
-
+                });
+            } else {
+                // Deseleziona tutti i visibili
+                visibleItems.forEach(item => {
+                    item.querySelector('.user-checkbox').checked = false;
+                });
+            }
             aggiornaContatore();
         }
 
         document.addEventListener("DOMContentLoaded", function() {
             if (document.getElementById('filtroSettore')) {
                 applicaFiltri();
-                aggiornaContatore(); // Setta stato iniziale
+                aggiornaContatore();
             }
         });
     </script>
+
+    <?php include ROOT_PATH . '/common/footer.html'; ?>
 </body>
 
 </html>

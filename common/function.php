@@ -888,3 +888,134 @@ function getNumeroSalePerTipo($cid, $tipo)
     $res = $stmt->get_result()->fetch_assoc();
     return $res['num'];
 }
+
+
+function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is_read_only = false)
+{
+    ob_start();
+?>
+    <div class="shadow-sm mb-4 rounded-4 overflow-hidden border">
+        <div class="table-responsive">
+            <table class="table table-sm calendar-table mb-0 text-center align-middle" style="min-width: 800px;">
+                <thead>
+                    <tr>
+                        <th class="align-middle" style="width: 80px; position: sticky; left: 0; z-index: 2; background-color: #d2b48c;">Ora</th>
+                        <?php
+                        $giorni = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
+                        for ($i = 0; $i < 7; $i++) {
+                            $d = date('Y-m-d', strtotime($lunedi_settimana . " +$i days"));
+                            $giorno_str = date('d/m', strtotime($d));
+                            $nome_giorno = $giorni[$i];
+
+                            // Se oggi usa bg-warning, altrimenti il colore standard
+                            $class_th = ($d == date('Y-m-d')) ? 'bg-warning bg-opacity-25 text-dark' : '';
+
+                            echo "<th class='$class_th' style='width: 12%'>$nome_giorno<br><small class='fw-normal'>$giorno_str</small></th>";
+                        }
+                        ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php for ($ora = 9; $ora < 23; $ora++): ?>
+                        <tr>
+                            <td class="fw-bold align-middle" style="position: sticky; left: 0; z-index: 1;"><?php echo $ora; ?>:00</td>
+                            <?php for ($i = 0; $i < 7; $i++):
+                                $data_curr = date('Y-m-d', strtotime($lunedi_settimana . " +$i days"));
+                                $is_occupied = isset($occupied[$data_curr][$ora]);
+                                $is_past = (strtotime($data_curr . " " . $ora . ":00") < time());
+                                $value = $data_curr . "|" . $ora;
+
+                                if ($is_occupied) {
+                                    $cell = $occupied[$data_curr][$ora];
+                                    $info = $cell['info'] ?? $cell['dati'];
+
+                                    // Definiamo variabili comuni (Nome e Cognome)
+                                    $nome = $info['nome'] ?? $info['nome_org'] ?? 'N/D';
+                                    $cognome = $info['cognome'] ?? $info['cognome_org'] ?? '';
+                                    $nominativo_completo = htmlspecialchars($nome . " " . $cognome);
+                                    $nominativo_corto = htmlspecialchars($nome . " " . substr($cognome, 0, 1) . ".");
+
+                                    // Stili colori testo
+                                    $text_class = $is_past ? "text-muted" : "text-dark";
+
+                                    if ($cell['is_start']) {
+                                        $durata = $info['durata'];
+                                        $bg_class = "bg-danger bg-opacity-10 border-danger";
+                                        if ($is_read_only) $bg_class = "bg-info bg-opacity-10 border-info";
+                                        if ($is_past) $bg_class = "bg-secondary bg-opacity-10 border-secondary";
+                            ?>
+                                        <td rowspan="<?php echo $durata; ?>" class="p-1 <?php echo $bg_class; ?> border border-opacity-25 align-middle">
+                                            <div class="d-flex flex-column justify-content-center align-items-center" style="min-height: <?php echo ($durata * 30); ?>px;">
+
+                                                <?php if ($durata == 1): ?>
+                                                    <div class="dropdown w-100 h-100 d-flex align-items-center justify-content-between px-2">
+
+                                                        <span class="fw-bold small text-truncate text-start <?php echo $text_class; ?>" style="max-width: 85%;">
+                                                            <?php echo htmlspecialchars($info['attivita']); ?>
+                                                        </span>
+
+                                                        <button class="btn btn-sm btn-link p-0 text-decoration-none <?php echo $text_class; ?>" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="bi bi-three-dots-vertical"></i>
+                                                        </button>
+
+                                                        <ul class="dropdown-menu shadow border-0 z-3">
+                                                            <li class="px-3 py-2">
+                                                                <h6 class="dropdown-header p-0 fw-bold text-dark">
+                                                                    Dettagli <?php echo $is_past ? '(Concluso)' : ''; ?>
+                                                                </h6>
+                                                                <div class="small text-muted" style="min-width: 200px;">
+                                                                    <strong><?php echo htmlspecialchars($info['attivita']); ?></strong><br>
+                                                                    <i class="bi bi-person-fill"></i> Org: <?php echo $nominativo_completo; ?><br>
+                                                                    <i class="bi bi-clock"></i> <?php echo $ora; ?>:00 - <?php echo $ora + $durata; ?>:00
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+
+                                                <?php else: ?>
+                                                    <div class="w-100 px-1 text-center overflow-hidden">
+                                                        <small class="fw-bold text-uppercase mb-1 d-block" style="font-size: 0.6rem; letter-spacing: 1px; opacity: 0.7;">
+                                                            <?php echo $is_read_only ? 'Prenotato' : 'Occupato'; ?>
+                                                        </small>
+
+                                                        <div class="fw-bold text-truncate <?php echo $text_class; ?> lh-sm mb-1" style="font-size: 0.85rem;" title="<?php echo htmlspecialchars($info['attivita']); ?>">
+                                                            <?php echo htmlspecialchars($info['attivita']); ?>
+                                                        </div>
+
+                                                        <div class="small <?php echo $text_class; ?> opacity-75" style="font-size: 0.75rem;">
+                                                            <i class="bi bi-person-fill"></i> <?php echo $nominativo_corto; ?>
+                                                        </div>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
+                                    <?php
+                                    }
+                                } elseif ($is_past) {
+                                    ?>
+                                    <td class="bg-light text-muted small align-middle">-</td>
+                                    <?php
+                                } else {
+                                    if (!$is_read_only && !$is_admin) {
+                                    ?>
+                                        <td class="cell-free p-0 align-middle">
+                                            <label class="check-container d-flex justify-content-center align-items-center w-100 h-100 py-3">
+                                                <input type="checkbox" name="slots[]" value="<?php echo $value; ?>">
+                                            </label>
+                                        </td>
+                            <?php
+                                    } else {
+                                        echo "<td>-</td>";
+                                    }
+                                }
+                            endfor; ?>
+                        </tr>
+                    <?php endfor; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+<?php
+    return ob_get_clean();
+}
+?>

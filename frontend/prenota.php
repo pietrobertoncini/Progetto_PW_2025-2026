@@ -48,7 +48,7 @@ $domenica_settimana = date('Y-m-d', strtotime('sunday this week', $timestamp_rif
 $prev_week = date('Y-m-d', strtotime($lunedi_settimana . ' -7 days'));
 $next_week = date('Y-m-d', strtotime($lunedi_settimana . ' +7 days'));
 
-// LOGICA CALENDARIO
+// LOGICA CALENDARIO (Solo se non siamo già in fase di conferma)
 $occupied = [];
 if ($id_sala_selezionata && !$data_scelta) {
     $res_p = getOccupazioniSettimana($cid, $id_sala_selezionata, $id_settore_utente, $lunedi_settimana, $domenica_settimana);
@@ -65,10 +65,11 @@ if ($id_sala_selezionata && !$data_scelta) {
     }
 }
 
-// Logica per form conferma
+// --- LOGICA UTENTI E FILTRI (Fase Conferma) ---
 $utenti_invitabili = [];
 $lista_settori = [];
 $capienza_sala_corrente = 0;
+
 if ($data_scelta && $ora_scelta) {
     $utenti_invitabili = getUtentiInvitabili($cid, $id_utente, $id_settore_utente, $data_scelta, $ora_scelta);
     $lista_settori = getListaSettori($cid);
@@ -81,8 +82,8 @@ if ($data_scelta && $ora_scelta) {
     }
 }
 
-// LOGICA VISIBILITÀ INIZIALE: Se non c'è sala, nascondiamo i tasti (d-none)
-$class_hidden = $id_sala_selezionata ? '' : 'd-none';
+// Se non c'è sala nascondiamo i tasti
+$class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
 ?>
 
 <!DOCTYPE html>
@@ -97,34 +98,38 @@ $class_hidden = $id_sala_selezionata ? '' : 'd-none';
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
             <h2 class="m-0 text-nowrap">Nuova Prenotazione</h2>
 
-            <div class="card shadow-sm border-0 rounded-4 bg-light">
-                <div class="card-body p-2">
-                    <form action="<?php echo BASE_URL; ?>frontend/prenota.php" method="GET" class="d-flex align-items-center gap-2">
-                        <input type="hidden" name="week" value="<?php echo $lunedi_settimana; ?>">
+            <?php if (!$data_scelta): ?>
+                <div class="card shadow-sm border-0 rounded-4 bg-light">
+                    <div class="card-body p-2">
+                        <form action="<?php echo BASE_URL; ?>frontend/prenota.php" method="GET" class="d-flex align-items-center gap-2">
+                            <input type="hidden" name="week" value="<?php echo $lunedi_settimana; ?>">
 
-                        <label for="sala" class="fw-bold text-muted m-0 text-nowrap">
-                            <i class="bi bi-geo-alt-fill"></i> Sala:
-                        </label>
+                            <label for="sala" class="fw-bold text-muted m-0 text-nowrap">
+                                <i class="bi bi-geo-alt-fill"></i> Sala:
+                            </label>
 
-                        <select class="form-select form-select-sm rounded-pill border-secondary"
-                            name="sala"
-                            id="sala"
-                            style="max-width: 300px; cursor: pointer;">
+                            <select class="form-select form-select-sm rounded-pill border-secondary"
+                                name="sala"
+                                id="sala"
+                                style="max-width: 300px; cursor: pointer;">
 
-                            <option value="" disabled <?php echo !$id_sala_selezionata ? 'selected' : ''; ?>>-- Seleziona --</option>
+                                <option value="" disabled <?php echo !$id_sala_selezionata ? 'selected' : ''; ?>>-- Seleziona --</option>
 
-                            <?php foreach ($sale as $s): ?>
-                                <option value="<?php echo htmlspecialchars($s['nome_sala']); ?>"
-                                    <?php echo ($id_sala_selezionata == $s['nome_sala']) ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($s['nome_sala']); ?> (Cap.: <?php echo $s['capienza_max']; ?>)
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                                <?php foreach ($sale as $s): ?>
+                                    <option value="<?php echo htmlspecialchars($s['nome_sala']); ?>"
+                                        <?php echo ($id_sala_selezionata == $s['nome_sala']) ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($s['nome_sala']); ?> (Cap.: <?php echo $s['capienza_max']; ?>)
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
 
-                        <noscript><button type="submit" class="btn btn-sm btn-secondary">Vai</button></noscript>
-                    </form>
+                            <noscript>
+                                <button type="submit" class="btn btn-sm btn-secondary rounded-pill">Vai</button>
+                            </noscript>
+                        </form>
+                    </div>
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
 
         <?php if ($errore_selezione): ?>
@@ -141,7 +146,7 @@ $class_hidden = $id_sala_selezionata ? '' : 'd-none';
         <?php if (!$data_scelta): ?>
 
             <form action="<?php echo BASE_URL; ?>frontend/prenota.php" method="POST" id="form-selezione-slot">
-                <input type="hidden" name="sala" value="<?php echo htmlspecialchars($id_sala_selezionata ?? ''); ?>">
+                <input type="hidden" id="hidden-sala" name="sala" value="<?php echo htmlspecialchars($id_sala_selezionata ?? ''); ?>">
                 <input type="hidden" name="week" value="<?php echo $lunedi_settimana; ?>">
 
                 <div id="nav-row" class="d-flex justify-content-between align-items-center mb-3 <?php echo $class_hidden; ?>">
@@ -160,10 +165,9 @@ $class_hidden = $id_sala_selezionata ? '' : 'd-none';
                 <div id="calendario-container">
                     <?php if ($id_sala_selezionata): ?>
                         <?php
+                        // Se JS non va, o al primo caricamento, renderizza questo.
                         if (function_exists('renderCalendarGrid')) {
                             echo renderCalendarGrid($lunedi_settimana, $occupied, false, false);
-                        } else {
-                            echo "Errore funzione renderCalendarGrid";
                         }
                         ?>
                     <?php else: ?>
@@ -268,7 +272,6 @@ $class_hidden = $id_sala_selezionata ? '' : 'd-none';
                                     $ruolo = strtolower($u['ruolo']);
                                     $id_sett_user = $u['id_settore'];
                                     $badge_class = 'bg-secondary';
-                                    // ... logica badge colori ...
                                     if (isset($u['tipo_settore'])) {
                                         if ($u['tipo_settore'] == 'musica') $badge_class = 'bg-primary';
                                         if ($u['tipo_settore'] == 'teatro') $badge_class = 'bg-danger';
@@ -299,7 +302,7 @@ $class_hidden = $id_sala_selezionata ? '' : 'd-none';
                         </div>
 
                         <div class="d-flex justify-content-end gap-2">
-                            <a href="<?php echo BASE_URL; ?>frontend/prenota.php?sala=<?php echo urlencode($id_sala_selezionata); ?>&week=<?php echo $lunedi_settimana; ?>" class="btn btn-secondary rounded-pill px-4">Annulla</a>
+                            <a href="<?php echo BASE_URL; ?>frontend/prenota.php?sala=<?php echo urlencode($id_sala_selezionata); ?>&week=<?php echo $lunedi_settimana; ?>" class="btn btn-outline-secondary rounded-pill px-4">Annulla</a>
                             <button type="submit" class="btn btn-success px-4 fw-bold rounded-pill">Conferma Prenotazione</button>
                         </div>
                     </form>
@@ -310,8 +313,8 @@ $class_hidden = $id_sala_selezionata ? '' : 'd-none';
     </div>
 
     <script src="<?php echo BASE_URL; ?>js/calendar.js"></script>
+
     <script>
-        // Funzioni per filtri utenti e contatore (Fase 3)
         function applicaFiltri() {
             const settoreSelezionato = document.getElementById('filtroSettore').value;
             const ruoloSelezionato = document.getElementById('filtroRuolo').value;
@@ -322,92 +325,100 @@ $class_hidden = $id_sala_selezionata ? '' : 'd-none';
                 const itemRuolo = item.getAttribute('data-ruolo');
                 const matchSettore = (settoreSelezionato === 'all') || (itemSettore === settoreSelezionato);
                 const matchRuolo = (ruoloSelezionato === 'all') || (itemRuolo === ruoloSelezionato);
-                const checkbox = item.querySelector('.user-checkbox');
 
+                // Gestione checkbox e visualizzazione
+                const checkbox = item.querySelector('.user-checkbox');
                 if (matchSettore && matchRuolo) {
                     item.style.display = 'block';
                 } else {
                     item.style.display = 'none';
-                    if (checkbox) {
-                        checkbox.checked = false;
-                        aggiornaContatore();
-                    }
+                    if (checkbox) checkbox.checked = false; // Deseleziona se nascosto
                 }
             });
+            aggiornaContatore();
         }
 
         function aggiornaContatore() {
-            const maxCapienzaElement = document.getElementById('maxCapienza');
-            if (!maxCapienzaElement) return; // Sicurezza se non siamo in fase conferma
-
-            const maxCapienza = parseInt(maxCapienzaElement.value);
+            const maxCapienza = parseInt(document.getElementById('maxCapienza').value);
             const checkboxes = document.querySelectorAll('.user-checkbox');
             let checkedCount = document.querySelectorAll('.user-checkbox:checked').length;
-            let occupati = checkedCount + 1;
+            let occupati = checkedCount + 1; // +1 per l'organizzatore
 
             const counterSpan = document.getElementById('counter-text');
             if (counterSpan) counterSpan.innerText = occupati;
 
-            if (occupati >= maxCapienza) {
+            // Logica disabilitazione
+            const limitReached = occupati >= maxCapienza;
+            if (limitReached) {
                 if (counterSpan) {
                     counterSpan.parentElement.classList.remove('bg-primary');
                     counterSpan.parentElement.classList.add('bg-danger');
                 }
-                checkboxes.forEach(cb => {
-                    if (!cb.checked) {
-                        cb.disabled = true;
-                        cb.closest('.form-check').classList.add('opacity-50');
-                    }
-                });
             } else {
                 if (counterSpan) {
                     counterSpan.parentElement.classList.remove('bg-danger');
                     counterSpan.parentElement.classList.add('bg-primary');
                 }
-                checkboxes.forEach(cb => {
+            }
+
+            // Disabilita i non selezionati solo se limite raggiunto
+            checkboxes.forEach(cb => {
+                if (!cb.checked) {
+                    cb.disabled = limitReached;
+                    if (limitReached) cb.closest('.form-check').classList.add('opacity-50');
+                    else cb.closest('.form-check').classList.remove('opacity-50');
+                } else {
                     cb.disabled = false;
                     cb.closest('.form-check').classList.remove('opacity-50');
-                });
-            }
+                }
+            });
         }
 
         function toggleSelezionaTutti() {
             const maxCapienza = parseInt(document.getElementById('maxCapienza').value);
+            // Consideriamo solo gli utenti visibili dai filtri
             const visibleItems = Array.from(document.querySelectorAll('.user-item')).filter(item => item.style.display !== 'none');
 
-            // Logica semplice toggle (puoi migliorarla se vuoi stato globale)
-            let anyUnchecked = visibleItems.some(item => !item.querySelector('.user-checkbox').checked);
+            // Calcoli attuali
+            const totalChecked = document.querySelectorAll('.user-checkbox:checked').length;
+            const currentOccupied = totalChecked + 1; // +1 per l'organizzatore
 
-            let currentOccupati = 1 + document.querySelectorAll('.user-checkbox:checked').length;
-            // Reset conteggio per logica corretta sarebbe meglio ricalcolare da zero o usare variabile globale, 
-            // ma per semplicità qui proviamo a selezionare finché c'è posto.
+            // Quanti tra quelli VISIBILI sono attualmente selezionati?
+            const visibleCheckedCount = visibleItems.filter(item => item.querySelector('.user-checkbox').checked).length;
+            const allVisibleAreChecked = (visibleItems.length > 0 && visibleCheckedCount === visibleItems.length);
 
-            if (anyUnchecked) {
-                // Seleziona tutti (fino a capienza)
-                // Bisogna contare quanti sono già checkati globalmente
-                let totalChecked = document.querySelectorAll('.user-checkbox:checked').length;
-                let slotsAvailable = maxCapienza - (totalChecked + 1);
+            // Condizione "Siamo pieni?": Sì se occupati >= capienza
+            const isFull = currentOccupied >= maxCapienza;
 
-                visibleItems.forEach(item => {
-                    const cb = item.querySelector('.user-checkbox');
-                    if (!cb.checked && slotsAvailable > 0) {
-                        cb.checked = true;
-                        slotsAvailable--;
-                    }
-                });
-            } else {
-                // Deseleziona tutti i visibili
+            // LOGICA INTELLIGENTE:
+            // Deselezioniamo se:
+            // 1. Tutti quelli che vedo sono già selezionati (comportamento standard)
+            // 2. OPPURE: Siamo pieni E ho almeno un selezionato visibile (il caso che non ti funzionava)
+            if (allVisibleAreChecked || (isFull && visibleCheckedCount > 0)) {
+                // DESELEZIONA TUTTI I VISIBILI
                 visibleItems.forEach(item => {
                     item.querySelector('.user-checkbox').checked = false;
                 });
+            } else {
+                // SELEZIONA (fino a riempimento)
+                let slotsFree = maxCapienza - currentOccupied;
+
+                visibleItems.forEach(item => {
+                    const cb = item.querySelector('.user-checkbox');
+                    // Seleziona solo se non è già checkato e se abbiamo spazio
+                    if (!cb.checked && slotsFree > 0) {
+                        cb.checked = true;
+                        slotsFree--;
+                    }
+                });
             }
+
             aggiornaContatore();
         }
 
         document.addEventListener("DOMContentLoaded", function() {
             if (document.getElementById('filtroSettore')) {
-                applicaFiltri();
-                aggiornaContatore();
+                applicaFiltri(); // Inizializza stato
             }
         });
     </script>

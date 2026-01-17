@@ -1,9 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
     const selectSala = document.getElementById('sala');
     const containerCalendario = document.getElementById('calendario-container');
-    const navRow = document.getElementById('nav-row'); // Riga tasti settimana
-    const btnSubmit = document.getElementById('btn-submit-row'); // Tasto procedi
+    const navRow = document.getElementById('nav-row');
+    const btnSubmit = document.getElementById('btn-submit-row');
+    const hiddenInputSala = document.getElementById('hidden-sala');
 
+    // Se non siamo nella pagina giusta (elementi non trovati), usciamo
     if (!selectSala || !containerCalendario) return;
 
     selectSala.addEventListener('change', function () {
@@ -18,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let idSettoreParam = '';
         let cleanNomeSala = valSala;
 
+        // Gestione caso Admin (value="ID|Nome")
         if (valSala.indexOf('|') !== -1) {
             const parts = valSala.split('|');
             idSettoreParam = '&id_settore=' + parts[0];
@@ -26,6 +29,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!cleanNomeSala) return;
 
+        // 1. Aggiorna Input Hidden per il submit del form
+        if (hiddenInputSala) {
+            hiddenInputSala.value = cleanNomeSala;
+        }
+
+        // 2. Aggiorna URL del browser senza ricaricare
+        if (mode === 'prenota') {
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set('sala', cleanNomeSala);
+            window.history.pushState({}, '', newUrl);
+        }
+
+        // 3. Feedback visivo e Chiamata AJAX
         containerCalendario.style.opacity = '0.5';
 
         const apiUrl = '../backend/api_get_calendar.php?sala=' + encodeURIComponent(cleanNomeSala) +
@@ -62,7 +78,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 const url = new URL(link.href, window.location.origin);
                 url.searchParams.set('sala', valoreSelect);
                 link.href = url.toString();
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                // Ignora errori di parsing URL
+            }
         });
     }
 });

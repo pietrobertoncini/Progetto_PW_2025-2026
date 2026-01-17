@@ -235,7 +235,7 @@ if ($filtro_sala) {
                                 <th class="ps-4">Data & Ora</th>
                                 <th>Sala & Settore</th>
                                 <th>Attività</th>
-                                <th>Organizzatore</th>
+                                <th class="pe-4">Organizzatore</th>
                             </tr>
                         </thead>
                         <tbody class="border-top-0">

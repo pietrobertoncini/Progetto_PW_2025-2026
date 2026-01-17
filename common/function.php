@@ -896,10 +896,10 @@ function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is
 ?>
     <div class="shadow-sm mb-4 rounded-4 overflow-hidden border">
         <div class="table-responsive">
-            <table class="table table-sm calendar-table mb-0 text-center align-middle" style="min-width: 800px;">
+            <table class="table table-sm calendar-table mb-0 text-center align-middle">
                 <thead>
                     <tr>
-                        <th class="align-middle" style="width: 80px; position: sticky; left: 0; z-index: 2; background-color: #d2b48c;">Ora</th>
+                        <th class="align-middle" style="position: sticky; left: 0; z-index: 2; background-color: #d2b48c;">Ora</th>
                         <?php
                         $giorni = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
                         for ($i = 0; $i < 7; $i++) {
@@ -999,7 +999,7 @@ function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is
                                     if (!$is_read_only && !$is_admin) {
                                     ?>
                                         <td class="cell-free p-0 align-middle">
-                                            <label class="check-container d-flex justify-content-center align-items-center w-100 h-100 py-3">
+                                            <label class="check-container d-flex justify-content-center align-items-center w-100 h-100">
                                                 <input type="checkbox" name="slots[]" value="<?php echo $value; ?>">
                                             </label>
                                         </td>

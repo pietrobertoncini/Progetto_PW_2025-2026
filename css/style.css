@@ -174,11 +174,7 @@ body {
 .calendar-table tr th:first-child,
 .calendar-table tr td:first-child {
     border-left: 0;
-}
-
-.calendar-table tr th:last-child,
-.calendar-table tr td:last-child {
-    border-right: 0;
+    border-right: 1px solid rgba(122, 94, 78, 0.25) !important;
 }
 
 .calendar-table thead th {
@@ -211,7 +207,6 @@ body {
     align-items: center;
     width: 100%;
     height: 100%;
-    min-height: 35px;
     cursor: pointer;
 }
 

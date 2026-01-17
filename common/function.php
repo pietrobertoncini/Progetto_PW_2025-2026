@@ -1018,4 +1018,181 @@ function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is
 <?php
     return ob_get_clean();
 }
+
+// Funzione SPECIFICA per visualizza_prenotazioni.php (Solo visualizzazione)
+function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = false)
+{
+    ob_start();
+?>
+    <div class="shadow-sm mb-4 rounded-4 overflow-hidden border">
+        <div class="table-responsive">
+            <table class="table table-sm calendar-table mb-0 text-center align-middle" style="min-width: 800px;">
+                <thead>
+                    <tr>
+                        <th class="align-middle" style="width: 60px; background-color: #d2b48c; border-right: 1px solid rgba(122, 94, 78, 0.25);">Ora</th>
+                        <?php
+                        $giorni = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
+                        for ($i = 0; $i < 7; $i++) {
+                            $d = date('Y-m-d', strtotime($lunedi_settimana . " +$i days"));
+                            $giorno_str = date('d/m', strtotime($d));
+                            $nome_giorno = $giorni[$i];
+                            $class_th = ($d == date('Y-m-d')) ? 'bg-warning bg-opacity-25 text-dark' : '';
+                            echo "<th class='$class_th' style='width: 13%'>$nome_giorno<br><small class='fw-normal'>$giorno_str</small></th>";
+                        }
+                        ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php for ($ora = 9; $ora < 23; $ora++): ?>
+                        <tr>
+                            <td class="align-middle fw-bold bg-light" style="border-right: 1px solid rgba(122, 94, 78, 0.25);"><?php echo $ora; ?>:00</td>
+
+                            <?php for ($i = 0; $i < 7; $i++):
+                                $data_curr = date('Y-m-d', strtotime($lunedi_settimana . " +$i days"));
+
+                                if (isset($occupied[$data_curr][$ora])) {
+                                    $cell = $occupied[$data_curr][$ora];
+                                    $info = $cell['dati'];
+
+                                    if ($cell['is_start']) {
+                                        $durata = $info['durata'];
+
+                                        // LOGICA TEMPORALE
+                                        $ts_inizio = strtotime($info['data'] . " " . $info['ora'] . ":00");
+                                        $ts_fine = $ts_inizio + ($durata * 3600);
+                                        $now = time();
+
+                                        $is_passato = ($now >= $ts_fine);
+                                        $is_in_corso = ($now >= $ts_inizio && $now < $ts_fine);
+
+                                        // COLORI & CLASSI (Stile Originale)
+                                        if ($is_passato) {
+                                            // Grigio
+                                            $bg_class = "bg-secondary bg-opacity-10 border-secondary border-opacity-25";
+                                            $text_class = "text-muted";
+                                            $icon_class = "text-muted";
+                                        } elseif ($is_in_corso) {
+                                            // Verde (Nuovo)
+                                            $bg_class = "bg-success bg-opacity-10 border-success border-opacity-25";
+                                            $text_class = "text-success fw-bold";
+                                            $icon_class = "text-success";
+                                        } else {
+                                            // Azzurro (Originale Futuro)
+                                            $bg_class = "bg-info bg-opacity-10 border-info border-opacity-25";
+                                            $text_class = "text-dark";
+                                            $icon_class = "text-dark";
+                                        }
+                            ?>
+                                        <td rowspan="<?php echo $durata; ?>" class="p-0 p-lg-2 <?php echo $bg_class; ?> position-relative border">
+                                            <div class="d-flex flex-column justify-content-center align-items-center h-100 w-100" style="min-height: <?php echo ($durata * 35); ?>px;">
+
+                                                <?php if ($durata == 1): ?>
+                                                    <div class="dropdown w-100 h-100 d-flex align-items-center justify-content-between px-2">
+
+                                                        <span class="fw-bold small text-truncate text-start <?php echo $text_class; ?>" style="max-width: 80%;">
+                                                            <?php echo htmlspecialchars($info['attivita']); ?>
+                                                        </span>
+
+                                                        <button class="btn btn-sm btn-link p-0 text-decoration-none <?php echo $icon_class; ?>" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="bi bi-three-dots-vertical"></i>
+                                                        </button>
+
+                                                        <ul class="dropdown-menu shadow border-0">
+                                                            <li class="px-3 py-2">
+                                                                <h6 class="dropdown-header p-0 fw-bold text-dark">
+                                                                    Dettagli <?php echo $is_passato ? '(Concluso)' : ($is_in_corso ? '(In Corso)' : ''); ?>
+                                                                </h6>
+                                                                <div class="small text-muted" style="min-width: 200px;">
+                                                                    <i class="bi bi-person-fill"></i> Org: <?php echo htmlspecialchars($info['nome_org'] . ' ' . $info['cognome_org']); ?><br>
+                                                                    <i class="bi bi-clock"></i> <?php echo $info['ora']; ?>:00 - <?php echo $info['ora'] + $durata; ?>:00
+                                                                </div>
+                                                            </li>
+
+                                                            <?php if ($is_admin && !$is_passato): ?>
+                                                                <li>
+                                                                    <hr class="dropdown-divider">
+                                                                </li>
+                                                                <li>
+                                                                    <div class="d-flex justify-content-center">
+                                                                        <form action="<?php echo BASE_URL; ?>backend/admin_prenotazioni_exe.php" method="POST" class="px-2 pb-1" onsubmit="return confirm('Eliminare questa prenotazione?');">
+                                                                            <input type="hidden" name="action" value="delete">
+                                                                            <input type="hidden" name="id_settore" value="<?php echo $info['id_settore']; ?>">
+                                                                            <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($info['nome_sala']); ?>">
+                                                                            <input type="hidden" name="data" value="<?php echo $info['data']; ?>">
+                                                                            <input type="hidden" name="ora" value="<?php echo $info['ora']; ?>">
+
+                                                                            <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2 rounded-pill shadow-sm">
+                                                                                <i class="bi bi-trash3"></i> Elimina
+                                                                            </button>
+                                                                        </form>
+                                                                    </div>
+                                                                </li>
+                                                            <?php endif; ?>
+                                                        </ul>
+                                                    </div>
+
+                                                <?php else: ?>
+                                                    <div class="fw-bold lh-sm mb-1 text-truncate px-1 <?php echo $text_class; ?>" style="max-width: 100%;">
+                                                        <?php echo htmlspecialchars($info['attivita']); ?>
+                                                    </div>
+
+                                                    <div class="small text-muted mb-2">
+                                                        <i class="bi bi-person-fill"></i>
+                                                        <?php echo htmlspecialchars($info['nome_org'] . ' ' . substr($info['cognome_org'], 0, 1) . '.'); ?>
+                                                    </div>
+
+                                                    <?php if ($is_passato): ?>
+                                                        <span class="badge bg-secondary opacity-50" style="font-size: 0.65rem;">Conclusa</span>
+                                                    <?php elseif ($is_in_corso): ?>
+                                                        <span class="badge bg-success" style="font-size: 0.65rem;">In corso...</span>
+
+                                                        <?php if ($is_admin): ?>
+                                                            <div class="mt-2">
+                                                                <form action="<?php echo BASE_URL; ?>backend/admin_prenotazioni_exe.php" method="POST" onsubmit="return confirm('Eliminare questa prenotazione?');">
+                                                                    <input type="hidden" name="action" value="delete">
+                                                                    <input type="hidden" name="id_settore" value="<?php echo $info['id_settore']; ?>">
+                                                                    <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($info['nome_sala']); ?>">
+                                                                    <input type="hidden" name="data" value="<?php echo $info['data']; ?>">
+                                                                    <input type="hidden" name="ora" value="<?php echo $info['ora']; ?>">
+                                                                    <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2 rounded-pill shadow-sm" style="font-size: 0.7rem;">
+                                                                        <i class="bi bi-trash3"></i> Elimina
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        <?php endif; ?>
+
+                                                    <?php else: ?>
+                                                        <?php if ($is_admin): ?>
+                                                            <form action="<?php echo BASE_URL; ?>backend/admin_prenotazioni_exe.php" method="POST" onsubmit="return confirm('Eliminare questa prenotazione?');">
+                                                                <input type="hidden" name="action" value="delete">
+                                                                <input type="hidden" name="id_settore" value="<?php echo $info['id_settore']; ?>">
+                                                                <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($info['nome_sala']); ?>">
+                                                                <input type="hidden" name="data" value="<?php echo $info['data']; ?>">
+                                                                <input type="hidden" name="ora" value="<?php echo $info['ora']; ?>">
+
+                                                                <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2 rounded-pill shadow-sm" style="font-size: 0.7rem;">
+                                                                    <i class="bi bi-trash3"></i> Elimina
+                                                                </button>
+                                                            </form>
+                                                        <?php endif; ?>
+                                                    <?php endif; ?>
+
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
+                            <?php
+                                    }
+                                } else {
+                                    echo "<td>-</td>";
+                                }
+                            endfor; ?>
+                        </tr>
+                    <?php endfor; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+<?php
+    return ob_get_clean();
+}
 ?>

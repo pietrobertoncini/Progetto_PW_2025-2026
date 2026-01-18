@@ -999,8 +999,8 @@ function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is
                                                             </li>
                                                         </ul>
                                                     </div>
-                                                
-                                                <!-- Se dura più di un'ora -->
+
+                                                    <!-- Se dura più di un'ora -->
                                                 <?php else: ?>
                                                     <div class="w-100 px-1 text-center overflow-hidden">
                                                         <small class="fw-bold text-uppercase mb-1 d-block <?php echo $text_class; ?>" style="font-size: 0.6rem; letter-spacing: 1px; opacity: 0.7;">
@@ -1159,8 +1159,8 @@ function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = 
                                                             <?php endif; ?>
                                                         </ul>
                                                     </div>
-                                                
-                                                <!-- Se dura più di un'ora -->
+
+                                                    <!-- Se dura più di un'ora -->
                                                 <?php else: ?>
                                                     <div class="fw-bold lh-sm mb-1 text-truncate px-1 <?php echo $text_class; ?>" style="max-width: 100%;">
                                                         <?php echo htmlspecialchars($info['attivita']); ?>
@@ -1214,6 +1214,85 @@ function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = 
                                 } else {
                                     echo "<td>-</td>";
                                 }
+                            endfor; ?>
+                        </tr>
+                    <?php endfor; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+<?php
+    return ob_get_clean();
+}
+
+function renderCalendarGrid_Impegni($lunedi_settimana, $planning, $is_responsabile)
+{
+    ob_start();
+?>
+    <div class="shadow-sm mb-4 rounded-4 overflow-hidden border">
+        <div class="table-responsive">
+            <table class="table table-sm calendar-table mb-0 text-center align-middle">
+                <thead>
+                    <tr>
+                        <th class="align-middle" style="width: 60px; background-color: #d2b48c; border-right: 1px solid rgba(122, 94, 78, 0.25);">Ora</th>
+                        <?php
+                        $giorni = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
+                        for ($i = 0; $i < 7; $i++) {
+                            $d = date('Y-m-d', strtotime($lunedi_settimana . " +$i days"));
+                            $giorno_str = date('d/m', strtotime($d));
+                            $nome_giorno = $giorni[$i];
+                            $class_th = ($d == date('Y-m-d')) ? 'bg-warning bg-opacity-25 text-dark' : '';
+                            echo "<th class='$class_th' style='width: 13%'>$nome_giorno<br><small class='fw-normal'>$giorno_str</small></th>";
+                        }
+                        ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php for ($ora = 9; $ora < 23; $ora++): ?>
+                        <tr>
+                            <td class="fw-bold bg-light border-end"><?php echo $ora; ?>:00</td>
+                            <?php for ($i = 0; $i < 7; $i++):
+                                $data_curr = date('Y-m-d', strtotime($lunedi_settimana . " +$i days"));
+                                if (isset($planning[$data_curr][$ora])):
+                                    $cell = $planning[$data_curr][$ora];
+                                    $info = $cell['dati'];
+                                    if ($cell['is_start']):
+                                        $durata = $info['durata'];
+                                        $is_passato = (strtotime($info['data'] . " " . $info['ora'] . ":00") < time());
+                                        $bg_class = $is_passato ? "bg-secondary bg-opacity-10 text-muted" : "bg-success bg-opacity-10 text-success";
+                            ?>
+                                        <td rowspan="<?php echo $durata; ?>" class="p-1 <?php echo $bg_class; ?>">
+                                            <div class="d-flex flex-column justify-content-between h-100 py-1">
+                                                <div class="fw-bold small text-truncate px-1" title="<?php echo htmlspecialchars($info['attivita']); ?>">
+                                                    <?php echo htmlspecialchars($info['attivita']); ?>
+                                                </div>
+                                                <div class="small fst-italic text-truncate" style="font-size: 0.75rem;">
+                                                    <?php echo htmlspecialchars($info['nome_sala']); ?>
+                                                </div>
+                                                <?php if (!$is_passato): ?>
+                                                    <div class="mt-1">
+                                                        <?php if ($is_responsabile): ?>
+                                                            <a href="modifica_prenotazione.php?sala=<?php echo urlencode($info['nome_sala']); ?>&data=<?php echo $info['data']; ?>&ora=<?php echo $info['ora']; ?>"
+                                                                class="btn btn-outline-secondary btn-xs rounded-pill" style="font-size: 0.65rem; padding: 1px 6px;">Gestisci</a>
+                                                        <?php else: ?>
+                                                            <form action="../backend/invite_reply.php" method="POST" onsubmit="return confirm('Disdire?');">
+                                                                <input type="hidden" name="id_settore" value="<?php echo $info['id_settore']; ?>">
+                                                                <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($info['nome_sala']); ?>">
+                                                                <input type="hidden" name="data" value="<?php echo $info['data']; ?>">
+                                                                <input type="hidden" name="ora" value="<?php echo $info['ora']; ?>">
+                                                                <input type="hidden" name="risposta" value="rifiutato">
+                                                                <input type="hidden" name="motivazione" value="Disdetta manuale">
+                                                                <button type="submit" class="btn btn-outline-danger btn-xs rounded-pill" style="font-size: 0.65rem; padding: 1px 6px;">Disdici</button>
+                                                            </form>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
+                                    <?php endif;
+                                else: ?>
+                                    <td class="border-start border-bottom text-muted opacity-25">-</td>
+                            <?php endif;
                             endfor; ?>
                         </tr>
                     <?php endfor; ?>

@@ -940,12 +940,31 @@ function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is
 
                                     if ($cell['is_start']) {
                                         $durata = $info['durata'];
-                                        $bg_class = "bg-danger bg-opacity-10 border-danger";
-                                        if ($is_read_only) $bg_class = "bg-info bg-opacity-10 border-info";
-                                        if ($is_past) $bg_class = "bg-secondary bg-opacity-10 border-secondary";
+
+                                        // --- LOGICA TEMPORALE PER CELLE OCCUPATE ---
+                                        $ts_inizio = strtotime($info['data'] . " " . $info['ora'] . ":00");
+                                        $ts_fine = $ts_inizio + ($durata * 3600);
+                                        $now = time();
+
+                                        $is_concluso = ($now >= $ts_fine);
+                                        $is_in_corso = ($now >= $ts_inizio && $now < $ts_fine);
+
+                                        $testo_stato = "OCCUPATO";
+                                        $bg_class = "bg-danger bg-opacity-10"; // Default Rosso Futuro
+                                        $text_class = "text-danger";
+
+                                        if ($is_concluso) {
+                                            $testo_stato = "Concluso";
+                                            $bg_class = "bg-secondary bg-opacity-10";
+                                            $text_class = "text-muted";
+                                        } elseif ($is_in_corso) {
+                                            $testo_stato = "In corso...";
+                                            $bg_class = "bg-success bg-opacity-10";
+                                            $text_class = "text-success fw-bold";
+                                        }
                             ?>
                                         <td rowspan="<?php echo $durata; ?>" class="p-1 <?php echo $bg_class; ?> border border-opacity-25 align-middle">
-                                            <div class="d-flex flex-column justify-content-center align-items-center" style="min-height: <?php echo ($durata * 30); ?>px;">
+                                            <div class="d-flex flex-column justify-content-center align-items-center">
 
                                                 <?php if ($durata == 1): ?>
                                                     <div class="dropdown w-100 h-100 d-flex align-items-center justify-content-between px-2">
@@ -961,7 +980,7 @@ function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is
                                                         <ul class="dropdown-menu shadow border-0 z-3">
                                                             <li class="px-3 py-2">
                                                                 <h6 class="dropdown-header p-0 fw-bold text-dark">
-                                                                    Dettagli <?php echo $is_past ? '(Concluso)' : ''; ?>
+                                                                    Dettagli <?php echo $is_concluso ? '(Concluso)' : ''; ?>
                                                                 </h6>
                                                                 <div class="small text-muted" style="min-width: 200px;">
                                                                     <strong><?php echo htmlspecialchars($info['attivita']); ?></strong><br>
@@ -971,11 +990,12 @@ function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is
                                                             </li>
                                                         </ul>
                                                     </div>
-
+                                                
+                                                <!-- Se dura più di un'ora -->
                                                 <?php else: ?>
                                                     <div class="w-100 px-1 text-center overflow-hidden">
-                                                        <small class="fw-bold text-uppercase mb-1 d-block" style="font-size: 0.6rem; letter-spacing: 1px; opacity: 0.7;">
-                                                            <?php echo $is_read_only ? 'Prenotato' : 'Occupato'; ?>
+                                                        <small class="fw-bold text-uppercase mb-1 d-block <?php echo $text_class; ?>" style="font-size: 0.6rem; letter-spacing: 1px; opacity: 0.7;">
+                                                            <?php echo $testo_stato ?>
                                                         </small>
 
                                                         <div class="fw-bold text-truncate <?php echo $text_class; ?> lh-sm mb-1" style="font-size: 0.85rem;" title="<?php echo htmlspecialchars($info['attivita']); ?>">
@@ -1065,26 +1085,26 @@ function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = 
                                         $is_passato = ($now >= $ts_fine);
                                         $is_in_corso = ($now >= $ts_inizio && $now < $ts_fine);
 
-                                        // COLORI & CLASSI (Stile Originale)
+                                        // COLORI e CLASSI
                                         if ($is_passato) {
                                             // Grigio
-                                            $bg_class = "bg-secondary bg-opacity-10 border-secondary border-opacity-25";
+                                            $bg_class = "bg-secondary bg-opacity-10";
                                             $text_class = "text-muted";
                                             $icon_class = "text-muted";
                                         } elseif ($is_in_corso) {
                                             // Verde (Nuovo)
-                                            $bg_class = "bg-success bg-opacity-10 border-success border-opacity-25";
+                                            $bg_class = "bg-success bg-opacity-10";
                                             $text_class = "text-success fw-bold";
                                             $icon_class = "text-success";
                                         } else {
                                             // Azzurro (Originale Futuro)
-                                            $bg_class = "bg-info bg-opacity-10 border-info border-opacity-25";
+                                            $bg_class = "bg-info bg-opacity-10";
                                             $text_class = "text-dark";
                                             $icon_class = "text-dark";
                                         }
                             ?>
-                                        <td rowspan="<?php echo $durata; ?>" class="p-0 p-lg-2 <?php echo $bg_class; ?> position-relative border">
-                                            <div class="d-flex flex-column justify-content-center align-items-center h-100 w-100" style="min-height: <?php echo ($durata * 35); ?>px;">
+                                        <td rowspan="<?php echo $durata; ?>" class="p-1 <?php echo $bg_class; ?> position-relative">
+                                            <div class="d-flex flex-column justify-content-center align-items-center">
 
                                                 <?php if ($durata == 1): ?>
                                                     <div class="dropdown w-100 h-100 d-flex align-items-center justify-content-between px-2">
@@ -1093,7 +1113,7 @@ function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = 
                                                             <?php echo htmlspecialchars($info['attivita']); ?>
                                                         </span>
 
-                                                        <button class="btn btn-sm btn-link p-0 text-decoration-none <?php echo $icon_class; ?>" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <button class="btn btn-sm btn-link text-decoration-none <?php echo $icon_class; ?>" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                             <i class="bi bi-three-dots-vertical"></i>
                                                         </button>
 
@@ -1130,13 +1150,14 @@ function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = 
                                                             <?php endif; ?>
                                                         </ul>
                                                     </div>
-
+                                                
+                                                <!-- Se dura più di un'ora -->
                                                 <?php else: ?>
                                                     <div class="fw-bold lh-sm mb-1 text-truncate px-1 <?php echo $text_class; ?>" style="max-width: 100%;">
                                                         <?php echo htmlspecialchars($info['attivita']); ?>
                                                     </div>
 
-                                                    <div class="small text-muted mb-2">
+                                                    <div class="small text-muted mb-1">
                                                         <i class="bi bi-person-fill"></i>
                                                         <?php echo htmlspecialchars($info['nome_org'] . ' ' . substr($info['cognome_org'], 0, 1) . '.'); ?>
                                                     </div>
@@ -1147,7 +1168,7 @@ function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = 
                                                         <span class="badge bg-success" style="font-size: 0.65rem;">In corso...</span>
 
                                                         <?php if ($is_admin): ?>
-                                                            <div class="mt-2">
+                                                            <div>
                                                                 <form action="<?php echo BASE_URL; ?>backend/admin_prenotazioni_exe.php" method="POST" onsubmit="return confirm('Eliminare questa prenotazione?');">
                                                                     <input type="hidden" name="action" value="delete">
                                                                     <input type="hidden" name="id_settore" value="<?php echo $info['id_settore']; ?>">
@@ -1169,7 +1190,6 @@ function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = 
                                                                 <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($info['nome_sala']); ?>">
                                                                 <input type="hidden" name="data" value="<?php echo $info['data']; ?>">
                                                                 <input type="hidden" name="ora" value="<?php echo $info['ora']; ?>">
-
                                                                 <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2 rounded-pill shadow-sm" style="font-size: 0.7rem;">
                                                                     <i class="bi bi-trash3"></i> Elimina
                                                                 </button>

@@ -186,10 +186,13 @@ body {
     padding-bottom: 4px !important;
 }
 
+.calendar-table tbody tr {
+    height: 35px;
+}
+
 .calendar-table tbody td {
     text-align: center;
     vertical-align: middle;
-    height: 35px;
 }
 
 .calendar-table tbody td.cell-free {

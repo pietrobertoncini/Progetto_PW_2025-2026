@@ -45,9 +45,9 @@ $lista_invitati = getInvitatiPrenotazione($cid, $id_settore, $nome_sala, $data_o
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">
 
-                <div class="card shadow-sm border-0 rounded-3">
-                    <div class="card-header bg-secondary bg-opacity-10 border-0 py-3 d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0 fw-bold text-dark">Gestisci Prenotazione</h4>
+                <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                    <div class="card-header bg-secondary bg-opacity-25 border-0 py-3 d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0 fw-bold" style="color: #7A5E4E;">Gestisci Prenotazione</h4>
                         <a href="<?php echo BASE_URL; ?>frontend/gestione_prenotazioni.php" class="btn btn-sm btn-outline-secondary rounded-pill">Annulla</a>
                     </div>
 
@@ -113,7 +113,7 @@ $lista_invitati = getInvitatiPrenotazione($cid, $id_settore, $nome_sala, $data_o
 
                         <hr class="my-4">
 
-                        <div class="bg-danger bg-opacity-10 p-3 rounded border border-danger border-opacity-25">
+                        <div class="bg-danger bg-opacity-10 p-3 rounded-4 border border-danger border-opacity-25">
                             <h5 class="text-danger fw-bold fs-6">Zona Pericolo</h5>
                             <p class="small text-muted mb-3">L'eliminazione è irreversibile e cancellerà anche tutti gli inviti associati.</p>
 

@@ -963,7 +963,7 @@ function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is
                                             $text_class = "text-success fw-bold";
                                         }
                             ?>
-                                        <td rowspan="<?php echo $durata; ?>" class="p-1 <?php echo $bg_class; ?> border border-opacity-25 align-middle">
+                                        <td rowspan="<?php echo $durata; ?>" class="p-1 <?php echo $bg_class; ?> align-middle">
                                             <div class="d-flex flex-column justify-content-center align-items-center">
 
                                                 <?php if ($durata == 1): ?>
@@ -980,7 +980,16 @@ function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is
                                                         <ul class="dropdown-menu shadow border-0 z-3">
                                                             <li class="px-3 py-2">
                                                                 <h6 class="dropdown-header p-0 fw-bold text-dark">
-                                                                    Dettagli <?php echo $is_concluso ? '(Concluso)' : ''; ?>
+                                                                    Dettagli
+                                                                    <?php
+                                                                    if ($is_concluso) {
+                                                                        echo '(Concluso)';
+                                                                    } elseif ($is_in_corso) {
+                                                                        echo '(In corso...)';
+                                                                    } else {
+                                                                        echo '(Occupato)';
+                                                                    }
+                                                                    ?>
                                                                 </h6>
                                                                 <div class="small text-muted" style="min-width: 200px;">
                                                                     <strong><?php echo htmlspecialchars($info['attivita']); ?></strong><br>

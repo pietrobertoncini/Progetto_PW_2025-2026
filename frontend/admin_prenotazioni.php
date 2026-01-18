@@ -85,7 +85,7 @@ if ($filtro_sala) {
                             <?php endforeach; ?>
                         </select>
                         <noscript>
-                            <button type="submit" class="btn btn-secondary ms-2">Vai</button>
+                            <button type="submit" class="btn btn-sm btn-secondary ms-2 rounded-pill">Vai</button>
                         </noscript>
                     </form>
                 </div>
@@ -120,7 +120,7 @@ if ($filtro_sala) {
             <?php if ($filtro_sala && $sala_selezionata_info): ?>
 
                 <?php
-                if (function_exists('renderCalendarGrid')) {
+                if (function_exists('renderCalendarGrid_AdminView')) {
                     echo renderCalendarGrid_AdminView($lunedi_settimana, $prenotazioni_griglia, true);
                 }
                 ?>

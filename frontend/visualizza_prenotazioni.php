@@ -86,7 +86,9 @@ $class_nav_hidden = $filtro_sala ? '' : 'd-none';
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <noscript><button type="submit" class="btn btn-sm btn-secondary ms-2 rounded-pill">Vai</button></noscript>
+                        <noscript>
+                            <button type="submit" class="btn btn-sm btn-secondary ms-2 rounded-pill">Vai</button>
+                        </noscript>
                     </form>
                 </div>
             </div>
@@ -120,7 +122,7 @@ $class_nav_hidden = $filtro_sala ? '' : 'd-none';
             <?php if ($filtro_sala && $sala_selezionata_info): ?>
 
                 <?php
-                if (function_exists('renderCalendarGrid_View')) {
+                if (function_exists('renderCalendarGrid_AdminView')) {
                     echo renderCalendarGrid_AdminView($lunedi_settimana, $prenotazioni_griglia);
                 }
                 ?>

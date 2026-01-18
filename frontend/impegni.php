@@ -131,8 +131,7 @@ foreach ($impegni_lista as $imp) {
                                 ?>
                                             <td rowspan="<?php echo $durata; ?>" class="p-0 border position-relative align-middle <?php echo $bg_class; ?>">
 
-                                                <div class="d-flex flex-column justify-content-center align-items-center w-100 h-100"
-                                                    style="min-height: <?php echo ($durata * 40); ?>px;">
+                                                <div class="d-flex flex-column justify-content-center align-items-center w-100 h-100">
 
                                                     <?php if ($durata == 1): ?>
                                                         <div class="dropdown w-100 h-100 d-flex align-items-center justify-content-between px-2">

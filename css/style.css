@@ -252,3 +252,11 @@ body {
         padding-bottom: 20px;
     }
 }
+
+/* Fallback per Navbar senza JavaScript */
+@media (min-width: 992px) {
+    .nav-item.dropdown:hover .dropdown-menu {
+        display: block;
+        margin-top: 0; 
+    }
+}

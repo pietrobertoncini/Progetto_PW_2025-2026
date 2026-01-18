@@ -131,8 +131,8 @@ $class_nav_hidden = $filtro_sala ? '' : 'd-none';
                     <div class="card-header bg-white py-3 border-bottom">
                         <span class="fw-bold text-muted"><i class="bi bi-list-ul"></i> Tutte le prenotazioni (<?php echo count($elenco_lista); ?>)</span>
                     </div>
-                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-                        <table class="table table-hover align-middle mb-0">
+                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                        <table class="table table-sm table-hover align-middle mb-0">
                             <thead class="table-light small text-muted text-uppercase" style="position: sticky; top: 0; z-index: 1;">
                                 <tr>
                                     <th class="ps-4">Data & Ora</th>
@@ -156,7 +156,7 @@ $class_nav_hidden = $filtro_sala ? '' : 'd-none';
                                                 <?php endif; ?>
                                             </td>
                                             <td>
-                                                <span class="d-block fw-bold" style="<?php echo $is_passata ? '' : 'color: #7A5E4E;'; ?>"><?php echo htmlspecialchars($p['nome_sala']); ?></span>
+                                                <span class="d-block fw-bold" style="color: #7A5E4E;"><?php echo htmlspecialchars($p['nome_sala']); ?></span>
                                                 <small class="text-muted"><?php echo htmlspecialchars($p['nome_settore']); ?></small>
                                             </td>
                                             <td><?php echo htmlspecialchars($p['attivita']); ?></td>

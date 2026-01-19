@@ -1166,7 +1166,7 @@ function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = 
                                                         <?php echo htmlspecialchars($info['attivita']); ?>
                                                     </div>
 
-                                                    <div class="small text-muted mb-1">
+                                                    <div class="small text-muted">
                                                         <i class="bi bi-person-fill"></i>
                                                         <?php echo htmlspecialchars($info['nome_org'] . ' ' . substr($info['cognome_org'], 0, 1) . '.'); ?>
                                                     </div>
@@ -1285,7 +1285,7 @@ function renderCalendarGrid_Impegni($lunedi_settimana, $planning, $is_responsabi
                                                         <ul class="dropdown-menu shadow border-0 z-3">
                                                             <li class="px-3 py-2">
                                                                 <h6 class="dropdown-header p-0 fw-bold text-dark">
-                                                                    Dettagli Impegno
+                                                                    <?php echo $is_passato ? 'Dettagli (Concluso)' : 'Dettagli Impegno'; ?>
                                                                 </h6>
                                                                 <div class="small text-muted" style="min-width: 200px;">
                                                                     <strong><?php echo htmlspecialchars($info['attivita']); ?></strong><br>
@@ -1301,7 +1301,7 @@ function renderCalendarGrid_Impegni($lunedi_settimana, $planning, $is_responsabi
                                                                 <li>
                                                                     <div class="d-flex justify-content-center px-2">
                                                                         <?php if ($is_responsabile): ?>
-                                                                            <a href="modifica_prenotazione.php?sala=<?php echo urlencode($info['nome_sala']); ?>&data=<?php echo $info['data']; ?>&ora=<?php echo $info['ora']; ?>"
+                                                                            <a href="modifica_prenotazione.php?sala=<?php echo urlencode($info['nome_sala']); ?>&data=<?php echo $info['data']; ?>&ora=<?php echo $info['ora']; ?>&source=impegni"
                                                                                 class="btn btn-outline-secondary btn-sm rounded-pill w-100">
                                                                                 <i class="bi bi-gear-fill"></i> Gestisci
                                                                             </a>
@@ -1323,7 +1323,7 @@ function renderCalendarGrid_Impegni($lunedi_settimana, $planning, $is_responsabi
                                                             <?php endif; ?>
                                                         </ul>
                                                     </div>
-                                                    <!-- Se dura èiù di un'ora -->
+                                                    <!-- Se dura più di un'ora -->
                                                 <?php else: ?>
                                                     <div class="fw-bold lh-sm mb-1 text-truncate px-1 <?php echo $text_class; ?>" style="max-width: 100%;">
                                                         <?php echo htmlspecialchars($info['attivita']); ?>
@@ -1333,12 +1333,14 @@ function renderCalendarGrid_Impegni($lunedi_settimana, $planning, $is_responsabi
                                                         <?php echo htmlspecialchars($info['nome_sala']); ?>
                                                     </div>
 
-                                                    <?php if (!$is_passato): ?>
+                                                    <?php if ($is_passato): ?>
+                                                        <span class="badge bg-secondary opacity-50 mt-1" style="font-size: 0.65rem;">Conclusa</span>
+                                                    <?php else: ?>
                                                         <div>
                                                             <?php if ($is_responsabile): ?>
-                                                                <a href="modifica_prenotazione.php?sala=<?php echo urlencode($info['nome_sala']); ?>&data=<?php echo $info['data']; ?>&ora=<?php echo $info['ora']; ?>"
+                                                                <a href="modifica_prenotazione.php?sala=<?php echo urlencode($info['nome_sala']); ?>&data=<?php echo $info['data']; ?>&ora=<?php echo $info['ora']; ?>&source=impegni"
                                                                     class="btn btn-outline-secondary btn-xs rounded-pill shadow-sm" style="font-size: 0.65rem; padding: 2px 8px;">
-                                                                    Gestisci
+                                                                    <i class="bi bi-gear-fill"></i> Gestisci
                                                                 </a>
                                                             <?php else: ?>
                                                                 <form action="../backend/invite_reply.php" method="POST" onsubmit="return confirm('Disdire?');">

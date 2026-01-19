@@ -17,6 +17,10 @@ $nome_sala = isset($_GET['sala']) ? urldecode($_GET['sala']) : null;
 $data_old = isset($_GET['data']) ? $_GET['data'] : null;
 $ora_old = isset($_GET['ora']) ? (int)$_GET['ora'] : null;
 
+// Recuperiamo la sorgente per il tasto "Annulla"
+$source = isset($_GET['source']) ? $_GET['source'] : '';
+$link_annulla = ($source === 'impegni') ? 'impegni.php' : 'gestione_prenotazioni.php';
+
 if (!$nome_sala || !$data_old || !$ora_old) {
     die("Errore: Parametri prenotazione mancanti.");
 }
@@ -48,7 +52,7 @@ $lista_invitati = getInvitatiPrenotazione($cid, $id_settore, $nome_sala, $data_o
                 <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
                     <div class="card-header bg-secondary bg-opacity-25 border-0 py-3 d-flex justify-content-between align-items-center">
                         <h4 class="mb-0 fw-bold" style="color: #7A5E4E;">Gestisci Prenotazione</h4>
-                        <a href="<?php echo BASE_URL; ?>frontend/gestione_prenotazioni.php" class="btn btn-sm btn-outline-secondary rounded-pill">Annulla</a>
+                        <a href="<?php echo BASE_URL . 'frontend/' . $link_annulla; ?>" class="btn btn-sm btn-outline-secondary rounded-pill">Annulla</a>
                     </div>
 
                     <div class="card-body p-4">

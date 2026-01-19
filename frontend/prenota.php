@@ -35,6 +35,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['slots'])) {
         $data_scelta = $risultato['data'];
         $ora_scelta = $risultato['ora'];
         $durata_calcolata = $risultato['durata'];
+
+        // Verifichiamo SUBITO se l'utente ha già un impegno, PRIMA di mostrare il form di conferma
+        if (checkSovrapposizioneUtente($cid, $id_utente, $data_scelta, $ora_scelta, $durata_calcolata, $id_settore_utente, $id_sala_selezionata)) {
+            $errore_selezione = "Impossibile procedere: hai già un altro impegno confermato in questo orario.";
+            // Resettiamo le variabili per impedire la visualizzazione del form di conferma
+            $data_scelta = null;
+            $ora_scelta = null;
+        }
     }
 }
 

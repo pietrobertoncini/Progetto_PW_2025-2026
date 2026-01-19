@@ -36,6 +36,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id_utente'])) {
         exit;
     }
 
+    // Controllo sovrapposizioni ORGANIZZATORE
+    // Verifichiamo se l'utente loggato ha già impegni "accettati" in quel lasso di tempo
+    if (checkSovrapposizioneUtente($cid, $id_utente, $data, $ora_inizio, $durata, $id_settore, $nome_sala)) {
+        header("Location: " . BASE_URL . "frontend/prenota.php?error=Errore: Hai già un altro impegno in questo orario.&sala=" . urlencode($nome_sala) . "&week=" . $data);
+        exit;
+    }
+
     // INSERIMENTO
     try {
         $cid->begin_transaction();

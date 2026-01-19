@@ -938,7 +938,7 @@ function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is
                             // Se oggi usa bg-warning, altrimenti il colore standard
                             $class_th = ($d == date('Y-m-d')) ? 'bg-warning bg-opacity-25 text-dark' : '';
 
-                            echo "<th class='$class_th' style='width: 12%'>$nome_giorno<br><small class='fw-normal'>$giorno_str</small></th>";
+                            echo "<th class='$class_th' style='width: 13%'>$nome_giorno<br><small class='fw-normal'>$giorno_str</small></th>";
                         }
                         ?>
                     </tr>
@@ -1086,7 +1086,7 @@ function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = 
             <table class="table table-sm calendar-table mb-0 text-center align-middle" style="min-width: 800px;">
                 <thead>
                     <tr>
-                        <th class="align-middle" style="width: 60px; background-color: #d2b48c; border-right: 1px solid rgba(122, 94, 78, 0.25);">Ora</th>
+                        <th class="align-middle" style="position: sticky; left: 0; z-index: 2; background-color: #d2b48c;">Ora</th>
                         <?php
                         $giorni = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
                         for ($i = 0; $i < 7; $i++) {
@@ -1102,7 +1102,7 @@ function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = 
                 <tbody>
                     <?php for ($ora = 9; $ora < 23; $ora++): ?>
                         <tr>
-                            <td class="align-middle fw-bold bg-light" style="border-right: 1px solid rgba(122, 94, 78, 0.25);"><?php echo $ora; ?>:00</td>
+                            <td class="align-middle fw-bold bg-light" style="position: sticky; left: 0; z-index: 1;"><?php echo $ora; ?>:00</td>
 
                             <?php for ($i = 0; $i < 7; $i++):
                                 $data_curr = date('Y-m-d', strtotime($lunedi_settimana . " +$i days"));
@@ -1243,7 +1243,7 @@ function renderCalendarGrid_Impegni($lunedi_settimana, $planning, $is_responsabi
             <table class="table table-sm calendar-table mb-0 text-center align-middle" style="min-width: 800px;">
                 <thead>
                     <tr>
-                        <th class="align-middle" style="width: 60px; background-color: #d2b48c; border-right: 1px solid rgba(122, 94, 78, 0.25);">Ora</th>
+                        <th class="align-middle" style="position: sticky; left: 0; z-index: 2; background-color: #d2b48c;">Ora</th>
                         <?php
                         $giorni = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
                         for ($i = 0; $i < 7; $i++) {
@@ -1259,7 +1259,7 @@ function renderCalendarGrid_Impegni($lunedi_settimana, $planning, $is_responsabi
                 <tbody>
                     <?php for ($ora = 9; $ora < 23; $ora++): ?>
                         <tr>
-                            <td class="align-middle fw-bold bg-light" style="border-right: 1px solid rgba(122, 94, 78, 0.25);"><?php echo $ora; ?>:00</td>
+                            <td class="align-middle fw-bold bg-light" style="position: sticky; left: 0; z-index: 1;"><?php echo $ora; ?>:00</td>
 
                             <?php for ($i = 0; $i < 7; $i++):
                                 $data_curr = date('Y-m-d', strtotime($lunedi_settimana . " +$i days"));

@@ -1096,17 +1096,14 @@ function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = 
 
                                         // COLORI e CLASSI
                                         if ($is_passato) {
-                                            // Grigio
                                             $bg_class = "bg-secondary bg-opacity-10";
                                             $text_class = "text-muted";
                                             $icon_class = "text-muted";
                                         } elseif ($is_in_corso) {
-                                            // Verde (Nuovo)
                                             $bg_class = "bg-success bg-opacity-10";
                                             $text_class = "text-success fw-bold";
                                             $icon_class = "text-success";
                                         } else {
-                                            // Azzurro (Originale Futuro)
                                             $bg_class = "bg-info bg-opacity-10";
                                             $text_class = "text-dark";
                                             $icon_class = "text-dark";
@@ -1261,12 +1258,28 @@ function renderCalendarGrid_Impegni($lunedi_settimana, $planning, $is_responsabi
 
                                     if ($cell['is_start']):
                                         $durata = $info['durata'];
-                                        $is_passato = (strtotime($info['data'] . " " . $info['ora'] . ":00") < time());
 
-                                        // Colori: Verde (Impegno Futuro) / Grigio (Passato)
-                                        $bg_class = $is_passato ? "bg-secondary bg-opacity-10" : "bg-success bg-opacity-10";
-                                        $text_class = $is_passato ? "text-muted" : "text-success fw-bold";
-                                        $icon_class = $is_passato ? "text-muted" : "text-success";
+                                        $ts_inizio = strtotime($info['data'] . " " . $info['ora'] . ":00");
+                                        $ts_fine = $ts_inizio + ($durata * 3600);
+                                        $now = time();
+
+                                        $is_concluso = ($now >= $ts_fine);
+                                        $is_in_corso = ($now >= $ts_inizio && $now < $ts_fine);
+
+                                        // Colori e Classi
+                                        if ($is_concluso) {
+                                            $bg_class = "bg-secondary bg-opacity-10";
+                                            $text_class = "text-muted";
+                                            $icon_class = "text-muted";
+                                        } elseif ($is_in_corso) {
+                                            $bg_class = "bg-success bg-opacity-10";
+                                            $text_class = "text-success fw-bold";
+                                            $icon_class = "text-success";
+                                        } else {
+                                            $bg_class = "bg-info bg-opacity-10";
+                                            $text_class = "text-dark fw-bold";
+                                            $icon_class = "text-dark";
+                                        }
                             ?>
                                         <td rowspan="<?php echo $durata; ?>" class="p-1 <?php echo $bg_class; ?> position-relative">
                                             <div class="d-flex flex-column justify-content-center align-items-center">
@@ -1285,7 +1298,7 @@ function renderCalendarGrid_Impegni($lunedi_settimana, $planning, $is_responsabi
                                                         <ul class="dropdown-menu shadow border-0 z-3">
                                                             <li class="px-3 py-2">
                                                                 <h6 class="dropdown-header p-0 fw-bold text-dark">
-                                                                    <?php echo $is_passato ? 'Dettagli (Concluso)' : 'Dettagli Impegno'; ?>
+                                                                    Dettagli <?php echo $is_concluso ? '(Concluso)' : ($is_in_corso ? '(In Corso)' : ''); ?>
                                                                 </h6>
                                                                 <div class="small text-muted" style="min-width: 200px;">
                                                                     <strong><?php echo htmlspecialchars($info['attivita']); ?></strong><br>
@@ -1294,7 +1307,7 @@ function renderCalendarGrid_Impegni($lunedi_settimana, $planning, $is_responsabi
                                                                 </div>
                                                             </li>
 
-                                                            <?php if (!$is_passato): ?>
+                                                            <?php if (!$is_concluso && !$is_in_corso): ?>
                                                                 <li>
                                                                     <hr class="dropdown-divider">
                                                                 </li>
@@ -1325,16 +1338,18 @@ function renderCalendarGrid_Impegni($lunedi_settimana, $planning, $is_responsabi
                                                     </div>
                                                     <!-- Se dura più di un'ora -->
                                                 <?php else: ?>
-                                                    <div class="fw-bold lh-sm mb-1 text-truncate px-1 <?php echo $text_class; ?>" style="max-width: 100%;">
+                                                    <div class="fw-bold lh-sm text-truncate px-1 <?php echo $text_class; ?>" style="max-width: 100%;">
                                                         <?php echo htmlspecialchars($info['attivita']); ?>
                                                     </div>
 
-                                                    <div class="small fst-italic text-truncate" style="font-size: 0.75rem; max-width: 100%;">
+                                                    <div class="small text-muted fst-italic text-truncate" style="font-size: 0.75rem; max-width: 100%;">
                                                         <?php echo htmlspecialchars($info['nome_sala']); ?>
                                                     </div>
 
-                                                    <?php if ($is_passato): ?>
+                                                    <?php if ($is_concluso): ?>
                                                         <span class="badge bg-secondary opacity-50 mt-1" style="font-size: 0.65rem;">Conclusa</span>
+                                                    <?php elseif ($is_in_corso): ?>
+                                                        <span class="badge bg-success mt-1" style="font-size: 0.65rem;">In corso...</span>
                                                     <?php else: ?>
                                                         <div>
                                                             <?php if ($is_responsabile): ?>

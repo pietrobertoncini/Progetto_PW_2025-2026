@@ -142,6 +142,7 @@ function getInvitiPendenti($cid, $id_utente)
             JOIN UTENTE U ON P.id_organizzatore = U.id_utente
             WHERE I.id_utente = ? 
             AND I.stato = 'invitato'
+            AND (P.data > CURDATE() OR (P.data = CURDATE() AND P.ora >= HOUR(NOW())))
             ORDER BY I.data ASC, I.ora ASC";
     $stmt = $cid->prepare($sql);
     $stmt->bind_param("i", $id_utente);

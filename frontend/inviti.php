@@ -42,8 +42,8 @@ if (function_exists('getInvitiPendenti')) {
 
             <div class="card-body p-0">
                 <?php if (count($inviti_pendenti) > 0): ?>
-                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
-                        <table class="table table-hover align-middle mb-0">
+                    <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                        <table class="table table-sm table-hover align-middle mb-0">
                             <thead class="table-light text-muted text-uppercase small" style="position: sticky; top: 0; z-index: 1;">
                                 <tr>
                                     <th class="ps-4 py-3">Attività</th>

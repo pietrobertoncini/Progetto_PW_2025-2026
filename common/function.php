@@ -423,8 +423,8 @@ function getPrenotazioniGriglia($cid, $id_settore, $nome_sala, $data_inizio, $da
     $stmt = $cid->prepare($sql);
     $stmt->bind_param("isss", $id_settore, $nome_sala, $data_inizio, $data_fine);
     $stmt->execute();
-    
-    
+
+
     // Mappiamo i risultati in un array [data][ora] => info
     $res = $stmt->get_result();
     while ($row = $res->fetch_assoc()) {
@@ -746,7 +746,6 @@ function getOccupazioniSettimana($cid, $nome_sala, $id_settore, $lunedi, $domeni
         }
     }
     return $occupied;
-    
 }
 
 function getUtentiInvitabili($cid, $id_escluso, $data, $ora)
@@ -922,6 +921,10 @@ function getNumeroSalePerTipo($cid, $tipo)
 function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is_read_only = false)
 {
     ob_start();
+
+    $domenica_settimana = date('Y-m-d', strtotime($lunedi_settimana . " +6 days"));
+    $oggi = date('Y-m-d');
+    $ora_di_adesso = date('H');
 ?>
     <div class="shadow-sm mb-4 rounded-4 overflow-hidden border">
         <div class="table-responsive">
@@ -947,7 +950,12 @@ function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is
                 <tbody>
                     <?php for ($ora = 9; $ora < 23; $ora++): ?>
                         <tr>
-                            <td class="fw-bold align-middle" style="position: sticky; left: 0; z-index: 1;"><?php echo $ora; ?>:00</td>
+                            <?php
+                            // per colorare l'ora corrente
+                            $is_current_hour_row = ($ora == $ora_di_adesso && $oggi >= $lunedi_settimana && $oggi <= $domenica_settimana);
+                            $class_ora = $is_current_hour_row ? 'bg-primary bg-opacity-10' : '';
+                            ?>
+                            <td class="fw-bold align-middle <?php echo $class_ora; ?>" style="position: sticky; left: 0; z-index: 2;"><?php echo $ora; ?>:00</td>
                             <?php for ($i = 0; $i < 7; $i++):
                                 $data_curr = date('Y-m-d', strtotime($lunedi_settimana . " +$i days"));
                                 $is_occupied = isset($occupied[$data_curr][$ora]);
@@ -1081,6 +1089,10 @@ function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is
 function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = false)
 {
     ob_start();
+
+    $domenica_settimana = date('Y-m-d', strtotime($lunedi_settimana . " +6 days"));
+    $oggi = date('Y-m-d');
+    $ora_di_adesso = date('H');
 ?>
     <div class="shadow-sm mb-4 rounded-4 overflow-hidden border">
         <div class="table-responsive">
@@ -1103,7 +1115,12 @@ function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = 
                 <tbody>
                     <?php for ($ora = 9; $ora < 23; $ora++): ?>
                         <tr>
-                            <td class="align-middle fw-bold bg-light" style="position: sticky; left: 0; z-index: 1;"><?php echo $ora; ?>:00</td>
+                            <?php
+                        // per colorare l'ora corrente
+                        $is_current_hour_row = ($ora == $ora_di_adesso && $oggi >= $lunedi_settimana && $oggi <= $domenica_settimana);
+                        $class_ora = $is_current_hour_row ? 'bg-primary bg-opacity-10' : '';
+                        ?>
+                        <td class="fw-bold align-middle <?php echo $class_ora; ?>" style="position: sticky; left: 0; z-index: 2;"><?php echo $ora; ?>:00</td>
 
                             <?php for ($i = 0; $i < 7; $i++):
                                 $data_curr = date('Y-m-d', strtotime($lunedi_settimana . " +$i days"));
@@ -1238,6 +1255,10 @@ function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = 
 function renderCalendarGrid_Impegni($lunedi_settimana, $planning, $is_responsabile)
 {
     ob_start();
+
+    $domenica_settimana = date('Y-m-d', strtotime($lunedi_settimana . " +6 days"));
+    $oggi = date('Y-m-d');
+    $ora_di_adesso = date('H');
 ?>
     <div class="shadow-sm mb-4 rounded-4 overflow-hidden border">
         <div class="table-responsive">
@@ -1260,7 +1281,12 @@ function renderCalendarGrid_Impegni($lunedi_settimana, $planning, $is_responsabi
                 <tbody>
                     <?php for ($ora = 9; $ora < 23; $ora++): ?>
                         <tr>
-                            <td class="align-middle fw-bold bg-light" style="position: sticky; left: 0; z-index: 1;"><?php echo $ora; ?>:00</td>
+                            <?php
+                            // per colorare l'ora corrente
+                            $is_current_hour_row = ($ora == $ora_di_adesso && $oggi >= $lunedi_settimana && $oggi <= $domenica_settimana);
+                            $class_ora = $is_current_hour_row ? 'bg-primary bg-opacity-10' : '';
+                            ?>
+                            <td class="fw-bold align-middle <?php echo $class_ora; ?>" style="position: sticky; left: 0; z-index: 2;"><?php echo $ora; ?>:00</td>
 
                             <?php for ($i = 0; $i < 7; $i++):
                                 $data_curr = date('Y-m-d', strtotime($lunedi_settimana . " +$i days"));

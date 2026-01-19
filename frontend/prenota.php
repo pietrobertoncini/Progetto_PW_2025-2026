@@ -59,18 +59,7 @@ $next_week = date('Y-m-d', strtotime($lunedi_settimana . ' +7 days'));
 // LOGICA CALENDARIO (Solo se non siamo già in fase di conferma)
 $occupied = [];
 if ($id_sala_selezionata && !$data_scelta) {
-    $res_p = getOccupazioniSettimana($cid, $id_sala_selezionata, $id_settore_utente, $lunedi_settimana, $domenica_settimana);
-    if ($res_p) {
-        while ($row = $res_p->fetch_assoc()) {
-            for ($i = 0; $i < $row['durata']; $i++) {
-                $h = $row['ora'] + $i;
-                $occupied[$row['data']][$h] = [
-                    'info' => $row,
-                    'is_start' => ($i === 0)
-                ];
-            }
-        }
-    }
+    $occupied = getOccupazioniSettimana($cid, $id_sala_selezionata, $id_settore_utente, $lunedi_settimana, $domenica_settimana);
 }
 
 // --- LOGICA UTENTI E FILTRI (Fase Conferma) ---

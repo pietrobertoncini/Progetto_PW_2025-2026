@@ -165,7 +165,20 @@ function getImpegniFuturi($cid, $id_utente)
     $stmt = $cid->prepare($sql);
     $stmt->bind_param("i", $id_utente);
     $stmt->execute();
-    return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+    // Costruzione Griglia
+    $res = $stmt->get_result();
+    $planning = [];
+    while ($row = $res->fetch_assoc()) {
+        for ($i = 0; $i < $row['durata']; $i++) {
+            $h = $row['ora'] + $i;
+            $planning[$row['data']][$h] = [
+                'dati' => $row,
+                'is_start' => ($i === 0)
+            ];
+        }
+    }
+    return $planning;
 }
 
 
@@ -409,9 +422,10 @@ function getPrenotazioniGriglia($cid, $id_settore, $nome_sala, $data_inizio, $da
     $stmt = $cid->prepare($sql);
     $stmt->bind_param("isss", $id_settore, $nome_sala, $data_inizio, $data_fine);
     $stmt->execute();
-    $res = $stmt->get_result();
-
+    
+    
     // Mappiamo i risultati in un array [data][ora] => info
+    $res = $stmt->get_result();
     while ($row = $res->fetch_assoc()) {
         for ($i = 0; $i < $row['durata']; $i++) {
             $h = $row['ora'] + $i;
@@ -717,7 +731,21 @@ function getOccupazioniSettimana($cid, $nome_sala, $id_settore, $lunedi, $domeni
     $stmt = $cid->prepare($sql);
     $stmt->bind_param("siss", $nome_sala, $id_settore, $lunedi, $domenica);
     $stmt->execute();
-    return $stmt->get_result();
+
+    // Costruzione Griglia
+    $res = $stmt->get_result();
+    $occupied = [];
+    while ($row = $res->fetch_assoc()) {
+        for ($i = 0; $i < $row['durata']; $i++) {
+            $h = $row['ora'] + $i;
+            $occupied[$row['data']][$h] = [
+                'dati' => $row, // Uniformato a 'dati' per coerenza
+                'is_start' => ($i === 0)
+            ];
+        }
+    }
+    return $occupied;
+    
 }
 
 function getUtentiInvitabili($cid, $id_escluso, $data, $ora)
@@ -1134,7 +1162,7 @@ function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = 
                                                                 </div>
                                                             </li>
 
-                                                            <?php if ($is_admin && !$is_passato): ?>
+                                                            <?php if ($is_admin && !$is_passato && !$is_in_corso): ?>
                                                                 <li>
                                                                     <hr class="dropdown-divider">
                                                                 </li>
@@ -1172,22 +1200,6 @@ function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = 
                                                         <span class="badge bg-secondary opacity-50" style="font-size: 0.65rem;">Conclusa</span>
                                                     <?php elseif ($is_in_corso): ?>
                                                         <span class="badge bg-success" style="font-size: 0.65rem;">In corso...</span>
-
-                                                        <?php if ($is_admin): ?>
-                                                            <div>
-                                                                <form action="<?php echo BASE_URL; ?>backend/admin_prenotazioni_exe.php" method="POST" onsubmit="return confirm('Eliminare questa prenotazione?');">
-                                                                    <input type="hidden" name="action" value="delete">
-                                                                    <input type="hidden" name="id_settore" value="<?php echo $info['id_settore']; ?>">
-                                                                    <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($info['nome_sala']); ?>">
-                                                                    <input type="hidden" name="data" value="<?php echo $info['data']; ?>">
-                                                                    <input type="hidden" name="ora" value="<?php echo $info['ora']; ?>">
-                                                                    <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2 rounded-pill shadow-sm" style="font-size: 0.7rem;">
-                                                                        <i class="bi bi-trash3"></i> Elimina
-                                                                    </button>
-                                                                </form>
-                                                            </div>
-                                                        <?php endif; ?>
-
                                                     <?php else: ?>
                                                         <?php if ($is_admin): ?>
                                                             <form action="<?php echo BASE_URL; ?>backend/admin_prenotazioni_exe.php" method="POST" onsubmit="return confirm('Eliminare questa prenotazione?');">

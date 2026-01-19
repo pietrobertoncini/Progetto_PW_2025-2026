@@ -24,30 +24,10 @@ $prev_week = date('Y-m-d', strtotime($lunedi_settimana . ' -7 days'));
 $next_week = date('Y-m-d', strtotime($lunedi_settimana . ' +7 days'));
 
 // RECUPERO DATI 
-$impegni_lista = [];
-if (function_exists('getImpegniFuturi')) {
-    $impegni_lista = getImpegniFuturi($cid, $_SESSION['id_utente']);
-}
-
-// ORGANIZZAZIONE DATI IN GRIGLIA 
 $planning = [];
-
-foreach ($impegni_lista as $imp) {
-    $data_imp = $imp['data'];
-    $ora_inizio = $imp['ora'];
-    $durata = $imp['durata'];
-
-    for ($i = 0; $i < $durata; $i++) {
-        $ora_corrente = $ora_inizio + $i;
-
-        // Salviamo i dati per ogni ora occupata
-        $planning[$data_imp][$ora_corrente] = [
-            'dati' => $imp,
-            'is_start' => ($i === 0) // True solo per la prima ora
-        ];
-    }
+if (function_exists('getImpegniFuturi')) {
+    $planning = getImpegniFuturi($cid, $_SESSION['id_utente']);
 }
-
 ?>
 
 <!DOCTYPE html>

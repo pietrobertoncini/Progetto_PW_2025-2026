@@ -39,48 +39,23 @@ $domenica_settimana = date('Y-m-d', strtotime('sunday this week', $timestamp_rif
 // Recupero Occupazioni
 $occupied = [];
 
-// Usiamo la funzione giusta in base alla modalità
-if ($mode === 'impegni') {
-    if (isset($_SESSION['id_utente'])) {
-        $impegni_lista = getImpegniFuturi($cid, $_SESSION['id_utente']);
-        
-        // Trasformiamo la lista lineare nella struttura a griglia $occupied
-        foreach ($impegni_lista as $imp) {
-            $data_imp = $imp['data'];
-            $ora_inizio = $imp['ora'];
-            $durata = $imp['durata'];
-
-            for ($i = 0; $i < $durata; $i++) {
-                $h = $ora_inizio + $i;
-                // Usiamo la chiave 'dati' per coerenza con la funzione di rendering
-                $occupied[$data_imp][$h] = [
-                    'dati' => $imp, 
-                    'is_start' => ($i === 0)
-                ];
-            }
-        }
-    }
-} elseif ($mode === 'admin' || $mode === 'view') {
-    $occupied = getPrenotazioniGriglia($cid, $id_settore, $nome_sala, $lunedi_settimana, $domenica_settimana);
-} else {
-    // Modalità PRENOTA (Checkbox)
-    $res_p = getOccupazioniSettimana($cid, $nome_sala, $id_settore, $lunedi_settimana, $domenica_settimana);
-    if ($res_p) {
-        while ($row = $res_p->fetch_assoc()) {
-            for ($i = 0; $i < $row['durata']; $i++) {
-                $h = $row['ora'] + $i;
-                $occupied[$row['data']][$h] = [
-                    'info' => $row, // Qui usiamo 'info' come chiave
-                    'is_start' => ($i === 0)
-                ];
-            }
-        }
-    }
-}
-
 // Generazione HTML
 try {
     $html = "";
+
+    // Usiamo la funzione giusta in base alla modalità
+    if ($mode === 'impegni') {
+        if (isset($_SESSION['id_utente'])) {
+            $occupied = getImpegniFuturi($cid, $_SESSION['id_utente']);
+        }
+    } elseif ($mode === 'admin' || $mode === 'view') {
+        $occupied = getPrenotazioniGriglia($cid, $id_settore, $nome_sala, $lunedi_settimana, $domenica_settimana);
+    } else {
+        // Modalità PRENOTA
+        if ($nome_sala) {
+            $occupied = getOccupazioniSettimana($cid, $nome_sala, $id_settore, $lunedi_settimana, $domenica_settimana);
+        }
+    }
 
     // SELEZIONE FUNZIONE CORRETTA
     if ($mode === 'impegni') {

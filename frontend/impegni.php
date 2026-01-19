@@ -63,18 +63,20 @@ foreach ($impegni_lista as $imp) {
             <h2>I Tuoi Impegni</h2>
         </div>
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="?week=<?php echo $prev_week; ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+        <div id="nav-row" class="d-flex justify-content-between align-items-center mb-3 <?php echo $class_nav_hidden; ?>">
+            <a href="?week=<?php echo $prev_week; ?>&sala=<?php echo urlencode($filtro_sala); ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3 nav-week-btn">
                 &larr; Settimana Prec.
             </a>
             <h5 class="mb-0 fw-bold text-center">
                 Dal <?php echo date('d/m', strtotime($lunedi_settimana)); ?>
                 al <?php echo date('d/m', strtotime($domenica_settimana)); ?>
             </h5>
-            <a href="?week=<?php echo $next_week; ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+            <a href="?week=<?php echo $next_week; ?>&sala=<?php echo urlencode($filtro_sala); ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3 nav-week-btn">
                 Settimana Succ. &rarr;
             </a>
         </div>
+
+        <input type="hidden" name="week" value="<?php echo $lunedi_settimana; ?>">
 
         <div id="calendario-container">
             <?php
@@ -92,6 +94,8 @@ foreach ($impegni_lista as $imp) {
         </div>
 
     </div>
+
+    <script src="<?php echo BASE_URL; ?>js/calendar.js"></script>
 
     <?php require ROOT_PATH . "/common/footer.html"; ?>
 </body>

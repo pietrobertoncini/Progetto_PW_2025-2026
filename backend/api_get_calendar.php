@@ -20,7 +20,7 @@ if (!isset($_GET['sala']) || !isset($_GET['week'])) {
 
 $nome_sala = urldecode($_GET['sala']);
 $data_rif = $_GET['week'];
-$mode = $_GET['mode'] ?? 'view'; // 'prenota', 'view', 'admin'
+$mode = $_GET['mode'] ?? 'view'; // 'prenota', 'view', 'admin', 'impegni'
 
 // Determina settore (dalla sessione o parametro se admin)
 $id_settore = 0;
@@ -40,7 +40,27 @@ $domenica_settimana = date('Y-m-d', strtotime('sunday this week', $timestamp_rif
 $occupied = [];
 
 // Usiamo la funzione giusta in base alla modalità
-if ($mode === 'admin' || $mode === 'view') {
+if ($mode === 'impegni') {
+    if (isset($_SESSION['id_utente'])) {
+        $impegni_lista = getImpegniFuturi($cid, $_SESSION['id_utente']);
+        
+        // Trasformiamo la lista lineare nella struttura a griglia $occupied
+        foreach ($impegni_lista as $imp) {
+            $data_imp = $imp['data'];
+            $ora_inizio = $imp['ora'];
+            $durata = $imp['durata'];
+
+            for ($i = 0; $i < $durata; $i++) {
+                $h = $ora_inizio + $i;
+                // Usiamo la chiave 'dati' per coerenza con la funzione di rendering
+                $occupied[$data_imp][$h] = [
+                    'dati' => $imp, 
+                    'is_start' => ($i === 0)
+                ];
+            }
+        }
+    }
+} elseif ($mode === 'admin' || $mode === 'view') {
     $occupied = getPrenotazioniGriglia($cid, $id_settore, $nome_sala, $lunedi_settimana, $domenica_settimana);
 } else {
     // Modalità PRENOTA (Checkbox)
@@ -63,7 +83,11 @@ try {
     $html = "";
 
     // SELEZIONE FUNZIONE CORRETTA
-    if ($mode === 'view') {
+    if ($mode === 'impegni') {
+        // Usa la funzione specifica per gli impegni
+        $is_resp = !empty($_SESSION['is_responsabile']);
+        $html = renderCalendarGrid_Impegni($lunedi_settimana, $occupied, $is_resp);
+    } elseif ($mode === 'view') {
         // Usa la NUOVA funzione specifica per la visualizzazione
         $html = renderCalendarGrid_AdminView($lunedi_settimana, $occupied, false);
     } elseif ($mode === 'admin') {

@@ -4,19 +4,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const navRow = document.getElementById('nav-row');
     const btnSubmit = document.getElementById('btn-submit-row');
     const hiddenInputSala = document.getElementById('hidden-sala');
-    const hiddenWeekInput = document.querySelector('input[name="week"]'); 
+    const hiddenWeekInput = document.querySelector('input[name="week"]');
 
     // Se non siamo nella pagina giusta, usciamo
-    if (!selectSala || !containerCalendario) return;
+    if (!containerCalendario) return;
 
     // --- FUNZIONE PRINCIPALE DI CARICAMENTO ---
     function loadCalendar(salaVal, weekVal) {
         let mode = 'view';
         if (window.location.href.includes('prenota.php')) mode = 'prenota';
         if (window.location.href.includes('admin_prenotazioni.php')) mode = 'admin';
+        if (window.location.href.includes('impegni.php')) mode = 'impegni';
 
         // Se seleziono "Tutte", ricarico la pagina pulita per vedere la lista
-        if (salaVal === "") {
+        if (mode !== 'impegni' && (!salaVal || salaVal === "")) {
             const newUrl = new URL(window.location);
             newUrl.searchParams.delete('sala');
             window.location.href = newUrl.toString();
@@ -27,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let cleanNomeSala = salaVal; // Default per 'prenota'
 
         // Parsing "ID|Nome" per Admin e Visualizza
-        if (salaVal.indexOf('|') !== -1) {
+        if (salaVal && salaVal.indexOf('|') !== -1) {
             const parts = salaVal.split('|');
             idSettoreParam = '&id_settore=' + parts[0];
             cleanNomeSala = parts[1];
@@ -39,12 +40,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // 2. Aggiorna URL Browser (senza reload)
         const newUrl = new URL(window.location);
-        
+
         // BUGFIX: Se siamo in Admin/View dobbiamo salvare nell'URL il valore "ID|Nome" (salaVal), 
         // altrimenti al reload PHP non trova la sala. In 'prenota' basta il nome.
-        const valoreUrl = (mode === 'prenota') ? cleanNomeSala : salaVal;
-        
-        newUrl.searchParams.set('sala', valoreUrl);
+        if (mode !== 'impegni') {
+            const valoreUrl = (mode === 'prenota') ? cleanNomeSala : salaVal;
+            newUrl.searchParams.set('sala', valoreUrl);
+        }
+
         newUrl.searchParams.set('week', weekVal);
         window.history.pushState({}, '', newUrl);
 
@@ -68,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (btnSubmit) btnSubmit.classList.remove('d-none');
 
                     // AGGIORNA I LINK E IL TITOLO DELLA SETTIMANA
-                    updateNavigationUI(valoreUrl, weekVal);
+                    updateNavigationUI(salaVal, weekVal);
                 } else {
                     containerCalendario.innerHTML = '<div class="alert alert-danger">Errore: ' + data.msg + '</div>';
                 }
@@ -81,11 +84,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- LISTENER CAMBIO SALA ---
-    selectSala.addEventListener('change', function () {
-        // Usa la settimana corrente salvata nell'input hidden (o default oggi)
-        const currentWeek = hiddenWeekInput ? hiddenWeekInput.value : new Date().toISOString().slice(0, 10);
-        loadCalendar(this.value, currentWeek);
-    });
+    if (selectSala) {
+        selectSala.addEventListener('change', function () {
+            const currentWeek = hiddenWeekInput ? hiddenWeekInput.value : new Date().toISOString().slice(0, 10);
+            loadCalendar(this.value, currentWeek);
+        });
+    }
 
     // --- LISTENER CAMBIO SETTIMANA (Cliccando sulle frecce) ---
     if (navRow) {
@@ -94,13 +98,15 @@ document.addEventListener("DOMContentLoaded", function () {
             const btn = e.target.closest('.nav-week-btn');
             if (btn) {
                 e.preventDefault(); // BLOCCA il reload della pagina
-                
+
                 // Legge la settimana target dall'href del bottone cliccato
                 const url = new URL(btn.href);
                 const targetWeek = url.searchParams.get('week');
-                const sala = selectSala.value;
 
-                if (targetWeek && sala) {
+                // In impegni non c'è selectSala, quindi passiamo stringa vuota
+                const sala = selectSala ? selectSala.value : '';
+
+                if (targetWeek) {
                     loadCalendar(sala, targetWeek);
                 }
             }
@@ -110,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // --- FUNZIONE HELPER: Aggiorna UI Navigazione ---
     function updateNavigationUI(salaVal, currentWeekDateStr) {
         const d = new Date(currentWeekDateStr);
-        
+
         // Calcola date per prev/next
         const prevD = new Date(d); prevD.setDate(d.getDate() - 7);
         const nextD = new Date(d); nextD.setDate(d.getDate() + 7);

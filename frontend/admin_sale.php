@@ -35,10 +35,10 @@ $lista_settori = getAllSettoriAdmin($cid);
 ?>
 
 <!DOCTYPE html>
-<html lang="it" class="no-js">
+<html lang="it" >
 <?php require ROOT_PATH . "/common/header.php" ?>
 
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column">
 
     <?php include ROOT_PATH . '/common/navbar.php'; ?>
 

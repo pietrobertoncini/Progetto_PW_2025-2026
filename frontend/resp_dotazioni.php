@@ -26,7 +26,7 @@ $sale = getSaleBySettore($cid, $id_settore);
 <html lang="it" class="no-js">
 <?php require ROOT_PATH . "/common/header.php"; ?>
 
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column">
     <?php include ROOT_PATH . '/common/navbar.php'; ?>
 
     <div class="flex-shrink-0 container py-5">

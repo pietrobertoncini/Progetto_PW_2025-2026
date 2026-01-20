@@ -18,10 +18,10 @@ $elenco_utenti = getAllUtentiAdmin($cid);
 ?>
 
 <!DOCTYPE html>
-<html lang="it" class="no-js h-100">
+<html lang="it" class="no-js">
 <?php require ROOT_PATH . "/common/header.php" ?>
 
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column">
     <?php include ROOT_PATH . '/common/navbar.php'; ?>
 
     <div class="flex-shrink-0 container py-5">

@@ -29,14 +29,15 @@ if (isset($_SESSION['id_utente'])) {
     <a class="navbar-brand d-flex" href="<?php echo BASE_URL; ?>index.php">
       <img src="<?php echo BASE_URL; ?>images/logo.png" alt="Logo" width="50px" class="rounded-pill">
     </a>
-    
+
     <div class="d-flex align-items-center d-lg-none">
+      <!-- Pallino rosso che lampeggia -->
       <?php if ($num_inviti > 0): ?>
         <a href="<?php echo BASE_URL; ?>frontend/inviti.php" class="me-2 d-flex align-items-center text-decoration-none">
-           <span class="bg-danger rounded-circle" style="width: 12px; height: 12px; border: 2px solid white; display: block; box-shadow: 0 0 4px rgba(220,53,69,0.5);"></span>
+          <span class="bg-danger rounded-circle" style="width: 12px; height: 12px; border: 2px solid white; display: block; box-shadow: 0 0 4px rgba(220,53,69,0.5);"></span>
         </a>
       <?php endif; ?>
-      
+
       <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -56,6 +57,7 @@ if (isset($_SESSION['id_utente'])) {
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle position-relative d-inline-flex align-items-center justify-content-center" href="#" id="dropVisualizza" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Visualizza
+                <!-- RESPONSABILE -->
                 <?php if (!empty($_SESSION['is_responsabile']) && $num_inviti > 0): ?>
                   <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle d-none d-lg-block"></span>
                   <span class="bg-danger rounded-circle ms-2 d-inline-block d-lg-none" style="width: 9px; height: 9px; border: 1px solid white;"></span>
@@ -73,10 +75,12 @@ if (isset($_SESSION['id_utente'])) {
                     </a>
                   </li>
                   <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>frontend/impegni.php">I Miei Impegni</a></li>
-                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                    <hr class="dropdown-divider">
+                  </li>
                   <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>frontend/visualizza_prenotazioni.php">Prenotazioni</a></li>
                 <?php endif; ?>
-
+                <!-- ADMIN -->
                 <?php if (!empty($_SESSION['is_admin'])): ?>
                   <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>frontend/admin_prenotazioni.php">Prenotazioni</a></li>
                   <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>frontend/admin_utenti.php">Utenti</a></li>
@@ -89,12 +93,13 @@ if (isset($_SESSION['id_utente'])) {
                 Gestisci
               </a>
               <ul class="dropdown-menu border-0 shadow" aria-labelledby="dropGestisci">
+                <!-- RESPONSABILE -->
                 <?php if (!empty($_SESSION['is_responsabile'])): ?>
                   <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>frontend/gestione_prenotazioni.php">Le Mie Prenotazioni</a></li>
                   <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>frontend/resp_dotazioni.php">Dotazioni Sale</a></li>
                   <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>frontend/risposte_inviti.php">Stato Inviti</a></li>
                 <?php endif; ?>
-
+                <!-- ADMIN -->
                 <?php if (!empty($_SESSION['is_admin'])): ?>
                   <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>frontend/admin_settori.php">Settori</a></li>
                   <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>frontend/admin_sale.php">Sale</a></li>
@@ -102,7 +107,7 @@ if (isset($_SESSION['id_utente'])) {
                 <?php endif; ?>
               </ul>
             </li>
-
+            <!-- UTENTE BASE -->
           <?php else: ?>
             <li class="nav-item">
               <a class="nav-link position-relative d-inline-flex align-items-center" href="<?php echo BASE_URL; ?>frontend/inviti.php">

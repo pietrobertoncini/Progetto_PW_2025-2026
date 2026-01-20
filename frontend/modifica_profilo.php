@@ -17,7 +17,7 @@ $dati_utente = datiUtenteCompleti($cid, $_SESSION['id_utente']);
 ?>
 
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" class="no-js"> 
 <?php require ROOT_PATH . "/common/header.php" ?>
 
 <body>

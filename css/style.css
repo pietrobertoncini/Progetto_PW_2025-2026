@@ -228,9 +228,11 @@ body {
     background-color: #EDE2D5;
     color: #7A5E4E;
     border-top: 1px solid rgba(122, 94, 78, 0.15);
-    
-    padding-top: 20px;    /* Era 60px */
-    padding-bottom: 20px; /* Era 40px */
+
+    padding-top: 20px;
+    /* Era 60px */
+    padding-bottom: 20px;
+    /* Era 40px */
     margin-top: auto;
 
     width: 100%;
@@ -242,8 +244,30 @@ body {
     padding-bottom: 60px !important;
 }
 
-/* Navbar scrollabile su mobile */
+
+/* Fallback per Navbar senza JavaScript */
+.no-js .nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+}
+
+/* Impedisce alla navbar di toccare i bordi su schermi medi/piccoli */
+.navbar {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Miglioramento visivo per l'hamburger menu su mobile */
 @media (max-width: 991.98px) {
+    .navbar .container-xl {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+    }
+}
+
+/* Navbar scrollabile su mobile */
+@media (max-width: 992px) {
     .navbar-collapse {
         /* Imposta un'altezza massima per il menu aperto.
            100vh è l'altezza dello schermo. 
@@ -253,13 +277,5 @@ body {
         /* Abilita lo scorrimento verticale se il contenuto eccede l'altezza */
         overflow-y: auto;
         padding-bottom: 20px;
-    }
-}
-
-/* Fallback per Navbar senza JavaScript */
-@media (min-width: 992px) {
-    .nav-item.dropdown:hover .dropdown-menu {
-        display: block;
-        margin-top: 0; 
     }
 }

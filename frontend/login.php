@@ -13,7 +13,8 @@ require_once __DIR__ . '/../common/function.php';
 ?>
 
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" class="no-js"
+>
 <?php require ROOT_PATH . "/common/header.php" ?>
 
 <body>

@@ -54,7 +54,7 @@ if ($filtro_sala) {
 ?>
 
 <!DOCTYPE html>
-<html lang="it" class="h-100">
+<html lang="it" class="no-js h-100">
 <?php require ROOT_PATH . "/common/header.php" ?>
 
 <body class="d-flex flex-column h-100">

@@ -21,7 +21,7 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
 ?>
 
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" class="no-js">
 <?php require ROOT_PATH . "/common/header.php" ?>
 
 <body class="homepage-body">

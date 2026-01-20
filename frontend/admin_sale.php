@@ -35,7 +35,7 @@ $lista_settori = getAllSettoriAdmin($cid);
 ?>
 
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" class="no-js">
 <?php require ROOT_PATH . "/common/header.php" ?>
 
 <body class="d-flex flex-column h-100">

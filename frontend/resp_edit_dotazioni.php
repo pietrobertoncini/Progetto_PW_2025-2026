@@ -30,7 +30,7 @@ $dotazioni_attuali_ids = getDotazioniIdsBySala($cid, $id_settore, $nome_sala);
 ?>
 
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" class="no-js">
 <?php require ROOT_PATH . "/common/header.php"; ?>
 
 <body class="d-flex flex-column h-100">

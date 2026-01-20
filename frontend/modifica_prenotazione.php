@@ -39,7 +39,7 @@ $lista_invitati = getInvitatiPrenotazione($cid, $id_settore, $nome_sala, $data_o
 ?>
 
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" class="no-js">
 <?php require ROOT_PATH . "/common/header.php" ?>
 
 <body>

@@ -41,15 +41,15 @@ $elenco_dotazioni = getAllDotazioni($cid);
 
     <div class="flex-shrink-0 container py-5">
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <h2>Catalogo Dotazioni</h2>
         </div>
 
         <?php if (isset($_GET['msg'])): ?>
-            <div class="alert alert-success shadow-sm rounded-4 mb-4"><i class="bi bi-check-circle-fill me-2"></i> <?php echo htmlspecialchars($_GET['msg']); ?></div>
+            <div class="alert alert-success shadow-sm rounded-4 mb-3"><i class="bi bi-check-circle-fill me-2"></i> <?php echo htmlspecialchars($_GET['msg']); ?></div>
         <?php endif; ?>
         <?php if (isset($_GET['error'])): ?>
-            <div class="alert alert-danger shadow-sm rounded-4 mb-4"><i class="bi bi-exclamation-triangle-fill me-2"></i> <?php echo htmlspecialchars($_GET['error']); ?></div>
+            <div class="alert alert-danger shadow-sm rounded-4 mb-3"><i class="bi bi-exclamation-triangle-fill me-2"></i> <?php echo htmlspecialchars($_GET['error']); ?></div>
         <?php endif; ?>
 
         <div class="row g-4">
@@ -60,7 +60,7 @@ $elenco_dotazioni = getAllDotazioni($cid);
                         <i class="bi <?php echo $is_editing ? 'bi-pencil-square' : 'bi-plus-lg'; ?> me-2"></i>
                         <?php echo $is_editing ? 'Modifica Dotazione' : 'Nuova Dotazione'; ?>
                     </div>
-                    <div class="card-body p-4">
+                    <div class="card-body py-3">
 
                         <form action="<?php echo BASE_URL; ?>backend/admin_dotazioni_exe.php" method="POST">
                             <input type="hidden" name="action" value="<?php echo $is_editing ? 'update' : 'create'; ?>">
@@ -99,7 +99,7 @@ $elenco_dotazioni = getAllDotazioni($cid);
                     <div class="card-header bg-white py-3 fw-bold text-muted border-bottom-0">
                         Dotazioni Disponibili (<?php echo count($elenco_dotazioni); ?>)
                     </div>
-                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                    <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light small text-muted text-uppercase" style="position: sticky; top: 0; z-index: 1;">
                                 <tr>

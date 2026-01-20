@@ -46,7 +46,7 @@ $elenco_settori = getAllSettoriAdmin($cid);
                         <i class="bi bi-arrow-up-circle me-2"></i> Promuovi a Responsabile
                     </div>
                     <div class="card-body p-4">
-                        <p class="mb-4">
+                        <p class="mb-2">
                             Stai promuovendo:
                             <strong class="text-primary">
                                 <?php echo htmlspecialchars($dati_utente_target['nome'] . ' ' . $dati_utente_target['cognome']); ?>

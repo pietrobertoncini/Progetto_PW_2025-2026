@@ -44,17 +44,17 @@ $lista_settori = getAllSettoriAdmin($cid);
 
     <div class="flex-shrink-0 container py-5">
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <h2>Gestione Sale</h2>
         </div>
 
         <?php if (isset($_GET['msg'])): ?>
-            <div class="alert alert-success shadow-sm rounded-4 mb-4">
+            <div class="alert alert-success shadow-sm rounded-4 mb-3">
                 <i class="bi bi-check-circle-fill me-2"></i> <?php echo htmlspecialchars($_GET['msg']); ?>
             </div>
         <?php endif; ?>
         <?php if (isset($_GET['error'])): ?>
-            <div class="alert alert-danger shadow-sm rounded-4 mb-4">
+            <div class="alert alert-danger shadow-sm rounded-4 mb-3">
                 <i class="bi bi-exclamation-triangle-fill me-2"></i> <?php echo htmlspecialchars($_GET['error']); ?>
             </div>
         <?php endif; ?>
@@ -67,7 +67,7 @@ $lista_settori = getAllSettoriAdmin($cid);
                         <?php echo $is_editing ? 'Modifica Sala' : 'Nuova Sala'; ?>
                     </div>
 
-                    <div class="card-body p-4">
+                    <div class="card-body py-3">
                         <form action="<?php echo BASE_URL; ?>backend/admin_sale_exe.php" method="POST">
                             <input type="hidden" name="action" value="<?php echo $is_editing ? 'update' : 'create'; ?>">
 
@@ -76,14 +76,14 @@ $lista_settori = getAllSettoriAdmin($cid);
                                 <input type="hidden" name="old_id_settore" value="<?php echo $sala_edit['id_settore']; ?>">
                             <?php endif; ?>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label fw-bold small text-muted">Nome Sala</label>
                                 <input type="text" class="form-control rounded-3" name="nome_sala"
                                     placeholder="Es. Aula Magna" required
                                     value="<?php echo $is_editing ? htmlspecialchars($sala_edit['nome_sala']) : ''; ?>">
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label fw-bold small text-muted">Capienza</label>
                                 <input type="number" class="form-control rounded-3" name="capienza_max"
                                     min="1" required
@@ -123,7 +123,7 @@ $lista_settori = getAllSettoriAdmin($cid);
                     <div class="card-header bg-white py-3 fw-bold text-muted border-bottom-0">
                         Elenco Sale Esistenti (<?php echo count($sale); ?>)
                     </div>
-                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                    <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light small text-muted text-uppercase" style="position: sticky; top: 0; z-index: 1;">
                                 <tr>

@@ -26,7 +26,7 @@ $elenco_utenti = getAllUtentiAdmin($cid);
 
     <div class="flex-shrink-0 container py-5">
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
             <h2>Gestione Utenti</h2>
         </div>
 
@@ -44,10 +44,9 @@ $elenco_utenti = getAllUtentiAdmin($cid);
             </div>
         </div>
 
-
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
-                <table class="table table-hover align-middle mb-0">
+            <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                <table class="table table-sm table-hover align-middle mb-0">
                     <thead class="table-light small text-muted text-uppercase" style="position: sticky; top: 0; z-index: 1;">
                         <tr>
                             <th class="ps-4">Utente</th>
@@ -80,18 +79,32 @@ $elenco_utenti = getAllUtentiAdmin($cid);
                                     </td>
                                     <td class="text-end pe-4">
                                         <?php if (!$utente['is_admin'] && $utente['id_utente'] != $_SESSION['id_utente']): ?>
-                                            <div class="d-flex justify-content-end gap-2">
+                                            <div class="d-flex justify-content-end align-items-center gap-2">
                                                 <?php if ($utente['is_responsabile']): ?>
-                                                    <form action="<?php echo BASE_URL; ?>backend/admin_utenti_exe.php" method="POST">
-                                                        <input type="hidden" name="action" value="demote"><input type="hidden" name="id_utente" value="<?php echo $utente['id_utente']; ?>">
-                                                        <button type="submit" class="btn btn-outline-warning btn-sm rounded-pill fw-bold" onclick="return confirm('Retrocedere <?php echo htmlspecialchars($utente['nome']); ?>?');"><i class="bi bi-arrow-down-circle"></i> Retrocedi</button>
+                                                    <form action="<?php echo BASE_URL; ?>backend/admin_utenti_exe.php" method="POST" class="m-0 p-0">
+                                                        <input type="hidden" name="action" value="demote">
+                                                        <input type="hidden" name="id_utente" value="<?php echo $utente['id_utente']; ?>">
+                                                        <button type="button" class="btn btn-outline-warning btn-sm rounded-pill fw-bold px-2"
+                                                            onclick="if(confirm('Vuoi davvero retrocedere <?php echo htmlspecialchars($utente['nome']); ?>?')) { this.form.submit(); }">
+                                                            <i class="bi bi-arrow-down-circle"></i>
+                                                            <span class="d-none d-lg-inline ms-1">Retrocedi</span>
+                                                        </button>
                                                     </form>
                                                 <?php else: ?>
-                                                    <a href="<?php echo BASE_URL; ?>frontend/admin_promuovi.php?id=<?php echo $utente['id_utente']; ?>" class="btn btn-outline-primary btn-sm rounded-pill fw-bold"><i class="bi bi-arrow-up-circle"></i> Promuovi</a>
+                                                    <a href="<?php echo BASE_URL; ?>frontend/admin_promuovi.php?id=<?php echo $utente['id_utente']; ?>"
+                                                        class="btn btn-outline-primary btn-sm rounded-pill fw-bold px-2">
+                                                        <i class="bi bi-arrow-up-circle"></i>
+                                                        <span class="d-none d-lg-inline ms-1">Promuovi</span>
+                                                    </a>
                                                 <?php endif; ?>
-                                                <form action="<?php echo BASE_URL; ?>backend/admin_utenti_exe.php" method="POST">
-                                                    <input type="hidden" name="action" value="delete"><input type="hidden" name="id_utente" value="<?php echo $utente['id_utente']; ?>">
-                                                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-circle" onclick="return confirm('Eliminare <?php echo htmlspecialchars($utente['nome']); ?>?');"><i class="bi bi-trash3"></i></button>
+
+                                                <form action="<?php echo BASE_URL; ?>backend/admin_utenti_exe.php" method="POST" class="m-0 p-0">
+                                                    <input type="hidden" name="action" value="delete">
+                                                    <input type="hidden" name="id_utente" value="<?php echo $utente['id_utente']; ?>">
+                                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-circle px-2"
+                                                        onclick="if(confirm('Sei sicuro di voler eliminare <?php echo htmlspecialchars($utente['nome']); ?>?')) { this.form.submit(); }">
+                                                        <i class="bi bi-trash3"></i>
+                                                    </button>
                                                 </form>
                                             </div>
                                         <?php endif; ?>
@@ -107,7 +120,7 @@ $elenco_utenti = getAllUtentiAdmin($cid);
                 </table>
             </div>
         </div>
-        
+
     </div>
     <?php include ROOT_PATH . '/common/footer.html'; ?>
 </body>

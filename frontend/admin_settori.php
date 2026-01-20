@@ -42,19 +42,19 @@ $elenco_settori = getAllSettoriAdmin($cid);
 
     <?php include ROOT_PATH . '/common/navbar.php'; ?>
     <div class="flex-shrink-0 container py-5">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <h2>Gestione Settori</h2>
         </div>
 
         <?php if (isset($_GET['msg'])): ?>
-            <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-4 mb-4" role="alert">
+            <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-4 mb-3" role="alert">
                 <i class="bi bi-check-circle-fill me-2"></i> <?php echo htmlspecialchars($_GET['msg']); ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <?php endif; ?>
 
         <?php if (isset($_GET['error'])): ?>
-            <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-4 mb-4" role="alert">
+            <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-4 mb-3" role="alert">
                 <i class="bi bi-exclamation-triangle-fill me-2"></i> <?php echo htmlspecialchars($_GET['error']); ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -68,7 +68,7 @@ $elenco_settori = getAllSettoriAdmin($cid);
                         <?php echo $is_editing ? 'Modifica Settore' : 'Nuovo Settore'; ?>
                     </div>
 
-                    <div class="card-body p-4">
+                    <div class="card-body py-3">
 
                         <form action="<?php echo BASE_URL; ?>backend/admin_settori_exe.php" method="POST">
                             <input type="hidden" name="action" value="<?php echo $is_editing ? 'update' : 'create'; ?>">
@@ -77,7 +77,7 @@ $elenco_settori = getAllSettoriAdmin($cid);
                                 <input type="hidden" name="id_settore" value="<?php echo $settore_da_modificare['id_settore']; ?>">
                             <?php endif; ?>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label for="nome" class="form-label fw-bold small text-muted">Nome Settore</label>
                                 <input type="text" class="form-control rounded-3" id="nome" name="nome"
                                     placeholder="Es. Dipartimento Jazz" required
@@ -116,7 +116,7 @@ $elenco_settori = getAllSettoriAdmin($cid);
                     <div class="card-header bg-white py-3 fw-bold text-muted border-bottom-0">
                         Elenco Settori Esistenti (<?php echo count($elenco_settori); ?>)
                     </div>
-                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                    <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light small text-muted text-uppercase" style="position: sticky; top: 0; z-index: 1;">
                                 <tr>

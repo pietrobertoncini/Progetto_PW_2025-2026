@@ -16,12 +16,19 @@ if (!isset($_SESSION['id_utente'])) {
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $id_utente = $_SESSION['id_utente'];
-    
+
     // Recupero dati
     $nome = trim($_POST['nome'] ?? '');
     $cognome = trim($_POST['cognome'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $data_nascita = $_POST['data_nascita'] ?? '';
+
+    // Controlla che la data sia valida
+    if (!empty($data_nascita) && strtotime($data_nascita) > time()) {
+        $risposta["msg"] = "La data di nascita non può essere nel futuro.";
+        echo json_encode($risposta);
+        exit;
+    }
 
     // Logica FOTO
     $queryOld = "SELECT foto FROM UTENTE WHERE id_utente = ?";
@@ -45,10 +52,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     try {
         modificaUtente($cid, $id_utente, $nome, $cognome, $email, $data_nascita, $percorsoFinale);
-        
+
         // Aggiorno sessione
         $_SESSION['nome'] = $nome;
-        
+
         $risposta["status"] = "ok";
         $risposta["msg"] = "Profilo aggiornato con successo!";
     } catch (mysqli_sql_exception $e) {
@@ -64,4 +71,3 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 echo json_encode($risposta);
 exit;
-?>

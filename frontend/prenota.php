@@ -17,8 +17,19 @@ $dati_utente = datiUtenteCompleti($cid, $id_utente);
 $id_settore_utente = $dati_utente['id_settore'];
 
 // PARAMETRI URL
-$id_sala_selezionata = isset($_REQUEST['sala']) ? $_REQUEST['sala'] : null;
-$data_rif = isset($_REQUEST['week']) ? $_REQUEST['week'] : date('Y-m-d');
+$id_sala_selezionata = null;
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['sala'])) {
+    $id_sala_selezionata = $_POST['sala'];
+} elseif (isset($_GET['sala'])) {
+    $id_sala_selezionata = $_GET['sala'];
+}
+
+$data_rif = date('Y-m-d'); // Default oggi
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['week'])) {
+    $data_rif = $_POST['week'];
+} elseif (isset($_GET['week'])) {
+    $data_rif = $_GET['week'];
+}
 
 // LOGICA POST-SELEZIONE
 $data_scelta = null;
@@ -312,29 +323,6 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
     <script src="<?php echo BASE_URL; ?>js/calendar.js"></script>
 
     <script>
-        function applicaFiltri() {
-            const settoreSelezionato = document.getElementById('filtroSettore').value;
-            const ruoloSelezionato = document.getElementById('filtroRuolo').value;
-            const items = document.querySelectorAll('.user-item');
-
-            items.forEach(item => {
-                const itemSettore = item.getAttribute('data-id-settore');
-                const itemRuolo = item.getAttribute('data-ruolo');
-                const matchSettore = (settoreSelezionato === 'all') || (itemSettore === settoreSelezionato);
-                const matchRuolo = (ruoloSelezionato === 'all') || (itemRuolo === ruoloSelezionato);
-
-                // Gestione checkbox e visualizzazione
-                const checkbox = item.querySelector('.user-checkbox');
-                if (matchSettore && matchRuolo) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                    if (checkbox) checkbox.checked = false; // Deseleziona se nascosto
-                }
-            });
-            aggiornaContatore();
-        }
-
         function aggiornaContatore() {
             const maxCapienza = parseInt(document.getElementById('maxCapienza').value);
             const checkboxes = document.querySelectorAll('.user-checkbox');
@@ -369,6 +357,29 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
                     cb.closest('.form-check').classList.remove('opacity-50');
                 }
             });
+        }
+
+        function applicaFiltri() {
+            const settoreSelezionato = document.getElementById('filtroSettore').value;
+            const ruoloSelezionato = document.getElementById('filtroRuolo').value;
+            const items = document.querySelectorAll('.user-item');
+
+            items.forEach(item => {
+                const itemSettore = item.getAttribute('data-id-settore');
+                const itemRuolo = item.getAttribute('data-ruolo');
+                const matchSettore = (settoreSelezionato === 'all') || (itemSettore === settoreSelezionato);
+                const matchRuolo = (ruoloSelezionato === 'all') || (itemRuolo === ruoloSelezionato);
+
+                // Gestione checkbox e visualizzazione
+                const checkbox = item.querySelector('.user-checkbox');
+                if (matchSettore && matchRuolo) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                    if (checkbox) checkbox.checked = false; // Deseleziona se nascosto
+                }
+            });
+            aggiornaContatore();
         }
 
         function toggleSelezionaTutti() {

@@ -13,20 +13,27 @@ $risposta = ["status" => "ko", "msg" => "Errore sconosciuto"];
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
+    $data_nascita = $_POST['data_nascita'] ?? '';
+    // Controlla che la data sia valida
+    if (!empty($_POST['data_nascita']) && strtotime($_POST['data_nascita']) > time()) {
+        $risposta["msg"] = "La data di nascita non può essere nel futuro.";
+        echo json_encode($risposta);
+        exit;
+    }
     // Gestione upload foto
-    $percorsoFotoDB = uploadFotoProfilo($_FILES['foto'] ?? null); 
+    $percorsoFotoDB = uploadFotoProfilo($_FILES['foto'] ?? null);
 
     try {
         //Inserimento utente nel DB
         $id_nuovo_utente = inserisciUtente(
-            $cid, 
-            $_POST['nome'] ?? '', 
-            $_POST['cognome'] ?? '', 
-            $_POST['email'] ?? '', 
-            $_POST['password'] ?? '', 
-            $_POST['data_nascita'] ?? '',
-            $_POST['ruolo'] ?? 'allievo', 
-            (int)($_POST['id_settore'] ?? 0), 
+            $cid,
+            $_POST['nome'] ?? '',
+            $_POST['cognome'] ?? '',
+            $_POST['email'] ?? '',
+            $_POST['password'] ?? '',
+            $data_nascita,
+            $_POST['ruolo'] ?? 'allievo',
+            (int)($_POST['id_settore'] ?? 0),
             $percorsoFotoDB
         );
 
@@ -43,7 +50,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         } else {
             $risposta["msg"] = "Errore durante l'inserimento. Riprova.";
         }
-
     } catch (mysqli_sql_exception $e) {
         // Gestione errore duplicato
         if ($e->getCode() == 1062) {
@@ -60,4 +66,3 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 echo json_encode($risposta);
 exit;
-?>

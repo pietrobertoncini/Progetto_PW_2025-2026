@@ -87,11 +87,6 @@ function eliminaMioProfilo($cid, $id_utente)
     }
     $stmtGet->close();
 
-    // Se c'è una foto, la cancelliamo fisicamente dal disco
-    if (!empty($percorsoFoto)) {
-        rimuoviVecchiaFoto($percorsoFoto);
-    }
-
     $stmt = $cid->prepare("DELETE FROM UTENTE WHERE id_utente = ?");
     $stmt->bind_param("i", $id_utente);
 
@@ -99,12 +94,19 @@ function eliminaMioProfilo($cid, $id_utente)
         $esito = $stmt->execute();
         $stmt->close();
 
-        // 3. Se la cancellazione è riuscita, decremento num_iscritti nel settore
-        if ($esito && $id_settore) {
-            $stmtUpd = $cid->prepare("UPDATE SETTORE SET num_iscritti = num_iscritti - 1 WHERE id_settore = ?");
-            $stmtUpd->bind_param("i", $id_settore);
-            $stmtUpd->execute();
-            $stmtUpd->close();
+        // Se la cancellazione è riuscita
+        if ($esito) {
+            // Se c'è una foto, la cancelliamo fisicamente dal disco
+            if (!empty($percorsoFoto)) {
+                rimuoviVecchiaFoto($percorsoFoto);
+            }
+            // Decremento num_iscritti nel settore
+            if ($id_settore) {
+                $stmtUpd = $cid->prepare("UPDATE SETTORE SET num_iscritti = num_iscritti - 1 WHERE id_settore = ?");
+                $stmtUpd->bind_param("i", $id_settore);
+                $stmtUpd->execute();
+                $stmtUpd->close();
+            }
         }
         return $esito;
     } catch (Exception $e) {
@@ -1116,11 +1118,11 @@ function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = 
                     <?php for ($ora = 9; $ora < 23; $ora++): ?>
                         <tr>
                             <?php
-                        // per colorare l'ora corrente
-                        $is_current_hour_row = ($ora == $ora_di_adesso && $oggi >= $lunedi_settimana && $oggi <= $domenica_settimana);
-                        $class_ora = $is_current_hour_row ? 'bg-primary bg-opacity-10' : '';
-                        ?>
-                        <td class="fw-bold align-middle <?php echo $class_ora; ?>" style="position: sticky; left: 0; z-index: 2;"><?php echo $ora; ?>:00</td>
+                            // per colorare l'ora corrente
+                            $is_current_hour_row = ($ora == $ora_di_adesso && $oggi >= $lunedi_settimana && $oggi <= $domenica_settimana);
+                            $class_ora = $is_current_hour_row ? 'bg-primary bg-opacity-10' : '';
+                            ?>
+                            <td class="fw-bold align-middle <?php echo $class_ora; ?>" style="position: sticky; left: 0; z-index: 2;"><?php echo $ora; ?>:00</td>
 
                             <?php for ($i = 0; $i < 7; $i++):
                                 $data_curr = date('Y-m-d', strtotime($lunedi_settimana . " +$i days"));

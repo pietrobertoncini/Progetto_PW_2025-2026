@@ -18,6 +18,12 @@ $cognome = trim($_POST['cognome']);
 $email = trim($_POST['email']);
 $data_nascita = $_POST['data_nascita'];
 
+// Controlla che la data sia valida
+if (!empty($data_nascita) && strtotime($data_nascita) > time()) {
+    header("Location: " . BASE_URL . "frontend/modifica_profilo.php?error=La data di nascita non può essere nel futuro.");
+    exit;
+}
+
 // recupero foto attuale
 $queryOld = "SELECT foto FROM UTENTE WHERE id_utente = '$id_utente'";
 $resOld = mysqli_query($cid, $queryOld);

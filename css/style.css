@@ -257,25 +257,70 @@ body {
     padding-right: 15px;
 }
 
-/* Miglioramento visivo per l'hamburger menu su mobile */
+
 @media (max-width: 991.98px) {
+
+    /* Miglioramento visivo per l'hamburger menu su mobile */
     .navbar .container-xl {
         margin-left: 0;
         margin-right: 0;
         width: 100%;
     }
-}
 
-/* Navbar scrollabile su mobile */
-@media (max-width: 992px) {
     .navbar-collapse {
         /* Imposta un'altezza massima per il menu aperto.
            100vh è l'altezza dello schermo. 
            Sottraiamo circa 80px per l'altezza della barra fissa in alto. */
         max-height: calc(100vh - 80px);
-
         /* Abilita lo scorrimento verticale se il contenuto eccede l'altezza */
         overflow-y: auto;
         padding-bottom: 20px;
+    }
+
+    /* Pallino rosso */
+    .d-lg-none .bg-danger.rounded-circle {
+        /* Ombra iniziale */
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+        /* Animazione: 1.5 secondi, più veloce e visibile */
+        animation: pulse-red-soft 2s infinite;
+    }
+
+    .navbar-nav .dropdown-menu {
+        width: fit-content; /* Si adatta al testo contenuto */
+        min-width: 220px; /* Mantiene una larghezza minima leggibile */
+        margin: 0 auto 10px auto; /* Centra il menu orizzontalmente nel collasso */
+        text-align: center;
+        border: 1px solid rgba(122, 94, 78, 0.15); /* Bordo coerente con il tuo stile */
+        border-radius: 1rem !important;
+        background-color: #ffffff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .dropdown-item {
+        color: rgba(0, 0, 0, 0.55) !important;
+        justify-content: center !important;
+        padding: 5px 15px;
+    }
+
+    .nav-link.dropdown-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+}
+
+@keyframes pulse-red-soft {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4);
+    }
+    70% {
+        transform: scale(1.15);
+        box-shadow: 0 0 0 6px rgba(220, 53, 69, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
     }
 }

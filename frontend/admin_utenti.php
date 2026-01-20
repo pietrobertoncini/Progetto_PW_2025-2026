@@ -153,18 +153,6 @@ $elenco_utenti = getAllUtentiAdmin($cid);
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-
-            // Pulizia URL
-            if (window.history.replaceState) {
-                const url = new URL(window.location);
-                // Se c'è un messaggio, lo puliamo dopo 2 secondi visivi o subito dall'URL
-                if (url.searchParams.has('msg') || url.searchParams.has('error')) {
-                    url.searchParams.delete('msg');
-                    url.searchParams.delete('error');
-                    window.history.replaceState(null, '', url);
-                }
-            }
-
             // Gestione Modale
             var modalAzione = document.getElementById('modalAzione');
 

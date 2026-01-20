@@ -59,6 +59,12 @@ $class_nav_hidden = $filtro_sala ? '' : 'd-none';
 <html lang="it" class="no-js">
 <?php require ROOT_PATH . "/common/header.php" ?>
 
+<style>
+    .table-clean tbody tr td {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+    }
+</style>
+
 <body class="d-flex flex-column">
     <?php include ROOT_PATH . '/common/navbar.php'; ?>
 
@@ -126,7 +132,7 @@ $class_nav_hidden = $filtro_sala ? '' : 'd-none';
                     echo renderCalendarGrid_AdminView($lunedi_settimana, $prenotazioni_griglia);
                 }
                 ?>
-            <!-- Se nessuna sala è selezionata vedo tutte le -->
+                <!-- Se nessuna sala è selezionata vedo tutte le -->
             <?php else: ?>
 
                 <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
@@ -134,7 +140,7 @@ $class_nav_hidden = $filtro_sala ? '' : 'd-none';
                         <span class="fw-bold text-muted"><i class="bi bi-list-ul"></i> Tutte le prenotazioni (<?php echo count($elenco_lista); ?>)</span>
                     </div>
                     <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
-                        <table class="table table-sm table-hover align-middle mb-0">
+                        <table class="table table-sm table-hover align-middle mb-0 table-clean">
                             <thead class="table-light small text-muted text-uppercase" style="position: sticky; top: 0; z-index: 1;">
                                 <tr>
                                     <th class="ps-4">Data & Ora</th>
@@ -146,15 +152,23 @@ $class_nav_hidden = $filtro_sala ? '' : 'd-none';
                             <tbody class="border-top-0">
                                 <?php if (count($elenco_lista) > 0): ?>
                                     <?php foreach ($elenco_lista as $p):
-                                        $ts_evento = strtotime($p['data'] . " " . $p['ora'] . ":00");
-                                        $is_passata = ($ts_evento < time());
+                                        // Calcolo orari precisi
+                                        $ts_inizio = strtotime($p['data'] . " " . $p['ora'] . ":00");
+                                        $ts_fine = $ts_inizio + ($p['durata'] * 3600);
+                                        $now = time();
+
+                                        $is_conclusa = ($now >= $ts_fine);
+                                        $is_in_corso = ($now >= $ts_inizio && $now < $ts_fine);
                                     ?>
-                                        <tr class="<?php echo $is_passata ? 'bg-light text-muted' : ''; ?>">
+                                        <tr class="<?php echo $is_conclusa ? 'bg-light text-muted' : ($is_in_corso ? 'table-success bg-opacity-10' : ''); ?>">
                                             <td class="ps-4">
                                                 <span class="fw-bold d-block"><?php echo date("d/m/Y", strtotime($p['data'])); ?></span>
                                                 <small><?php echo $p['ora']; ?>:00 - <?php echo $p['ora'] + $p['durata']; ?>:00</small>
-                                                <?php if ($is_passata): ?>
+
+                                                <?php if ($is_conclusa): ?>
                                                     <span class="badge bg-secondary mt-1" style="font-size: 0.7em;">Conclusa</span>
+                                                <?php elseif ($is_in_corso): ?>
+                                                    <span class="badge bg-success mt-1" style="font-size: 0.7em;">In corso...</span>
                                                 <?php endif; ?>
                                             </td>
                                             <td>

@@ -22,3 +22,20 @@
         </div>
     </div>
 </footer>
+
+<script>
+    // Pulizia URL in tutte le pagine di frontend
+    document.addEventListener("DOMContentLoaded", function() {
+        if (window.history.replaceState) {
+            const url = new URL(window.location);
+            // Se nell'URL ci sono parametri di messaggio o errore
+            if (url.searchParams.has('msg') || url.searchParams.has('error')) {
+                // Li rimuoviamo dall'oggetto URL
+                url.searchParams.delete('msg');
+                url.searchParams.delete('error');
+                // Aggiorniamo la barra degli indirizzi senza ricaricare la pagina
+                window.history.replaceState(null, '', url);
+            }
+        }
+    });
+</script>

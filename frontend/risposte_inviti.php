@@ -51,39 +51,65 @@ $risposte = getRisposteInvitiByResponsabile($cid, $id_responsabile);
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($risposte as $r): ?>
-                                    <tr>
+                                <?php foreach ($risposte as $r):
+                                    // Calcolo orari precisi
+                                    $durata = isset($r['durata']) ? $r['durata'] : 1; // Fallback se manca
+                                    $ts_inizio = strtotime($r['data'] . " " . $r['ora'] . ":00");
+                                    $ts_fine = $ts_inizio + ($durata * 3600);
+                                    $now = time();
+
+                                    // Logica corretta
+                                    $is_concluso = ($now >= $ts_fine);
+                                    $is_in_corso = ($now >= $ts_inizio && $now < $ts_fine);
+
+                                    // Classi per lo stile
+                                    $row_class = $is_concluso ? 'bg-light text-muted' : '';
+                                    $text_class = $is_concluso ? 'text-muted' : 'text-dark';
+                                    $badge_class = $is_concluso ? 'bg-secondary bg-opacity-50' : 'bg-light text-secondary border';
+                                ?>
+                                    <tr class="<?php echo $row_class; ?>">
                                         <td class="ps-4">
-                                            <strong><?php echo htmlspecialchars($r['attivita']); ?></strong><br>
-                                            <small class="text-muted">
+                                            <strong class="<?php echo $text_class; ?>"><?php echo htmlspecialchars($r['attivita']); ?></strong>
+
+                                            <?php if ($is_concluso): ?>
+                                                <span class="badge bg-secondary ms-2" style="font-size: 0.65rem;">CONCLUSO</span>
+                                            <?php elseif ($is_in_corso): ?>
+                                                <span class="badge bg-success ms-2" style="font-size: 0.65rem;">IN CORSO</span>
+                                            <?php endif; ?>
+
+                                            <br>
+                                            <small class="<?php echo $is_concluso ? 'text-muted opacity-75' : 'text-muted'; ?>">
                                                 <?php echo date("d/m/Y", strtotime($r['data'])); ?> - Ore <?php echo $r['ora']; ?>:00
                                                 (<?php echo htmlspecialchars($r['nome_sala']); ?>)
                                             </small>
                                         </td>
                                         <td>
-                                            <?php echo htmlspecialchars($r['nome'] . " " . $r['cognome']); ?><br>
-                                            <span class="badge bg-light text-secondary border"><?php echo ucfirst($r['ruolo']); ?></span>
+                                            <span class="<?php echo $text_class; ?>">
+                                                <?php echo htmlspecialchars($r['nome'] . " " . $r['cognome']); ?>
+                                            </span>
+                                            <br>
+                                            <span class="badge <?php echo $badge_class; ?>"><?php echo ucfirst($r['ruolo']); ?></span>
                                         </td>
                                         <td>
                                             <?php if ($r['stato'] == 'accettato'): ?>
-                                                <span class="badge bg-success"><i class="bi bi-check-lg"></i> Accettato</span>
+                                                <span class="badge bg-success <?php echo $is_concluso ? 'opacity-50' : ''; ?>"><i class="bi bi-check-lg"></i> Accettato</span>
                                             <?php elseif ($r['stato'] == 'rifiutato'): ?>
-                                                <span class="badge bg-danger"><i class="bi bi-x-lg"></i> Rifiutato</span>
+                                                <span class="badge bg-danger <?php echo $is_concluso ? 'opacity-50' : ''; ?>"><i class="bi bi-x-lg"></i> Rifiutato</span>
                                             <?php else: ?>
-                                                <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split"></i> In attesa</span>
+                                                <span class="badge bg-warning text-dark <?php echo $is_concluso ? 'opacity-50' : ''; ?>"><i class="bi bi-hourglass-split"></i> In attesa</span>
                                             <?php endif; ?>
                                         </td>
                                         <td>
-                                            <?php 
+                                            <?php
                                             if (!empty($r['motivazione'])) {
-                                                echo '<span class="text-danger small fst-italic">"' . htmlspecialchars($r['motivazione']) . '"</span>';
+                                                echo '<span class="text-danger small fst-italic ' . ($is_concluso ? 'opacity-50' : '') . '">"' . htmlspecialchars($r['motivazione']) . '"</span>';
                                             } else {
                                                 echo '<span class="text-muted small">-</span>';
                                             }
                                             ?>
                                         </td>
                                         <td class="text-end pe-4 text-muted small">
-                                            <?php 
+                                            <?php
                                             if ($r['data_risposta']) {
                                                 echo date("d/m/Y H:i", strtotime($r['data_risposta']));
                                             } else {
@@ -107,4 +133,5 @@ $risposte = getRisposteInvitiByResponsabile($cid, $id_responsabile);
 
     <?php include ROOT_PATH . '/common/footer.html'; ?>
 </body>
+
 </html>

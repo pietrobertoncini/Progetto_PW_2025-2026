@@ -57,6 +57,12 @@ if ($filtro_sala) {
 <html lang="it" class="no-js">
 <?php require ROOT_PATH . "/common/header.php" ?>
 
+<style>
+    .table-clean tbody tr td {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+    }
+</style>
+
 <body class="d-flex flex-column">
     <?php include ROOT_PATH . '/common/navbar.php'; ?>
 
@@ -132,7 +138,7 @@ if ($filtro_sala) {
                         <span class="fw-bold text-muted"><i class="bi bi-list-ul"></i> Tutte le prenotazioni (<?php echo count($elenco_lista); ?>)</span>
                     </div>
                     <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
-                        <table class="table table-sm table-hover align-middle mb-0">
+                        <table class="table table-sm table-hover align-middle mb-0 table-clean">
                             <thead class="table-light small text-muted text-uppercase" style="position: sticky; top: 0; z-index: 1;">
                                 <tr>
                                     <th class="ps-4">Data & Ora</th>
@@ -145,20 +151,27 @@ if ($filtro_sala) {
                             <tbody class="border-top-0">
                                 <?php if (count($elenco_lista) > 0): ?>
                                     <?php foreach ($elenco_lista as $p):
-                                        $ts_evento = strtotime($p['data'] . " " . $p['ora'] . ":00");
-                                        $is_passata = ($ts_evento < time());
+                                        // Calcolo orari precisi
+                                        $ts_inizio = strtotime($p['data'] . " " . $p['ora'] . ":00");
+                                        $ts_fine = $ts_inizio + ($p['durata'] * 3600); // Aggiungiamo la durata in secondi
+                                        $now = time();
+
+                                        $is_conclusa = ($now >= $ts_fine);
+                                        $is_in_corso = ($now >= $ts_inizio && $now < $ts_fine);
                                     ?>
-                                        <tr class="<?php echo $is_passata ? 'bg-light text-muted' : ''; ?>">
+                                        <tr class="<?php echo $is_conclusa ? 'bg-light text-muted' : ($is_in_corso ? 'table-success bg-opacity-10' : ''); ?>">
                                             <td class="ps-4">
                                                 <span class="fw-bold d-block"><?php echo date("d/m/Y", strtotime($p['data'])); ?></span>
                                                 <small><?php echo $p['ora']; ?>:00 - <?php echo $p['ora'] + $p['durata']; ?>:00</small>
 
-                                                <?php if ($is_passata): ?>
+                                                <?php if ($is_conclusa): ?>
                                                     <span class="badge bg-secondary mt-1" style="font-size: 0.7em;">Conclusa</span>
+                                                <?php elseif ($is_in_corso): ?>
+                                                    <span class="badge bg-success mt-1" style="font-size: 0.7em;">In corso...</span>
                                                 <?php endif; ?>
                                             </td>
                                             <td>
-                                                <span class="d-block fw-bold" style="<?php echo $is_passata ? '' : 'color: #7A5E4E;'; ?>"><?php echo htmlspecialchars($p['nome_sala']); ?></span>
+                                                <span class="d-block fw-bold" style="<?php echo $is_conclusa ? '' : 'color: #7A5E4E;'; ?>"><?php echo htmlspecialchars($p['nome_sala']); ?></span>
                                                 <small class="text-muted"><?php echo htmlspecialchars($p['nome_settore']); ?></small>
                                             </td>
                                             <td><?php echo htmlspecialchars($p['attivita']); ?></td>
@@ -172,7 +185,10 @@ if ($filtro_sala) {
                                                     <input type="hidden" name="nome_sala" value="<?php echo htmlspecialchars($p['nome_sala']); ?>">
                                                     <input type="hidden" name="data" value="<?php echo $p['data']; ?>">
                                                     <input type="hidden" name="ora" value="<?php echo $p['ora']; ?>">
-                                                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-circle" <?php echo $is_passata ? 'disabled title="Non puoi eliminare eventi passati"' : ''; ?>><i class="bi bi-trash3"></i></button>
+
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-circle" <?php echo ($is_conclusa || $is_in_corso) ? 'disabled title="Evento concluso o in corso"' : ''; ?>>
+                                                        <i class="bi bi-trash3"></i>
+                                                    </button>
                                                 </form>
                                             </td>
                                         </tr>

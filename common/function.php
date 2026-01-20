@@ -512,7 +512,7 @@ function getPrenotazioniByOrganizzatore($cid, $id_settore, $id_organizzatore)
             WHERE id_settore = ? 
             AND id_organizzatore = ? 
             AND data >= CURDATE() 
-            ORDER BY data ASC, ora ASC";
+            ORDER BY data DESC, ora DESC";
     $stmt = $cid->prepare($sql);
     $stmt->bind_param("ii", $id_settore, $id_organizzatore);
     $stmt->execute();
@@ -522,7 +522,7 @@ function getPrenotazioniByOrganizzatore($cid, $id_settore, $id_organizzatore)
 // Recupera le risposte agli inviti inviati dal responsabile
 function getRisposteInvitiByResponsabile($cid, $id_responsabile)
 {
-    $sql = "SELECT I.*, U.nome, U.cognome, U.ruolo, P.attivita 
+    $sql = "SELECT I.*, U.nome, U.cognome, U.ruolo, P.attivita, P.durata
             FROM INVITO I
             JOIN PRENOTAZIONE P ON I.id_settore = P.id_settore 
                  AND I.nome_sala = P.nome_sala 

@@ -31,7 +31,7 @@ $sale = getSaleBySettore($cid, $id_settore);
 
     <div class="flex-shrink-0 container py-5">
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
                 <h2>Allestimento Sale</h2>
                 <h5 class="text-muted">Settore di riferimento: <span class="text-brand fw-bold"><?php echo htmlspecialchars($nome_settore); ?></span></h5>
@@ -48,8 +48,8 @@ $sale = getSaleBySettore($cid, $id_settore);
             <div class="card-header bg-primary bg-opacity-25 border-0 py-3">
                 <h5 class="mb-0 text-dark">Elenco Sale da Gestire</h5>
             </div>
-            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
-                <table class="table table-hover align-middle mb-0">
+            <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                <table class="table table-sm table-hover align-middle mb-0">
                     <thead class="table-light small text-muted text-uppercase" style="position: sticky; top: 0; z-index: 1;">
                         <tr>
                             <th class="ps-4">Nome Sala</th>
@@ -77,8 +77,10 @@ $sale = getSaleBySettore($cid, $id_settore);
                                     </td>
                                     <td class="text-end pe-4">
                                         <a href="<?php echo BASE_URL; ?>frontend/resp_edit_dotazioni.php?sala=<?php echo urlencode($s['nome_sala']); ?>"
-                                            class="btn btn-primary btn-sm rounded-pill fw-bold shadow-sm">
-                                            <i class="bi bi-box-seam me-1"></i> Modifica Dotazioni
+                                            title="Modifica Dotazioni"
+                                            class="btn btn-primary btn-sm rounded-pill fw-bold shadow-sm px-2 px-md-3">
+                                            <i class="bi bi-box-seam"></i>
+                                            <span class="d-none d-lg-inline ms-1">Modifica Dotazioni</span>
                                         </a>
                                     </td>
                                 </tr>

@@ -531,7 +531,10 @@ function getRisposteInvitiByResponsabile($cid, $id_responsabile)
             JOIN UTENTE U ON I.id_utente = U.id_utente
             WHERE P.id_organizzatore = ?
             AND I.id_utente != P.id_organizzatore
+            -- Nascondi gli inviti in sospeso per eventi già passati
+            AND NOT (I.stato = 'invitato' AND (P.data < CURDATE() OR (P.data = CURDATE() AND P.ora < HOUR(NOW()))))
             ORDER BY I.data_risposta DESC, I.data ASC";
+            
     $stmt = $cid->prepare($sql);
     $stmt->bind_param("i", $id_responsabile);
     $stmt->execute();

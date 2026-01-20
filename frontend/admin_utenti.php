@@ -6,14 +6,13 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once __DIR__ . '/../common/setup.php';
 require_once __DIR__ . '/../common/function.php';
 
-//SICUREZZA: SOLO ADMIN
+// SICUREZZA: SOLO ADMIN
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_admin'])) {
     header("Location: " . BASE_URL . "index.php");
     exit;
 }
 
 // RECUPERO DATI 
-// Recupera TUTTI gli utenti
 $elenco_utenti = getAllUtentiAdmin($cid);
 ?>
 
@@ -80,16 +79,18 @@ $elenco_utenti = getAllUtentiAdmin($cid);
                                     <td class="text-end pe-4">
                                         <?php if (!$utente['is_admin'] && $utente['id_utente'] != $_SESSION['id_utente']): ?>
                                             <div class="d-flex justify-content-end align-items-center gap-2">
+
                                                 <?php if ($utente['is_responsabile']): ?>
-                                                    <form action="<?php echo BASE_URL; ?>backend/admin_utenti_exe.php" method="POST" class="m-0 p-0">
-                                                        <input type="hidden" name="action" value="demote">
-                                                        <input type="hidden" name="id_utente" value="<?php echo $utente['id_utente']; ?>">
-                                                        <button type="button" class="btn btn-outline-warning btn-sm rounded-pill fw-bold px-2"
-                                                            onclick="if(confirm('Vuoi davvero retrocedere <?php echo htmlspecialchars($utente['nome']); ?>?')) { this.form.submit(); }">
-                                                            <i class="bi bi-arrow-down-circle"></i>
-                                                            <span class="d-none d-lg-inline ms-1">Retrocedi</span>
-                                                        </button>
-                                                    </form>
+                                                    <button type="button"
+                                                        class="btn btn-outline-warning btn-sm rounded-pill fw-bold px-2"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#modalAzione"
+                                                        data-bs-action="demote"
+                                                        data-bs-id="<?php echo $utente['id_utente']; ?>"
+                                                        data-bs-nome="<?php echo htmlspecialchars($utente['nome'] . ' ' . $utente['cognome'], ENT_QUOTES); ?>">
+                                                        <i class="bi bi-arrow-down-circle"></i>
+                                                        <span class="d-none d-lg-inline ms-1">Retrocedi</span>
+                                                    </button>
                                                 <?php else: ?>
                                                     <a href="<?php echo BASE_URL; ?>frontend/admin_promuovi.php?id=<?php echo $utente['id_utente']; ?>"
                                                         class="btn btn-outline-primary btn-sm rounded-pill fw-bold px-2">
@@ -98,14 +99,16 @@ $elenco_utenti = getAllUtentiAdmin($cid);
                                                     </a>
                                                 <?php endif; ?>
 
-                                                <form action="<?php echo BASE_URL; ?>backend/admin_utenti_exe.php" method="POST" class="m-0 p-0">
-                                                    <input type="hidden" name="action" value="delete">
-                                                    <input type="hidden" name="id_utente" value="<?php echo $utente['id_utente']; ?>">
-                                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-circle px-2"
-                                                        onclick="if(confirm('Sei sicuro di voler eliminare <?php echo htmlspecialchars($utente['nome']); ?>?')) { this.form.submit(); }">
-                                                        <i class="bi bi-trash3"></i>
-                                                    </button>
-                                                </form>
+                                                <button type="button"
+                                                    class="btn btn-outline-danger btn-sm rounded-circle px-2"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#modalAzione"
+                                                    data-bs-action="delete"
+                                                    data-bs-id="<?php echo $utente['id_utente']; ?>"
+                                                    data-bs-nome="<?php echo htmlspecialchars($utente['nome'] . ' ' . $utente['cognome'], ENT_QUOTES); ?>">
+                                                    <i class="bi bi-trash3"></i>
+                                                </button>
+
                                             </div>
                                         <?php endif; ?>
                                     </td>
@@ -122,7 +125,94 @@ $elenco_utenti = getAllUtentiAdmin($cid);
         </div>
 
     </div>
+
+    <div class="modal fade" id="modalAzione" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title fw-bold" id="modalTitle">Conferma Azione</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-0">
+                    <p class="text-muted" id="modalMessage">Sei sicuro di voler procedere?</p>
+                </div>
+                <div class="modal-footer border-top-0">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-3" data-bs-dismiss="modal">Annulla</button>
+
+                    <form action="<?php echo BASE_URL; ?>backend/admin_utenti_exe.php" method="POST">
+                        <input type="hidden" name="action" id="inputAction" value="">
+                        <input type="hidden" name="id_utente" id="inputId" value="">
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold" id="btnConfirm">Conferma</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <?php include ROOT_PATH . '/common/footer.html'; ?>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Pulizia URL
+            if (window.history.replaceState) {
+                const url = new URL(window.location);
+                // Se c'è un messaggio, lo puliamo dopo 2 secondi visivi o subito dall'URL
+                if (url.searchParams.has('msg') || url.searchParams.has('error')) {
+                    url.searchParams.delete('msg');
+                    url.searchParams.delete('error');
+                    window.history.replaceState(null, '', url);
+                }
+            }
+
+            // Gestione Modale
+            var modalAzione = document.getElementById('modalAzione');
+
+            modalAzione.addEventListener('show.bs.modal', function(event) {
+                // Bottone che ha attivato il modale
+                var button = event.relatedTarget;
+
+                // Estrai info dagli attributi data-bs-*
+                var action = button.getAttribute('data-bs-action');
+                var id = button.getAttribute('data-bs-id');
+                var nome = button.getAttribute('data-bs-nome');
+
+                // Elementi del modale da aggiornare
+                var modalTitle = modalAzione.querySelector('.modal-title');
+                var modalMessage = modalAzione.querySelector('#modalMessage');
+                var btnConfirm = modalAzione.querySelector('#btnConfirm');
+                var inputAction = modalAzione.querySelector('#inputAction');
+                var inputId = modalAzione.querySelector('#inputId');
+
+                // Aggiorna i campi hidden del form
+                inputAction.value = action;
+                inputId.value = id;
+
+                // Personalizza interfaccia in base all'azione
+                if (action === 'delete') {
+                    
+                    modalTitle.textContent = 'Elimina Utente';
+                    modalTitle.className = 'modal-title fw-bold text-danger';
+                    modalMessage.innerHTML = 'Stai per eliminare definitivamente <strong>' + nome + '</strong>.<br>Questa azione è irreversibile.';
+
+                    btnConfirm.className = 'btn btn-danger rounded-pill px-4 fw-bold';
+                    btnConfirm.textContent = 'Elimina';
+
+                } else if (action === 'demote') {
+                    
+                    modalTitle.textContent = 'Retrocedi Responsabile';
+                    modalTitle.className = 'modal-title fw-bold';
+                    modalTitle.style.color = '#d68c00'; // Un giallo/arancio più scuro e leggibile
+
+                    modalMessage.innerHTML = 'Vuoi togliere i privilegi di Responsabile a <strong>' + nome + '</strong>?';
+
+                    // Bottone giallo con testo scuro per contrasto
+                    btnConfirm.className = 'btn btn-warning text-dark rounded-pill px-4 fw-bold';
+                    btnConfirm.textContent = 'Retrocedi';
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

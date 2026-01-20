@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById('registerForm');
+    const form = document.getElementById('registerForm');ù
+
+    if (!form) return;
 
     function checkStatus(response) {
         if (!response.ok) { throw Error(response.statusText); }

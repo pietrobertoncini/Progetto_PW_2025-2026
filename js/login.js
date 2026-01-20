@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", function() {
     
     const form = document.getElementById('loginForm');
+
+    if (!form) return;
     
     // Funzione per gestire lo stato della risposta
     function checkStatus(response) {

@@ -31,6 +31,8 @@ if (isset($_GET['id_settore'])) {
     $id_settore = $dati_utente['id_settore'];
 }
 
+$id_utente_sessione = $_SESSION['id_utente'] ?? null;
+
 // Calcolo Date
 $timestamp_rif = strtotime($data_rif);
 $lunedi_settimana = date('Y-m-d', strtotime('monday this week', $timestamp_rif));
@@ -53,7 +55,7 @@ try {
     } else {
         // Modalità PRENOTA
         if ($nome_sala) {
-            $occupied = getOccupazioniSettimana($cid, $nome_sala, $id_settore, $lunedi_settimana, $domenica_settimana);
+            $occupied = getOccupazioniSettimana($cid, $nome_sala, $id_settore, $lunedi_settimana, $domenica_settimana, $id_utente_sessione);
         }
     }
 

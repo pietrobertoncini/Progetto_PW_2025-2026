@@ -724,7 +724,7 @@ function getSaleBySettore($cid, $id_settore)
     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
-function getOccupazioniSettimana($cid, $nome_sala, $id_settore, $lunedi, $domenica)
+function getOccupazioniSettimana($cid, $nome_sala, $id_settore, $lunedi, $domenica, $id_utente = null)
 {
     $sql = "SELECT P.data, P.ora, P.durata, P.attivita, U.nome, U.cognome 
             FROM PRENOTAZIONE P
@@ -747,6 +747,41 @@ function getOccupazioniSettimana($cid, $nome_sala, $id_settore, $lunedi, $domeni
             ];
         }
     }
+
+    // Recupero impegni personali dell'utente (se id_utente è fornito)
+    if ($id_utente) {
+        $sqlPersonale = "SELECT P.data, P.ora, P.durata, P.attivita, P.nome_sala as altra_sala
+                         FROM INVITO I
+                         JOIN PRENOTAZIONE P ON I.id_settore = P.id_settore 
+                              AND I.nome_sala = P.nome_sala 
+                              AND I.data = P.data 
+                              AND I.ora = P.ora
+                         WHERE I.id_utente = ? AND I.stato = 'accettato'
+                         AND (P.nome_sala != ? OR P.id_settore != ?) -- Solo impegni in ALTRE sale
+                         AND P.data BETWEEN ? AND ?";
+
+        $stmtP = $cid->prepare($sqlPersonale);
+        $stmtP->bind_param("isiss", $id_utente, $nome_sala, $id_settore, $lunedi, $domenica);
+        $stmtP->execute();
+        $resP = $stmtP->get_result();
+        while ($rowP = $resP->fetch_assoc()) {
+            for ($i = 0; $i < $rowP['durata']; $i++) {
+                $h = $rowP['ora'] + $i;
+                // Se lo slot non è già occupato dalla sala stessa, inseriamo l'impegno personale
+                if (!isset($occupied[$rowP['data']][$h])) {
+                    $rowP['attivita'] = $rowP['altra_sala'];
+                    $rowP['nome'] = "";
+                    $rowP['cognome'] = "";
+                    $occupied[$rowP['data']][$h] = [
+                        'dati' => $rowP,
+                        'is_start' => ($i === 0),
+                        'is_personal' => true
+                    ];
+                }
+            }
+        }
+    }
+
     return $occupied;
 }
 
@@ -980,17 +1015,16 @@ function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is
                                     if ($cell['is_start']) {
                                         $durata = $info['durata'];
 
-                                        // --- LOGICA TEMPORALE PER CELLE OCCUPATE ---
+                                        // LOGICA TEMPORALE PER CELLE OCCUPATE
                                         $ts_inizio = strtotime($info['data'] . " " . $info['ora'] . ":00");
                                         $ts_fine = $ts_inizio + ($durata * 3600);
                                         $now = time();
 
+                                        $is_personal = isset($cell['is_personal']) && $cell['is_personal'];
+                                        $testo_stato = $is_personal ? "Mio Impegno" : "OCCUPATO";
+
                                         $is_concluso = ($now >= $ts_fine);
                                         $is_in_corso = ($now >= $ts_inizio && $now < $ts_fine);
-
-                                        $testo_stato = "OCCUPATO";
-                                        $bg_class = "bg-danger bg-opacity-10"; // Default Rosso Futuro
-                                        $text_class = "text-danger";
 
                                         if ($is_concluso) {
                                             $testo_stato = "Concluso";
@@ -1000,6 +1034,9 @@ function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is
                                             $testo_stato = "In corso...";
                                             $bg_class = "bg-success bg-opacity-10";
                                             $text_class = "text-success fw-bold";
+                                        } else {
+                                            $bg_class = $is_personal ? "bg-info bg-opacity-10" : "bg-danger bg-opacity-10";
+                                            $text_class = $is_personal ? "text-primary" : "text-danger";
                                         }
                             ?>
                                         <td rowspan="<?php echo $durata; ?>" class="p-1 <?php echo $bg_class; ?> align-middle">
@@ -1032,7 +1069,9 @@ function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is
                                                                 </h6>
                                                                 <div class="small text-muted" style="min-width: 200px;">
                                                                     <strong><?php echo htmlspecialchars($info['attivita']); ?></strong><br>
+                                                                    <?php if (!$is_personal): ?>
                                                                     <i class="bi bi-person-fill"></i> Org: <?php echo $nominativo_completo; ?><br>
+                                                                    <?php endif; ?>
                                                                     <i class="bi bi-clock"></i> <?php echo $ora; ?>:00 - <?php echo $ora + $durata; ?>:00
                                                                 </div>
                                                             </li>
@@ -1049,10 +1088,11 @@ function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is
                                                         <div class="fw-bold text-truncate <?php echo $text_class; ?> lh-sm mb-1" style="font-size: 0.85rem;" title="<?php echo htmlspecialchars($info['attivita']); ?>">
                                                             <?php echo htmlspecialchars($info['attivita']); ?>
                                                         </div>
-
-                                                        <div class="small <?php echo $text_class; ?> opacity-75" style="font-size: 0.75rem;">
-                                                            <i class="bi bi-person-fill"></i> <?php echo $nominativo_corto; ?>
-                                                        </div>
+                                                        <?php if (!$is_personal): ?>
+                                                            <div class="small <?php echo $text_class; ?> opacity-75" style="font-size: 0.75rem;">
+                                                                <i class="bi bi-person-fill"></i> <?php echo $nominativo_corto; ?>
+                                                            </div>
+                                                        <?php endif; ?>
                                                     </div>
                                                 <?php endif; ?>
                                             </div>

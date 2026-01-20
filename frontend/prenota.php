@@ -70,10 +70,10 @@ $next_week = date('Y-m-d', strtotime($lunedi_settimana . ' +7 days'));
 // LOGICA CALENDARIO (Solo se non siamo già in fase di conferma)
 $occupied = [];
 if ($id_sala_selezionata && !$data_scelta) {
-    $occupied = getOccupazioniSettimana($cid, $id_sala_selezionata, $id_settore_utente, $lunedi_settimana, $domenica_settimana);
+    $occupied = getOccupazioniSettimana($cid, $id_sala_selezionata, $id_settore_utente, $lunedi_settimana, $domenica_settimana, $id_utente);
 }
 
-// --- LOGICA UTENTI E FILTRI (Fase Conferma) ---
+// LOGICA UTENTI E FILTRI (Fase Conferma)
 $utenti_invitabili = [];
 $lista_settori = [];
 $capienza_sala_corrente = 0;
@@ -104,7 +104,9 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
     <div class="flex-shrink-0 container py-5">
 
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
-            <h2 class="m-0 text-nowrap">Nuova Prenotazione</h2>
+            <div class="text-center">
+                <h2 class="m-0">Nuova Prenotazione</h2>
+            </div>
 
             <?php if (!$data_scelta): ?>
                 <div class="card shadow-sm border-0 rounded-4 bg-light">
@@ -178,8 +180,9 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
                             echo renderCalendarGrid($lunedi_settimana, $occupied, false, false);
                         }
                         ?>
+                        <!-- Se nessuna sala è selezionata -->
                     <?php else: ?>
-                        <div class="mt-3 text-center">
+                        <div class="mt-5 text-center">
                             <div class="mb-2 text-secondary" style="opacity: 0.3;">
                                 <i class="bi bi-arrow-up-circle-fill" style="font-size: 3rem;"></i>
                             </div>
@@ -195,6 +198,14 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
                     <div class="alert alert-info py-2 small border-0 bg-info bg-opacity-10 rounded-4 mb-3 text-start">
                         <i class="bi bi-info-circle-fill text-info ms-2"></i> Seleziona le caselle orarie consecutive che vuoi prenotare e premi "Procedi".
                     </div>
+
+                    <div id="js-error-alert" class="alert alert-danger d-none rounded-4 shadow-sm mb-3 text-start">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-exclamation-octagon-fill fs-4 me-2"></i>
+                            <span id="js-error-msg"></span>
+                        </div>
+                    </div>
+
                     <button type="submit" class="btn btn-success btn-lg shadow rounded-pill px-4 fw-bold">
                         Procedi con la Selezione <i class="bi bi-arrow-right"></i>
                     </button>
@@ -203,23 +214,26 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
 
         <?php endif; ?>
 
-
+        <!-- Fase di completamento prenotazione (descrizione attività, inviti) -->
         <?php if ($data_scelta && $ora_scelta && $id_sala_selezionata): ?>
 
-            <div id="form-prenotazione" class="card border-0 shadow rounded-4 overflow-hidden">
-                <div class="card-header bg-primary text-white py-3">
-                    <h4 class="mb-0 fs-5 fw-bold ms-2">Completa Prenotazione</h4>
+            <div id="form-prenotazione" class="card border-0 shadow-sm rounded-4 overflow-hidden mx-auto" style="max-width: 800px;">
+                <div class="card-header bg-primary text-white py-2 px-3">
+                    <h5 class="mb-0 fw-bold"></i>Completa Prenotazione</h5>
                 </div>
-                <div class="card-body p-4">
-                    <p class="lead mb-2">Sala: <strong><?php echo htmlspecialchars($id_sala_selezionata); ?></strong></p>
 
-                    <div class="alert alert-success border-success border-opacity-25 bg-success bg-opacity-10 rounded-4">
-                        <i class="bi bi-calendar-check-fill text-success me-2 ms-2"></i>
-                        Prenotazione per il giorno <strong><?php echo date('d/m/Y', strtotime($data_scelta)); ?></strong><br>
-                        <span class="ms-5">
-                            Dalle ore <strong><?php echo $ora_scelta; ?>:00</strong>
-                            alle ore <strong><?php echo ($ora_scelta + $durata_calcolata); ?>:00</strong>.
-                        </span>
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-start mb-3 border-bottom pb-2">
+                        <div>
+                            <p class="mb-0 text-muted small">Sala selezionata:</p>
+                            <h6 class="fw-bold mb-0"><?php echo htmlspecialchars($id_sala_selezionata); ?></h6>
+                        </div>
+                        <div class="alert alert-success py-1 px-3 mb-0 small border-0 bg-success bg-opacity-10 rounded-pill">
+                            <i class="bi bi-calendar-event me-1"></i>
+                            <strong><?php echo date('d/m/Y', strtotime($data_scelta)); ?></strong> |
+                            <i class="bi bi-clock me-1 ms-1"></i>
+                            <strong><?php echo $ora_scelta; ?>:00 - <?php echo ($ora_scelta + $durata_calcolata); ?>:00</strong>
+                        </div>
                     </div>
 
                     <form action="<?php echo BASE_URL; ?>backend/prenota_exe.php" method="POST">
@@ -230,25 +244,23 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
                         <input type="hidden" name="durata" value="<?php echo $durata_calcolata; ?>">
 
                         <div class="mb-3">
-                            <label for="attivita" class="form-label fw-bold ps-1">Descrizione Attività</label>
-                            <input type="text" class="form-control rounded-3" id="attivita" name="attivita" placeholder="Es. Prove, Lezione..." required>
+                            <label for="attivita" class="form-label fw-bold small ps-1 mb-1">Descrizione Attività</label>
+                            <input type="text" class="form-control form-control-sm rounded-3" id="attivita" name="attivita" placeholder="Es. Prove, Lezione..." required>
                         </div>
 
-                        <hr>
-
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="fw-bold mb-0">Invita Partecipanti</h5>
-                            <span class="badge bg-primary fs-6">
-                                <i class="bi bi-people-fill"></i>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="fw-bold mb-0 small text-uppercase text-muted">Invita Partecipanti</h6>
+                            <span class="badge bg-primary px-2 py-1" style="font-size: 0.75rem;">
+                                <i class="bi bi-people-fill me-1"></i>
                                 <span id="counter-text">1</span> / <?php echo $capienza_sala_corrente; ?> Posti
                             </span>
                         </div>
 
                         <input type="hidden" id="maxCapienza" value="<?php echo $capienza_sala_corrente; ?>">
 
-                        <div class="row g-2 mb-3 align-items-center">
+                        <div class="row g-2 mb-2">
                             <div class="col-md-4">
-                                <select id="filtroSettore" class="form-select form-select-sm rounded-pill border-secondary" onchange="applicaFiltri()">
+                                <select id="filtroSettore" class="form-select form-select-sm rounded-pill" onchange="applicaFiltri()">
                                     <option value="all">Tutti i Settori</option>
                                     <?php if (!empty($lista_settori)): ?>
                                         <?php foreach ($lista_settori as $sett): ?>
@@ -260,21 +272,21 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <select id="filtroRuolo" class="form-select form-select-sm rounded-pill border-secondary" onchange="applicaFiltri()">
+                                <select id="filtroRuolo" class="form-select form-select-sm rounded-pill" onchange="applicaFiltri()">
                                     <option value="all">Tutti i Ruoli</option>
-                                    <option value="docente">Docente</option>
-                                    <option value="allievo">Allievo</option>
-                                    <option value="tecnico">Tecnico</option>
+                                    <option value="docente">Docenti</option>
+                                    <option value="allievo">Allievi</option>
+                                    <option value="tecnico">Tecnici</option>
                                 </select>
                             </div>
-                            <div class="col-md-4 text-end">
-                                <button type="button" class="btn btn-sm btn-outline-dark rounded-pill w-100" id="btnSelectAll" onclick="toggleSelezionaTutti()">
-                                    <i class="bi bi-check-all"></i> Seleziona Tutti Possibili
+                            <div class="col-md-4">
+                                <button type="button" class="btn btn-xs btn-outline-dark rounded-pill w-100 py-1 fw-bold" id="btnSelectAll" onclick="toggleSelezionaTutti()" style="font-size: 0.7rem;">
+                                    <i class="bi bi-check-all"></i> SELEZIONA TUTTI
                                 </button>
                             </div>
                         </div>
 
-                        <div class="row g-2 mb-4 p-2 border rounded bg-light" style="max-height: 300px; overflow-y: auto;">
+                        <div class="row g-1 mb-3 p-1 border rounded bg-light" style="max-height: 220px; overflow-y: auto;">
                             <?php if (!empty($utenti_invitabili)): ?>
                                 <?php foreach ($utenti_invitabili as $u):
                                     $ruolo = strtolower($u['ruolo']);
@@ -287,31 +299,33 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
                                     }
                                 ?>
                                     <div class="col-md-6 user-item" data-id-settore="<?php echo $id_sett_user; ?>" data-ruolo="<?php echo $ruolo; ?>">
-                                        <div class="form-check p-2 border rounded-3 bg-white h-100 shadow-sm d-flex align-items-center">
-                                            <input class="form-check-input ms-1 me-3 my-0 user-checkbox" type="checkbox" name="invitati[]" value="<?php echo $u['id_utente']; ?>" id="user_<?php echo $u['id_utente']; ?>" style="transform: scale(1.2);" onchange="aggiornaContatore()">
-                                            <label class="form-check-label w-100 lh-sm" style="cursor: pointer;" for="user_<?php echo $u['id_utente']; ?>">
-                                                <span class="d-block fw-bold text-dark mb-1">
+                                        <div class="form-check p-1 px-2 border rounded-3 bg-white h-100 shadow-sm d-flex align-items-center" style="min-height: 45px;">
+                                            <input class="form-check-input ms-0 me-2 my-0 user-checkbox" type="checkbox" name="invitati[]" value="<?php echo $u['id_utente']; ?>" id="user_<?php echo $u['id_utente']; ?>" onchange="aggiornaContatore()" style="width: 1rem; height: 1rem;">
+                                            <label class="form-check-label w-100 lh-1" style="cursor: pointer; font-size: 0.8rem;" for="user_<?php echo $u['id_utente']; ?>">
+                                                <span class="d-block fw-bold text-dark mb-1 text-truncate" style="max-width: 150px;">
                                                     <?php echo htmlspecialchars($u['nome'] . " " . $u['cognome']); ?>
                                                 </span>
-                                                <?php if ($u['is_responsabile']): ?>
-                                                    <span class="badge bg-dark border border-light me-1" style="font-size: 0.65rem;"><i class="bi bi-star-fill text-warning"></i> RESPONSABILE</span>
-                                                <?php endif; ?>
-                                                <span class="badge bg-light text-secondary border me-1" style="font-size: 0.65rem;"><?php echo ucfirst($u['ruolo']); ?></span>
-                                                <?php if ($u['id_settore'] != $id_settore_utente): ?>
-                                                    <span class="badge <?php echo $badge_class; ?> bg-opacity-75" style="font-size: 0.65rem;"><?php echo htmlspecialchars($u['nome_settore']); ?></span>
-                                                <?php endif; ?>
+                                                <div class="d-flex gap-1 flex-wrap">
+                                                    <?php if ($u['is_responsabile']): ?>
+                                                        <span class="badge bg-dark" style="font-size: 0.55rem;">RESP.</span>
+                                                    <?php endif; ?>
+                                                    <span class="badge bg-light text-secondary border" style="font-size: 0.55rem;"><?php echo strtoupper($u['ruolo']); ?></span>
+                                                    <?php if ($u['id_settore'] != $id_settore_utente): ?>
+                                                        <span class="badge <?php echo $badge_class; ?> bg-opacity-75" style="font-size: 0.55rem;"><?php echo htmlspecialchars(substr($u['nome_settore'], 0, 15)); ?>...</span>
+                                                    <?php endif; ?>
+                                                </div>
                                             </label>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
                             <?php else: ?>
-                                <div class="col-12 text-center py-4 text-muted">Nessun utente disponibile in questo orario.</div>
+                                <div class="col-12 text-center py-3 text-muted small">Nessun utente disponibile.</div>
                             <?php endif; ?>
                         </div>
 
-                        <div class="d-flex justify-content-end gap-2">
-                            <a href="<?php echo BASE_URL; ?>frontend/prenota.php?sala=<?php echo urlencode($id_sala_selezionata); ?>&week=<?php echo $lunedi_settimana; ?>" class="btn btn-outline-secondary rounded-pill px-4">Annulla</a>
-                            <button type="submit" class="btn btn-success px-4 fw-bold rounded-pill">Conferma Prenotazione</button>
+                        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                            <a href="<?php echo BASE_URL; ?>frontend/prenota.php?sala=<?php echo urlencode($id_sala_selezionata); ?>&week=<?php echo $lunedi_settimana; ?>" class="btn btn-sm btn-outline-secondary rounded-pill px-3">Annulla</a>
+                            <button type="submit" class="btn btn-sm btn-success px-4 fw-bold rounded-pill">Conferma Prenotazione</button>
                         </div>
                     </form>
                 </div>
@@ -427,6 +441,48 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
         document.addEventListener("DOMContentLoaded", function() {
             if (document.getElementById('filtroSettore')) {
                 applicaFiltri(); // Inizializza stato
+            }
+
+            // Validazione selezione slot
+            const formSelezione = document.getElementById('form-selezione-slot');
+            const errorAlert = document.getElementById('js-error-alert');
+            const errorMsg = document.getElementById('js-error-msg');
+            const selectSala = document.getElementById('sala'); // Recuperiamo il select della sala
+
+            if (formSelezione) {
+                formSelezione.addEventListener('submit', function(e) {
+                    // Conta quante caselle orarie sono state selezionate
+                    const slotsSelezionati = formSelezione.querySelectorAll('input[name="slots[]"]:checked');
+
+                    if (slotsSelezionati.length === 0) {
+                        // Blocca l'invio del form
+                        e.preventDefault();
+
+                        // Mostra l'alert di Bootstrap invece di quello del browser
+                        if (errorAlert && errorMsg) {
+                            errorMsg.textContent = "Attenzione: devi selezionare almeno un'ora nel calendario per procedere.";
+                            errorAlert.classList.remove('d-none'); // Rende visibile l'avviso
+
+                            // Scorri la pagina verso l'errore per renderlo visibile
+                            errorAlert.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                        }
+                    } else {
+                        // Se ci sono selezioni, nascondi l'eventuale errore precedente
+                        if (errorAlert) errorAlert.classList.add('d-none');
+                    }
+                });
+            }
+
+            // Nasconde l'alert quando si cambia sala
+            if (selectSala) {
+                selectSala.addEventListener('change', function() {
+                    if (errorAlert) {
+                        errorAlert.classList.add('d-none');
+                    }
+                });
             }
         });
     </script>

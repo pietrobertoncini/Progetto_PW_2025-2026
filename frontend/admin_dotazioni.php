@@ -6,13 +6,13 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once __DIR__ . '/../common/setup.php';
 require_once __DIR__ . '/../common/function.php';
 
-// SICUREZZA 
+// Verifica dell'identità dell'utente per limitare l'accesso esclusivamente agli amministratori 
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_admin'])) {
     header("Location: " . BASE_URL . "index.php");
     exit;
 }
 
-// LOGICA MODIFICA (Recupero dati se ?edit=ID)
+// Logica per il recupero dei dati di una specifica dotazione in fase di modifica
 $dotazione_da_modificare = null;
 $is_editing = false;
 
@@ -28,7 +28,7 @@ if (isset($_GET['edit'])) {
     $stmt->close();
 }
 
-// RECUPERO LISTA 
+// Recupero della lista
 $elenco_dotazioni = getAllDotazioni($cid);
 ?>
 
@@ -45,6 +45,7 @@ $elenco_dotazioni = getAllDotazioni($cid);
             <h2>Catalogo Dotazioni</h2>
         </div>
 
+        <!-- Alert errori -->
         <?php if (isset($_GET['msg'])): ?>
             <div class="alert alert-success shadow-sm rounded-4 mb-3"><i class="bi bi-check-circle-fill me-2"></i> <?php echo htmlspecialchars($_GET['msg']); ?></div>
         <?php endif; ?>
@@ -93,7 +94,7 @@ $elenco_dotazioni = getAllDotazioni($cid);
                     </div>
                 </div>
             </div>
-
+            <!-- Lista dotazioni -->
             <div class="col-lg-8">
                 <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
                     <div class="card-header bg-white py-3 fw-bold text-muted border-bottom-0">

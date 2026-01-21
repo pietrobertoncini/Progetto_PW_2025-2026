@@ -7,7 +7,7 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once __DIR__ . '/../common/setup.php';
 require_once __DIR__ . '/../common/function.php';
 
-// SICUREZZA: SOLO RESPONSABILE
+// Controllo di sicurezza per limitare l'accesso esclusivamente agli utenti con ruolo di responsabile
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
     header('Location: ' . BASE_URL . 'index.php');
     exit;
@@ -66,7 +66,6 @@ $sale = getSaleBySettore($cid, $id_settore);
                                     </td>
                                     <td class="text-muted small">
                                         <?php
-                                        // Funzione esistente che restituisce stringa separata da virgole
                                         $lista_dot = getDotazioniSala($cid, $id_settore, $s['nome_sala']);
                                         if ($lista_dot) {
                                             echo htmlspecialchars($lista_dot);

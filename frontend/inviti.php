@@ -4,7 +4,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Controllo sicurezza
+// Verifica della sessione attiva
 if (!isset($_SESSION['id_utente'])) {
     header('Location: ' . BASE_URL . 'frontend/login.php');
     exit;
@@ -14,10 +14,7 @@ require_once __DIR__ . '/../common/setup.php';
 require_once __DIR__ . '/../common/function.php';
 
 // Recupero dati
-$inviti_pendenti = [];
-if (function_exists('getInvitiPendenti')) {
-    $inviti_pendenti = getInvitiPendenti($cid, $_SESSION['id_utente']);
-}
+$inviti_pendenti = getInvitiPendenti($cid, $_SESSION['id_utente']);
 ?>
 
 <!DOCTYPE html>

@@ -7,13 +7,13 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once __DIR__ . '/../common/setup.php';
 require_once __DIR__ . '/../common/function.php';
 
-// SICUREZZA: SOLO ADMIN
+// Verifica dell'identità dell'utente per limitare l'accesso esclusivamente agli amministratori 
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_admin'])) {
     header('Location: ' . BASE_URL . 'index.php');
     exit;
 }
 
-// LOGICA MODIFICA
+// Gestione dello stato di modifica
 $sala_edit = null;
 $is_editing = false;
 
@@ -29,7 +29,7 @@ if (isset($_GET['edit']) && isset($_GET['settore'])) {
 }
 
 
-// RECUPERO DATI
+// Recuper dei dati
 $sale = getAllSaleGlobal($cid);
 $lista_settori = getAllSettoriAdmin($cid);
 ?>

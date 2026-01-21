@@ -7,7 +7,7 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once __DIR__ . '/../common/setup.php';
 require_once __DIR__ . '/../common/function.php';
 
-// SICUREZZA
+// Verifica della sessione attiva
 if (!isset($_SESSION['id_utente'])) {
     header("Location: " . BASE_URL . "index.php");
     exit;
@@ -31,6 +31,7 @@ $domenica_settimana = date('Y-m-d', strtotime('sunday this week', $timestamp_rif
 $prev_week = date('Y-m-d', strtotime($lunedi_settimana . ' -7 days'));
 $next_week = date('Y-m-d', strtotime($lunedi_settimana . ' +7 days'));
 
+// Logica di recupero dati per la visualizzazione settimanale o la lista globale
 if ($filtro_sala) {
     // GRIGLIA
     $parts = explode('|', $filtro_sala);

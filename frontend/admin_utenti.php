@@ -6,13 +6,13 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once __DIR__ . '/../common/setup.php';
 require_once __DIR__ . '/../common/function.php';
 
-// SICUREZZA: SOLO ADMIN
+// Verifica dell'identità dell'utente per limitare l'accesso esclusivamente agli amministratori 
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_admin'])) {
     header("Location: " . BASE_URL . "index.php");
     exit;
 }
 
-// RECUPERO DATI 
+// Recuper dati
 $elenco_utenti = getAllUtentiAdmin($cid);
 ?>
 
@@ -28,7 +28,7 @@ $elenco_utenti = getAllUtentiAdmin($cid);
         <div class="d-flex justify-content-between align-items-center mb-2">
             <h2>Gestione Utenti</h2>
         </div>
-
+        <!-- Alert errori -->
         <?php if (isset($_GET['msg'])): ?>
             <div class="alert alert-success shadow-sm rounded-4 mb-4"><?php echo htmlspecialchars($_GET['msg']); ?></div>
         <?php endif; ?>
@@ -42,7 +42,7 @@ $elenco_utenti = getAllUtentiAdmin($cid);
                 <span class="badge bg-dark rounded-pill px-3"><?php echo count($elenco_utenti); ?></span>
             </div>
         </div>
-
+        <!-- Lista utenti -->
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
             <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
                 <table class="table table-sm table-hover align-middle mb-0">
@@ -125,7 +125,7 @@ $elenco_utenti = getAllUtentiAdmin($cid);
         </div>
 
     </div>
-
+    <!-- Modali per retrocedi e elimina -->
     <div class="modal fade" id="modalAzione" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-4 border-0 shadow">
@@ -152,6 +152,7 @@ $elenco_utenti = getAllUtentiAdmin($cid);
     <?php include ROOT_PATH . '/common/footer.html'; ?>
 
     <script>
+        // Logica javascript per personalizzare i messaggi del modale in base all'azione scelta
         document.addEventListener('DOMContentLoaded', function() {
             // Gestione Modale
             var modalAzione = document.getElementById('modalAzione');
@@ -178,7 +179,7 @@ $elenco_utenti = getAllUtentiAdmin($cid);
 
                 // Personalizza interfaccia in base all'azione
                 if (action === 'delete') {
-                    
+
                     modalTitle.textContent = 'Elimina Utente';
                     modalTitle.className = 'modal-title fw-bold text-danger';
                     modalMessage.innerHTML = 'Stai per eliminare definitivamente <strong>' + nome + '</strong>.<br>Questa azione è irreversibile.';
@@ -187,7 +188,7 @@ $elenco_utenti = getAllUtentiAdmin($cid);
                     btnConfirm.textContent = 'Elimina';
 
                 } else if (action === 'demote') {
-                    
+
                     modalTitle.textContent = 'Retrocedi Responsabile';
                     modalTitle.className = 'modal-title fw-bold';
                     modalTitle.style.color = '#d68c00'; // Un giallo/arancio più scuro e leggibile

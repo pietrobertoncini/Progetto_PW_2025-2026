@@ -3,6 +3,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+// Verifica dell'autenticazione
 if (!isset($_SESSION["id_utente"])) {
     header("Location: " . BASE_URL . "frontend/login.php");
     exit;

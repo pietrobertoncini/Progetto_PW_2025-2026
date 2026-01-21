@@ -7,7 +7,7 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once __DIR__ . '/../common/setup.php';
 require_once __DIR__ . '/../common/function.php';
 
-// SICUREZZA: SOLO ADMIN 
+// Verifica dell'identità dell'utente per limitare l'accesso esclusivamente agli amministratori 
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_admin'])) {
     header("Location: " . BASE_URL . "index.php");
     exit;
@@ -31,24 +31,30 @@ $domenica_settimana = date('Y-m-d', strtotime('sunday this week', $timestamp_rif
 $prev_week = date('Y-m-d', strtotime($lunedi_settimana . ' -7 days'));
 $next_week = date('Y-m-d', strtotime($lunedi_settimana . ' +7 days'));
 
+// Questa sezione gestisce la logica di visualizzazione delle prenotazioni
+// filtrando i dati in base alla scelta dell'amministratore
 if ($filtro_sala) {
-    // VISTA GRIGLIA PER SINGOLA SALA
+    // Quando viene selezionata una sala specifica il valore viene scomposto
+    // per ottenere separatamente l'identificativo del settore e il nome della sala
     $parts = explode('|', $filtro_sala);
     if (count($parts) === 2) {
         $id_sett_sel = (int)$parts[0];
         $nome_sala_sel = $parts[1];
-
+        // Il sistema esegue una ricerca tra tutte le sale disponibili per individuare 
+        // quella corrispondente e recuperarne i dettagli completi
         foreach ($sale_disponibili as $s) {
             if ($s['id_settore'] == $id_sett_sel && $s['nome_sala'] == $nome_sala_sel) {
                 $sala_selezionata_info = $s;
                 break;
             }
         }
-
+        // Una volta identificata la sala vengono recuperate tutte le occupazioni previste 
+        // per la settimana di riferimento per popolare la griglia del calendario
         $prenotazioni_griglia = getPrenotazioniGriglia($cid, $id_sett_sel, $nome_sala_sel, $lunedi_settimana, $domenica_settimana);
     }
 } else {
-    // VISTA LISTA GLOBALE
+    // Nel caso in cui non sia applicato alcun filtro il sistema carica l'elenco integrale 
+    // di tutte le prenotazioni presenti nel database per la visualizzazione a lista
     $elenco_lista = getAllPrenotazioniAdmin($cid);
 }
 ?>

@@ -4,7 +4,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Controllo sicurezza
+// Verifica della sessione attiva per permettere la consultazione dell'agenda personale
 if (!isset($_SESSION['id_utente'])) {
     header('Location: ' . BASE_URL . 'frontend/login.php');
     exit;

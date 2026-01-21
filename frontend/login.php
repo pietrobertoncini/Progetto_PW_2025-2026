@@ -3,6 +3,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+// Reindirizzamento automatico se l'utente risulta già correttamente autenticato
 if (isset($_SESSION['id_utente'])) {
     header('Location: ' . BASE_URL . 'index.php');
     exit;

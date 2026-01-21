@@ -6,7 +6,7 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once __DIR__ . '/../common/setup.php';
 require_once __DIR__ . '/../common/function.php';
 
-// Controllo Accesso
+// Controllo di sicurezza per limitare l'accesso esclusivamente agli utenti con ruolo di responsabile
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
     header('Location: ' . BASE_URL . 'frontend/index.php');
     exit;

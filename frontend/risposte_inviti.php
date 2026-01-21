@@ -4,7 +4,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-//  Controllo Sicurezza
+// Controllo di sicurezza per limitare l'accesso esclusivamente agli utenti con ruolo di responsabile
 if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
     header('Location: ' . BASE_URL . 'index.php');
     exit;
@@ -15,7 +15,7 @@ require_once __DIR__ . '/../common/function.php';
 
 $id_responsabile = $_SESSION['id_utente'];
 
-//  RECUPERO RISPOSTE
+// Recupero delle risposte
 $risposte = getRisposteInvitiByResponsabile($cid, $id_responsabile);
 ?>
 
@@ -53,12 +53,11 @@ $risposte = getRisposteInvitiByResponsabile($cid, $id_responsabile);
                             <tbody>
                                 <?php foreach ($risposte as $r):
                                     // Calcolo orari precisi
-                                    $durata = isset($r['durata']) ? $r['durata'] : 1; // Fallback se manca
+                                    $durata = isset($r['durata']) ? $r['durata'] : 1;
                                     $ts_inizio = strtotime($r['data'] . " " . $r['ora'] . ":00");
                                     $ts_fine = $ts_inizio + ($durata * 3600);
                                     $now = time();
 
-                                    // Logica corretta
                                     $is_concluso = ($now >= $ts_fine);
                                     $is_in_corso = ($now >= $ts_inizio && $now < $ts_fine);
 

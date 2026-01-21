@@ -6,8 +6,8 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once __DIR__ . '/../common/setup.php';
 require_once __DIR__ . '/../common/function.php';
 
-// Controllo Login
-if (!isset($_SESSION['is_responsabile'])) {
+// Controllo di sicurezza per limitare l'accesso esclusivamente agli utenti con ruolo di responsabile
+if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_responsabile'])) {
     header('Location: ' . BASE_URL . 'index.php');
     exit;
 }
@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['week'])) {
     $data_rif = $_GET['week'];
 }
 
-// LOGICA POST-SELEZIONE
+// Elaborazione della selezione temporale effettuata dall'utente sulla griglia
 $data_scelta = null;
 $ora_scelta = null;
 $durata_calcolata = 1;
@@ -337,16 +337,20 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
     <script src="<?php echo BASE_URL; ?>js/calendar.js"></script>
 
     <script>
+        // Gestisce il conteggio in tempo reale dei partecipanti selezionati e verifica il rispetto della capienza massima
         function aggiornaContatore() {
             const maxCapienza = parseInt(document.getElementById('maxCapienza').value);
             const checkboxes = document.querySelectorAll('.user-checkbox');
             let checkedCount = document.querySelectorAll('.user-checkbox:checked').length;
-            let occupati = checkedCount + 1; // +1 per l'organizzatore
+
+            // Il numero totale degli occupanti include l'organizzatore più tutti gli utenti selezionati nella lista
+            let occupati = checkedCount + 1;
 
             const counterSpan = document.getElementById('counter-text');
             if (counterSpan) counterSpan.innerText = occupati;
 
-            // Logica disabilitazione
+            // Cambia il colore dell'indicatore visivo e disabilita ulteriori selezioni 
+            // quando viene raggiunto il limite della sala
             const limitReached = occupati >= maxCapienza;
             if (limitReached) {
                 if (counterSpan) {
@@ -360,7 +364,8 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
                 }
             }
 
-            // Disabilita i non selezionati solo se limite raggiunto
+            // Impedisce nuove selezioni disabilitando le caselle ancora libere se
+            // il numero massimo di posti è stato esaurito
             checkboxes.forEach(cb => {
                 if (!cb.checked) {
                     cb.disabled = limitReached;
@@ -373,6 +378,7 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
             });
         }
 
+        // Filtra la lista degli utenti visualizzati in base al settore e al ruolo selezionati nei menu a tendina
         function applicaFiltri() {
             const settoreSelezionato = document.getElementById('filtroSettore').value;
             const ruoloSelezionato = document.getElementById('filtroRuolo').value;
@@ -381,6 +387,7 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
             items.forEach(item => {
                 const itemSettore = item.getAttribute('data-id-settore');
                 const itemRuolo = item.getAttribute('data-ruolo');
+                // Verifica la corrispondenza dell'utente con i criteri di ricerca impostati dall'organizzatore
                 const matchSettore = (settoreSelezionato === 'all') || (itemSettore === settoreSelezionato);
                 const matchRuolo = (ruoloSelezionato === 'all') || (itemRuolo === ruoloSelezionato);
 
@@ -389,13 +396,16 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
                 if (matchSettore && matchRuolo) {
                     item.style.display = 'block';
                 } else {
+                    // Nasconde gli utenti non corrispondenti e deseleziona le loro caselle per mantenere corretto il conteggio
                     item.style.display = 'none';
-                    if (checkbox) checkbox.checked = false; // Deseleziona se nascosto
+                    if (checkbox) checkbox.checked = false;
                 }
             });
+            // Ricalcola il numero totale dei partecipanti dopo aver aggiornato la visualizzazione della lista
             aggiornaContatore();
         }
 
+        // Permette di selezionare o deselezionare velocemente tutti gli utenti attualmente visibili rispettando i limiti di spazio
         function toggleSelezionaTutti() {
             const maxCapienza = parseInt(document.getElementById('maxCapienza').value);
             // Consideriamo solo gli utenti visibili dai filtri
@@ -405,24 +415,20 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
             const totalChecked = document.querySelectorAll('.user-checkbox:checked').length;
             const currentOccupied = totalChecked + 1; // +1 per l'organizzatore
 
-            // Quanti tra quelli VISIBILI sono attualmente selezionati?
+            // Quanti tra quelli VISIBILI sono attualmente selezionati
             const visibleCheckedCount = visibleItems.filter(item => item.querySelector('.user-checkbox').checked).length;
             const allVisibleAreChecked = (visibleItems.length > 0 && visibleCheckedCount === visibleItems.length);
 
-            // Condizione "Siamo pieni?": Sì se occupati >= capienza
+            // Condizione del pienio: Si se occupati >= capienza
             const isFull = currentOccupied >= maxCapienza;
 
-            // LOGICA INTELLIGENTE:
-            // Deselezioniamo se:
-            // 1. Tutti quelli che vedo sono già selezionati (comportamento standard)
-            // 2. OPPURE: Siamo pieni E ho almeno un selezionato visibile (il caso che non ti funzionava)
+            // Se tutti gli utenti visibili sono già stati scelti o se la sala è piena procede con la deselezione di massa
             if (allVisibleAreChecked || (isFull && visibleCheckedCount > 0)) {
-                // DESELEZIONA TUTTI I VISIBILI
                 visibleItems.forEach(item => {
                     item.querySelector('.user-checkbox').checked = false;
                 });
             } else {
-                // SELEZIONA (fino a riempimento)
+                // Seleziona gli utenti filtrati uno alla volta fino all'esaurimento dei posti ancora disponibili nella sala
                 let slotsFree = maxCapienza - currentOccupied;
 
                 visibleItems.forEach(item => {
@@ -438,6 +444,7 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
             aggiornaContatore();
         }
 
+        // Configura i controlli di validazione e il comportamento dell'interfaccia al caricamento completo della pagina
         document.addEventListener("DOMContentLoaded", function() {
             if (document.getElementById('filtroSettore')) {
                 applicaFiltri(); // Inizializza stato
@@ -449,6 +456,7 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
             const errorMsg = document.getElementById('js-error-msg');
             const selectSala = document.getElementById('sala'); // Recuperiamo il select della sala
 
+            // Impedisce l'invio del modulo se l'utente non ha effettuato alcuna selezione oraria sul calendario
             if (formSelezione) {
                 formSelezione.addEventListener('submit', function(e) {
                     // Conta quante caselle orarie sono state selezionate
@@ -458,7 +466,7 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
                         // Blocca l'invio del form
                         e.preventDefault();
 
-                        // Mostra l'alert di Bootstrap invece di quello del browser
+                        // Mostra un avviso grafico personalizzato per segnalare la mancanza di fasce orarie selezionate
                         if (errorAlert && errorMsg) {
                             errorMsg.textContent = "Attenzione: devi selezionare almeno un'ora nel calendario per procedere.";
                             errorAlert.classList.remove('d-none'); // Rende visibile l'avviso
@@ -476,7 +484,7 @@ $class_hidden = ($id_sala_selezionata && !$data_scelta) ? '' : 'd-none';
                 });
             }
 
-            // Nasconde l'alert quando si cambia sala
+            // Rimuove gli avvisi di errore precedenti ogni volta che l'utente cambia la sala da prenotare
             if (selectSala) {
                 selectSala.addEventListener('change', function() {
                     if (errorAlert) {

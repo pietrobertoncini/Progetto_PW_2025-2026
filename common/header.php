@@ -1,5 +1,6 @@
 <head>
     <script>
+        /* Rimuove la classe no-js per segnalare al CSS che il browser supporta javascript */
         document.documentElement.classList.remove('no-js');
     </script>
     <meta charset="UTF-8">
@@ -12,6 +13,7 @@
     <!-- bootstrap icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+    <!-- CSS personalizzato -->
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>css/style.css">
 
     <!-- bootstrap js link -->

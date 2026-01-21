@@ -1,18 +1,19 @@
 <?php
 
-// definiamo la root
+// Individuazione della cartella principale del progetto per gestire i percorsi relativi
 define('ROOT_PATH', dirname(__DIR__));
 
-// otteniamo il percorso della root del server
+// Otteniamo il percorso della root del server per la corretta gestione degli url
 $docRoot = $_SERVER['DOCUMENT_ROOT'];
 
+// Uniforma i separatori di percorso per garantire la compatibilità tra sistemi operativi diversi
 $docRoot = str_replace('\\', '/', $docRoot);
 $projectRoot = str_replace('\\', '/', ROOT_PATH);
 
-// sottraiamo la docRoot dal percorso del progetto
+// Estrae la sottocartella del progetto rispetto alla cartella pubblica del server
 $folder = str_replace($docRoot, '', $projectRoot);
 
-// definiamo URL base
+// Definizione della costante URL da utilizzare per tutti i collegamenti del sito
 define('BASE_URL', $folder . '/');
 
 $hostname = "localhost";

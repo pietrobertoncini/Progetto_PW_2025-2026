@@ -6,13 +6,14 @@ if (session_status() == PHP_SESSION_NONE) {
 
 $num_inviti = 0;
 
+/* Recupero delle informazioni sugli inviti solo se l'utente ha effettuato l'accesso */
 if (isset($_SESSION['id_utente'])) {
   require_once __DIR__ . '/setup.php';
   require_once __DIR__ . '/function.php';
 
   if (isset($cid)) {
     try {
-      // Contiamo solo gli Inviti in attesa (Per tutti)
+      // Conteggio degli inviti pendenti per mostrare la notifica visiva nella barra
       if (function_exists('getInvitiPendenti')) {
         $inviti = getInvitiPendenti($cid, $_SESSION['id_utente']);
         $num_inviti = count($inviti);
@@ -29,9 +30,9 @@ if (isset($_SESSION['id_utente'])) {
     <a class="navbar-brand d-flex" href="<?php echo BASE_URL; ?>index.php">
       <img src="<?php echo BASE_URL; ?>images/logo.png" alt="Logo" width="50px" class="rounded-pill">
     </a>
-
+    <!-- Parte per mobile -->
     <div class="d-flex align-items-center d-lg-none">
-      <!-- Pallino rosso che lampeggia -->
+      <!-- Indicatore visivo per le notifiche su dispositivi mobili -->
       <?php if ($num_inviti > 0): ?>
         <a href="<?php echo BASE_URL; ?>frontend/inviti.php" class="me-2 d-flex align-items-center text-decoration-none">
           <span class="bg-danger rounded-circle" style="width: 12px; height: 12px; border: 2px solid white; display: block; box-shadow: 0 0 4px rgba(220,53,69,0.5);"></span>
@@ -42,7 +43,7 @@ if (isset($_SESSION['id_utente'])) {
         <span class="navbar-toggler-icon"></span>
       </button>
     </div>
-
+    <!-- Parte principale -->
     <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
 
       <ul class="navbar-nav mx-auto mb-2 mb-lg-0 text-center gap-2">
@@ -51,7 +52,7 @@ if (isset($_SESSION['id_utente'])) {
         </li>
 
         <?php if (isset($_SESSION['id_utente'])): ?>
-
+          <!-- Sezione dei menu a tendina dedicata ai ruoli di admin o di responsabile -->
           <?php if (!empty($_SESSION['is_responsabile']) || !empty($_SESSION['is_admin'])): ?>
 
             <li class="nav-item dropdown">
@@ -132,7 +133,8 @@ if (isset($_SESSION['id_utente'])) {
       </ul>
 
       <div class="d-block d-lg-none my-2" style="width: 100%; height: 1px; background-color: #ddd;"></div>
-
+      
+      <!-- Parte finale con identificazione e logout -->
       <ul class="navbar-nav align-items-center justify-content-center flex-column flex-lg-row gap-3 mt-3 mt-lg-0">
         <?php if (isset($_SESSION['id_utente'])): ?>
           <li class="nav-item">

@@ -12,6 +12,7 @@ function connessione($hostname, $username, $password, $dbname)
     }
 }
 
+// Verifica le credenziali dell'utente confrontando l'email e verificando l'hash della password
 function controllaUtente($cid, $email, $password)
 {
     $sql = "SELECT id_utente, nome, ruolo, password_hash, is_responsabile, is_admin  
@@ -32,7 +33,7 @@ function controllaUtente($cid, $email, $password)
 
 
 // REGISTRAZIONE E MODIFICA UTENTE
-
+// Registrazione di un nuovo profilo utente con contestuale aggiornamento dei dati del settore
 function inserisciUtente($cid, $nome, $cognome, $email, $password, $data_nascita, $ruolo, $id_settore, $foto = null)
 {
     $password_hash = password_hash($password, PASSWORD_DEFAULT);
@@ -44,7 +45,7 @@ function inserisciUtente($cid, $nome, $cognome, $email, $password, $data_nascita
     $id = $cid->insert_id;
     $stmt->close();
 
-    // aggiornamento num_iscritti
+    // Aggiornamento num_iscritti
     if ($id_settore) {
         $sqlUpdate = "UPDATE SETTORE SET num_iscritti = num_iscritti + 1 WHERE id_settore = ?";
         $stmtUpd = $cid->prepare($sqlUpdate);
@@ -56,6 +57,7 @@ function inserisciUtente($cid, $nome, $cognome, $email, $password, $data_nascita
     return $id;
 }
 
+// Aggiornamento dei dati personali con gestione differenziata in base alla presenza della foto
 function modificaUtente($cid, $id_utente, $nome, $cognome, $email, $data_nascita, $foto)
 {
     if (!empty($foto)) {
@@ -71,6 +73,7 @@ function modificaUtente($cid, $id_utente, $nome, $cognome, $email, $data_nascita
     $stmt->close();
 }
 
+// Rimozione completa del profilo utente comprensiva di foto da disco e statistiche settore
 function eliminaMioProfilo($cid, $id_utente)
 {
     // Recupero il settore dell'utente PRIMA di cancellarlo
@@ -131,7 +134,7 @@ function datiUtenteCompleti($cid, $id_utente)
 
 
 // NAVBAR
-
+// Estrazione degli inviti pendenti che non sono ancora scaduti temporalmente
 function getInvitiPendenti($cid, $id_utente)
 {
     $sql = "SELECT I.*, S.nome_sala, P.attivita, U.nome as nome_org, U.cognome as cognome_org
@@ -152,6 +155,7 @@ function getInvitiPendenti($cid, $id_utente)
     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
+// Recupero dei futuri impegni confermati organizzati per la visualizzazione grafica
 function getImpegniFuturi($cid, $id_utente)
 {
     $sql = "SELECT I.*, S.nome_sala, P.attivita, P.durata, P.id_organizzatore, U.nome as nome_org, U.cognome as cognome_org
@@ -172,6 +176,7 @@ function getImpegniFuturi($cid, $id_utente)
     // Costruzione Griglia
     $res = $stmt->get_result();
     $planning = [];
+    // Elaborazione della durata per mappare correttamente ogni ora occupata
     while ($row = $res->fetch_assoc()) {
         for ($i = 0; $i < $row['durata']; $i++) {
             $h = $row['ora'] + $i;
@@ -186,25 +191,6 @@ function getImpegniFuturi($cid, $id_utente)
 
 
 // FUNZIONI PER ADMIN 
-
-// Statistiche
-function getTotaleUtenti($cid)
-{
-    $res = $cid->query("SELECT COUNT(*) as totale FROM UTENTE");
-    return $res ? $res->fetch_assoc()['totale'] : 0;
-}
-
-function getTotaleSettori($cid)
-{
-    $res = $cid->query("SELECT COUNT(*) as totale FROM SETTORE");
-    return $res ? $res->fetch_assoc()['totale'] : 0;
-}
-
-function getPrenotazioni($cid)
-{
-    $res = $cid->query("SELECT COUNT(*) as totale FROM PRENOTAZIONE");
-    return $res ? $res->fetch_assoc()['totale'] : 0;
-}
 
 // Settori
 function getAllSettoriAdmin($cid)
@@ -276,15 +262,19 @@ function getAllUtentiAdmin($cid)
     return $cid->query($sql)->fetch_all(MYSQLI_ASSOC);
 }
 
+// Procedura di nomina a responsabile
 function promuoviAResponsabile($cid, $id_utente, $id_settore)
 {
     $cid->begin_transaction();
     try {
+        // Reset del precedente incarico per il settore specifico
         $cid->query("UPDATE SETTORE SET id_responsabile = NULL WHERE id_settore = $id_settore");
+        // Aggiornamento dello stato dell'utente e assegnazione al settore
         $stmt = $cid->prepare("UPDATE UTENTE SET is_responsabile = 1, id_settore = ? WHERE id_utente = ? AND is_admin = 0");
         $stmt->bind_param("ii", $id_settore, $id_utente);
         $stmt->execute();
         if ($stmt->affected_rows === 0) throw new Exception();
+        // Consolidamento del legame tra settore e nuovo responsabile
         $stmt = $cid->prepare("UPDATE SETTORE SET id_responsabile = ? WHERE id_settore = ?");
         $stmt->bind_param("ii", $id_utente, $id_settore);
         $stmt->execute();
@@ -296,6 +286,7 @@ function promuoviAResponsabile($cid, $id_utente, $id_settore)
     }
 }
 
+// Procedura di retrocessione a utente base
 function retrocediResponsabile($cid, $id_utente)
 {
     $cid->begin_transaction();
@@ -334,21 +325,29 @@ function eliminaUtente($cid, $id_target, $id_self)
 
     // Se c'è una foto, la cancelliamo fisicamente dal disco
     if (!empty($percorsoFoto)) {
-        rimuoviVecchiaFoto($percorsoFoto); // Funzione helper già esistente
+        rimuoviVecchiaFoto($percorsoFoto);
     }
 
+    // Eliminazione effettiva
     $stmt = $cid->prepare("DELETE FROM UTENTE WHERE id_utente = ?");
     $stmt->bind_param("i", $id_target);
     try {
         $esito = $stmt->execute();
         $stmt->close();
 
-        // Se cancellato con successo, decremento num_iscritti (-1)
-        if ($esito && $id_settore) {
-            $stmtUpd = $cid->prepare("UPDATE SETTORE SET num_iscritti = num_iscritti - 1 WHERE id_settore = ?");
-            $stmtUpd->bind_param("i", $id_settore);
-            $stmtUpd->execute();
-            $stmtUpd->close();
+        // Se cancellato con successo
+        if ($esito) {
+            // Eliminazione della foto dal server solo dopo la conferma della cancellazione del profilo
+            if (!empty($percorsoFoto)) {
+                rimuoviVecchiaFoto($percorsoFoto);
+            }
+            // Decremento num_iscritti
+            if ($id_settore) {
+                $stmtUpd = $cid->prepare("UPDATE SETTORE SET num_iscritti = num_iscritti - 1 WHERE id_settore = ?");
+                $stmtUpd->bind_param("i", $id_settore);
+                $stmtUpd->execute();
+                $stmtUpd->close();
+            }
         }
 
         return $esito;
@@ -412,6 +411,8 @@ function eliminaDotazione($cid, $id)
     }
 }
 
+// Estrae tutte le prenotazioni relative a una sala in un determinato intervallo di tempo 
+// per disporle ordinatamente all'interno di una griglia settimanale
 function getPrenotazioniGriglia($cid, $id_settore, $nome_sala, $data_inizio, $data_fine)
 {
     $prenotazioni_griglia = [];
@@ -457,7 +458,7 @@ function getAllSaleGlobal($cid)
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
-// Recupera le dotazioni di una specifica sala (Stringa formattata)
+// Recupera le dotazioni di una specifica sala
 function getDotazioniSala($cid, $id_settore, $nome_sala)
 {
     $sql = "SELECT D.tipo 
@@ -531,16 +532,18 @@ function getRisposteInvitiByResponsabile($cid, $id_responsabile)
             JOIN UTENTE U ON I.id_utente = U.id_utente
             WHERE P.id_organizzatore = ?
             AND I.id_utente != P.id_organizzatore
-            -- Nascondi gli inviti in sospeso per eventi già passati
+            -- Nasconde gli inviti in sospeso per eventi già passati
             AND NOT (I.stato = 'invitato' AND (P.data < CURDATE() OR (P.data = CURDATE() AND P.ora < HOUR(NOW()))))
             ORDER BY I.data_risposta DESC, I.data ASC";
-            
+
     $stmt = $cid->prepare($sql);
     $stmt->bind_param("i", $id_responsabile);
     $stmt->execute();
     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
+// Restituisce i dettagli di tutti i partecipanti invitati a una prenotazione 
+// mostrando chi ha accettato e chi ha rifiutato l'invito
 function getInvitatiPrenotazione($cid, $id_settore, $nome_sala, $data, $ora)
 {
     $sql = "SELECT U.nome, U.cognome, U.email, I.stato, I.motivazione, U.ruolo
@@ -582,44 +585,6 @@ function getDotazioniIdsBySala($cid, $id_settore, $nome_sala)
     return $ids;
 }
 
-// Salva o Aggiorna sala (usata sia in creazione che modifica)
-function salvaSalaConDotazioni($cid, $id_settore, $nome_sala, $capienza, $dotazioni, $old_nome = null)
-{
-    if ($old_nome) {
-        // UPDATE
-        $stmt = $cid->prepare("UPDATE SALA SET nome_sala = ?, capienza_max = ? WHERE id_settore = ? AND nome_sala = ?");
-        $stmt->bind_param("siis", $nome_sala, $capienza, $id_settore, $old_nome);
-        $stmt->execute();
-
-        // Rimuovi vecchie dotazioni per reinserirle
-        $stmt_del = $cid->prepare("DELETE FROM SALA_DOTAZIONE WHERE id_settore = ? AND nome_sala = ?");
-        $stmt_del->bind_param("is", $id_settore, $nome_sala);
-        $stmt_del->execute();
-    } else {
-        // INSERT NUOVA
-        $stmt = $cid->prepare("INSERT INTO SALA (id_settore, nome_sala, capienza_max) VALUES (?, ?, ?)");
-        $stmt->bind_param("isi", $id_settore, $nome_sala, $capienza);
-        $stmt->execute();
-    }
-
-    // Inserimento Dotazioni
-    if (!empty($dotazioni)) {
-        $stmt_dot = $cid->prepare("INSERT INTO SALA_DOTAZIONE (id_settore, nome_sala, id_dotazione) VALUES (?, ?, ?)");
-        foreach ($dotazioni as $id_dot) {
-            $stmt_dot->bind_param("isi", $id_settore, $nome_sala, $id_dot);
-            $stmt_dot->execute();
-        }
-    }
-    return true;
-}
-
-function eliminaSalaResponsabile($cid, $id_settore, $nome_sala)
-{
-    $stmt = $cid->prepare("DELETE FROM SALA WHERE id_settore = ? AND nome_sala = ?");
-    $stmt->bind_param("is", $id_settore, $nome_sala);
-    return $stmt->execute();
-}
-
 // Recupera singola prenotazione
 function getPrenotazioneSingola($cid, $id_settore, $nome_sala, $data, $ora)
 {
@@ -630,7 +595,7 @@ function getPrenotazioneSingola($cid, $id_settore, $nome_sala, $data, $ora)
     return $stmt->get_result()->fetch_assoc();
 }
 
-// Check sovrapposizione per NUOVA prenotazione
+// Verifica dell'esistenza di conflitti orari per una specifica sala in una data
 function checkSovrapposizioneNuova($cid, $id_settore, $nome_sala, $data, $ora_nuova, $durata_nuova)
 {
     $sql = "SELECT ora FROM PRENOTAZIONE
@@ -683,7 +648,7 @@ function creaPrenotazioneConInviti($cid, $id_settore, $nome_sala, $data, $ora, $
 
     $stmt_inv = $cid->prepare("INSERT INTO INVITO (id_utente, id_settore, nome_sala, data, ora, stato) VALUES (?, ?, ?, ?, ?, ?)");
 
-    // Inseriamo l'organizzatore come 'accettato'
+    // Inserimento automatico dell'organizzatore con stato già confermato
     $stato_org = 'accettato';
     $stmt_inv->bind_param("iissis", $id_organizzatore, $id_settore, $nome_sala, $data, $ora, $stato_org);
     $stmt_inv->execute();
@@ -727,6 +692,8 @@ function getSaleBySettore($cid, $id_settore)
     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
+// Verifica quali orari sono occupati in una sala specifica durante la settimana corrente 
+// segnalando anche eventuali impegni già presi dall'utente in altre sale
 function getOccupazioniSettimana($cid, $nome_sala, $id_settore, $lunedi, $domenica, $id_utente = null)
 {
     $sql = "SELECT P.data, P.ora, P.durata, P.attivita, U.nome, U.cognome 
@@ -745,7 +712,7 @@ function getOccupazioniSettimana($cid, $nome_sala, $id_settore, $lunedi, $domeni
         for ($i = 0; $i < $row['durata']; $i++) {
             $h = $row['ora'] + $i;
             $occupied[$row['data']][$h] = [
-                'dati' => $row, // Uniformato a 'dati' per coerenza
+                'dati' => $row,
                 'is_start' => ($i === 0)
             ];
         }
@@ -788,6 +755,8 @@ function getOccupazioniSettimana($cid, $nome_sala, $id_settore, $lunedi, $domeni
     return $occupied;
 }
 
+// Compone una lista di persone che possono essere invitate a un nuovo evento 
+// escludendo chi ha già altri impegni confermati nello stesso orario
 function getUtentiInvitabili($cid, $id_escluso, $data, $ora)
 {
     $sql = "SELECT U.id_utente, U.nome, U.cognome, U.ruolo, U.is_responsabile, 
@@ -805,7 +774,7 @@ function getUtentiInvitabili($cid, $id_escluso, $data, $ora)
     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
-// Check sovrapposizione Utente (Inviti)
+// Check sovrapposizione Utente
 function checkSovrapposizioneUtente($cid, $id_utente_target, $data_target, $ora_target, $durata_target, $id_settore_target, $nome_sala_target)
 {
     $sql = "SELECT P.ora FROM PRENOTAZIONE P 
@@ -840,7 +809,7 @@ function getListaSettori($cid)
     return $result;
 }
 
-// Elabora slot selezionati
+// Analisi dei parametri ricevuti per calcolare durata e validità della selezione
 function elaboraSlotSelezionati($slots)
 {
     if (empty($slots)) {
@@ -859,7 +828,7 @@ function elaboraSlotSelezionati($slots)
         if ($giorno_riferimento === null) {
             $giorno_riferimento = $d;
         }
-
+        // Controllo che la selezione appartenga interamente alla stessa giornata
         if ($d !== $giorno_riferimento) {
             return ['error' => "Puoi selezionare orari solo per un singolo giorno alla volta."];
         }
@@ -867,9 +836,9 @@ function elaboraSlotSelezionati($slots)
         $ore_selezionate[] = $h;
     }
 
-    // Ordinamento e controllo Consecutività
     sort($ore_selezionate, SORT_NUMERIC);
 
+    // Validazione della continuità temporale della richiesta di prenotazione
     for ($i = 0; $i < count($ore_selezionate) - 1; $i++) {
         if ($ore_selezionate[$i + 1] !== ($ore_selezionate[$i] + 1)) {
             return ['error' => "Errore: Hai selezionato orari non consecutivi. Seleziona solo ore di fila."];
@@ -889,9 +858,7 @@ function elaboraSlotSelezionati($slots)
     ];
 }
 
-
-// GESTIONE FOTO (REGISTRA E MODIFICA PROFILO
-
+// Gestione del caricamento dell'immagine del profilo con generazione di nome file univoco
 function uploadFotoProfilo($fileInput)
 {
     // Controlli base
@@ -915,6 +882,7 @@ function uploadFotoProfilo($fileInput)
     return null;
 }
 
+// Rimozione definitiva del file fisico dell'immagine dal server
 function rimuoviVecchiaFoto($pathRelativoDalDb)
 {
 
@@ -957,7 +925,7 @@ function getNumeroSalePerTipo($cid, $tipo)
     return $res['num'];
 }
 
-
+// Genera la struttura visiva del calendario interattivo permettendo la selezione degli slot orari liberi tramite caselle di spunta
 function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is_read_only = false)
 {
     ob_start();
@@ -1073,7 +1041,7 @@ function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is
                                                                 <div class="small text-muted" style="min-width: 200px;">
                                                                     <strong><?php echo htmlspecialchars($info['attivita']); ?></strong><br>
                                                                     <?php if (!$is_personal): ?>
-                                                                    <i class="bi bi-person-fill"></i> Org: <?php echo $nominativo_completo; ?><br>
+                                                                        <i class="bi bi-person-fill"></i> Org: <?php echo $nominativo_completo; ?><br>
                                                                     <?php endif; ?>
                                                                     <i class="bi bi-clock"></i> <?php echo $ora; ?>:00 - <?php echo $ora + $durata; ?>:00
                                                                 </div>
@@ -1130,7 +1098,8 @@ function renderCalendarGrid($lunedi_settimana, $occupied, $is_admin = false, $is
     return ob_get_clean();
 }
 
-// Funzione SPECIFICA per visualizza_prenotazioni.php (Solo visualizzazione)
+// Produce una versione del calendario dedicata alla sola consultazione
+// con la possibilità per gli amministratori di intervenire sulle prenotazioni esistenti
 function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = false)
 {
     ob_start();
@@ -1297,6 +1266,8 @@ function renderCalendarGrid_AdminView($lunedi_settimana, $occupied, $is_admin = 
     return ob_get_clean();
 }
 
+// Visualizza il planning personale dell'utente mostrando esclusivamente gli appuntamenti accettati
+// e permettendo la gestione rapida delle disdette
 function renderCalendarGrid_Impegni($lunedi_settimana, $planning, $is_responsabile)
 {
     ob_start();

@@ -24,8 +24,7 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
 <html lang="it" class="no-js">
 <?php require ROOT_PATH . "/common/header.php" ?>
 
-<body class="homepage-body">
-
+<body>
     <?php include ROOT_PATH . '/common/navbar.php'; ?>
 
     <header class="hero-section text-center text-white d-flex align-items-center justify-content-center mb-0">
@@ -50,7 +49,7 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
     </header>
 
     <div class="sezioni">
-
+        
         <section id="musica" class="py-5 section-white section-spacious first-section-overlap">
             <div class="container-xl my-4">
                 <div class="row gy-4 gx-lg-5 align-items-center">
@@ -63,6 +62,7 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                             Le nostre sale musica offrono un'acustica trattata professionalmente con pannelli fonoassorbenti e bass traps, ideali per band al completo, ensemble acustici o sessioni di pratica individuale. Troverai spazi climatizzati, dotati di amplificazione di base di alta qualità, mixer multicanale e batteria standard.
                         </p>
 
+                        <!-- Card con statistiche -->
                         <div class="row g-4 justify-content-center">
                             <div class="col-auto">
                                 <div class="p-3 bg-white rounded-4 text-center shadow-sm border h-100 d-flex flex-column justify-content-center stat-card" style="min-width: 120px;">
@@ -82,7 +82,7 @@ $num_sale_ballo = getNumeroSalePerTipo($cid, 'ballo');
                             </div>
                         </div>
                     </div>
-
+                    <!-- Immagine -->
                     <div class="col-lg-6 mt-5 mt-lg-0 px-4">
                         <img src="images/musica.jpg"
                             alt="Sala Musica"

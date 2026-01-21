@@ -14,17 +14,17 @@ $risposta = ["status" => "ko", "msg" => "Errore sconosciuto"];
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $data_nascita = $_POST['data_nascita'] ?? '';
-    // Controlla che la data sia valida
+    // Controlla che la data sia valida (no futuro)
     if (!empty($_POST['data_nascita']) && strtotime($_POST['data_nascita']) > time()) {
         $risposta["msg"] = "La data di nascita non può essere nel futuro.";
         echo json_encode($risposta);
         exit;
     }
-    // Gestione upload foto
+    // Esecuzione del caricamento della foto del profilo e generazione del relativo percorso
     $percorsoFotoDB = uploadFotoProfilo($_FILES['foto'] ?? null);
 
     try {
-        //Inserimento utente nel DB
+        // Registrazione dei dati dell'utente e assegnazione al settore di appartenenza scelto
         $id_nuovo_utente = inserisciUtente(
             $cid,
             $_POST['nome'] ?? '',
@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $risposta["msg"] = "Errore durante l'inserimento. Riprova.";
         }
     } catch (mysqli_sql_exception $e) {
-        // Gestione errore duplicato
+        // Gestione specifica degli errori in caso di email già presente nel sistema
         if ($e->getCode() == 1062) {
             $risposta["msg"] = "Questa email è già registrata.";
         } else {

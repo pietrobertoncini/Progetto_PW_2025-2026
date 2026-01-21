@@ -16,7 +16,7 @@ if (!isset($_SESSION['is_admin']) || empty($_SESSION['is_admin'])) {
 $action = $_POST['action'] ?? '';
 
 switch ($action) {
-    
+    // Inserimento di una nuova sala definendone nome e capienza massima consentita
     case 'create':
         $nome = trim($_POST['nome_sala']);
         $capienza = (int)$_POST['capienza_max'];
@@ -33,11 +33,12 @@ switch ($action) {
         }
         break;
 
+    // Modifica dei dati identificativi della sala mantenendo la coerenza con le prenotazioni esistenti
     case 'update':
         // Dati Vecchi
         $old_nome = $_POST['old_nome_sala'];
         $old_id_settore = (int)$_POST['old_id_settore'];
-        
+
         // Dati Nuovi
         $new_nome = trim($_POST['nome_sala']);
         $new_capienza = (int)$_POST['capienza_max'];
@@ -54,6 +55,7 @@ switch ($action) {
         }
         break;
 
+    // Cancellazione sicura di una sala che fallisce automaticamente in presenza di impegni futuri
     case 'delete':
         $nome = $_POST['nome_sala'];
         $id_settore = (int)$_POST['id_settore'];
@@ -65,7 +67,7 @@ switch ($action) {
                 throw new Exception("Impossibile eliminare.");
             }
         } catch (mysqli_sql_exception $e) {
-            // Codice 1451: foreign key constraint
+            // Gestione del vincolo di integrità se esistono prenotazioni collegate
             if ($e->getCode() == 1451) {
                 header("Location: " . BASE_URL . "frontend/admin_sale.php?error=" . urlencode("Impossibile eliminare: ci sono prenotazioni associate a questa sala."));
             } else {
@@ -78,4 +80,3 @@ switch ($action) {
         header("Location: " . BASE_URL . "frontend/admin_sale.php");
         exit;
 }
-?>

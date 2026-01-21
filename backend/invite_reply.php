@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id_utente'])) {
     $motivazione = !empty($_POST['motivazione']) ? $_POST['motivazione'] : null;
 
     try {
-        // Se accetta, controlliamo che non abbia sovrapposizioni (Query 4)
+        // Controllo preventivo delle sovrapposizioni orarie nel planning personale dell'utente in caso di accettazione
         if ($risposta === 'accettato') {
 
             // Dobbiamo recuperare la DURATA della prenotazione target per fare il controllo
@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id_utente'])) {
             }
         }
 
-        // Se passiamo i controlli o se rifiutiamo, eseguiamo l'update
+        // Aggiornamento dello stato dell'invito con eventuale inserimento della motivazione del rifiuto
         if (rispondiInvito($cid, $id_utente, $id_settore, $nome_sala, $data, $ora, $risposta, $motivazione)) {
             if ($risposta === 'accettato') {
                 header("Location: " . BASE_URL . "frontend/impegni.php?msg=Invito accettato con successo!");
@@ -49,7 +49,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['id_utente'])) {
             header("Location: " . BASE_URL . "frontend/inviti.php?error=Errore durante l'aggiornamento.");
         }
         exit;
-
     } catch (Exception $e) {
         header("Location: " . BASE_URL . "frontend/inviti.php?error=" . $e->getMessage());
         exit;

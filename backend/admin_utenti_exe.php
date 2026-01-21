@@ -18,7 +18,7 @@ if ($id_utente_target <= 0) {
 }
 
 switch ($action) {
-    // caso 1: PROMUOVI A RESPONSABILE
+    // Assegnazione del ruolo di responsabile a un utente per la gestione di un settore specifico
     case 'promote':
         $id_settore_dest = intval($_POST['id_settore_dest'] ?? 0);
         if ($id_settore_dest <= 0) {
@@ -33,7 +33,7 @@ switch ($action) {
         }
         break;
 
-    // caso 2: RETROCEDI RESPONSABILE
+    // Revoca dell'incarico di responsabilità riportando l'utente allo stato standard
     case 'demote':
         if (retrocediResponsabile($cid, $id_utente_target)) {
             header("Location: " . BASE_URL . "frontend/admin_utenti.php?msg=" . urlencode("Responsabile retrocesso a utente normale."));
@@ -42,7 +42,7 @@ switch ($action) {
         }
         break;
 
-    // caso 3: ELIMINA UTENTE
+    // Rimozione definitiva di un account dal sistema con blocco dell'autoeliminazione
     case 'delete':
         // Passiamo anche il nostro ID per evitare auto-eliminazione
         if (eliminaUtente($cid, $id_utente_target, $_SESSION['id_utente'])) {

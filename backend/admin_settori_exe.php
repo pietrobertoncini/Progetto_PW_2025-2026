@@ -15,7 +15,7 @@ if (!isset($_SESSION['id_utente']) || empty($_SESSION['is_admin'])) {
 $action = isset($_POST['action']) ? $_POST['action'] : '';
 
 switch ($action) {
-    // caso 1: CREAZIONE
+    // Creazione di un nuovo settore
     case 'create':
         // recupera dati dal form e pulisci
         $nome = trim($_POST['nome'] ?? '');
@@ -28,7 +28,7 @@ switch ($action) {
         }
         break;
 
-    // caso 2: AGGIORNAMENTO
+    // Aggiornamento delle informazioni descrittive del settore
     case 'update':
         $id_settore = intval($_POST['id_settore'] ?? 0);
         $nome = trim($_POST['nome'] ?? '');
@@ -46,7 +46,7 @@ switch ($action) {
         }
         break;
 
-    // caso 3: ELIMINAZIONE
+    // Eliminazione di un settore possibile solo se privo di iscritti o sale collegate
     case 'delete':
         $id_settore = intval($_POST['id_settore'] ?? 0);
 
@@ -58,7 +58,6 @@ switch ($action) {
         if (eliminaSettore($cid, $id_settore)) {
             header("Location: " . BASE_URL . "frontend/admin_settori.php?msg=" . urlencode("Settore eliminato con successo!"));
         } else {
-            // Messaggio specifico: l'errore più probabile è che ci sono utenti iscritti
             header("Location: " . BASE_URL . "frontend/admin_settori.php?error=" . urlencode("Impossibile eliminare: ci sono utenti o sale associate a questo settore."));
         }
         break;

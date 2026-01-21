@@ -19,6 +19,7 @@ $id_settore = $dati_utente['id_settore'];
 $nome_sala = $_POST['nome_sala'];
 $nuove_dotazioni = isset($_POST['dotazioni']) ? $_POST['dotazioni'] : [];
 
+// Salvataggio della nuova configurazione delle dotazioni di supporto selezionate
 if (aggiornaDotazioniSala($cid, $id_settore, $nome_sala, $nuove_dotazioni)) {
     header("Location: " . BASE_URL . "frontend/resp_dotazioni.php?msg=" . urlencode("Dotazioni aggiornate con successo!"));
 } else {

@@ -30,7 +30,7 @@ $resOld = mysqli_query($cid, $queryOld);
 $rowOld = mysqli_fetch_assoc($resOld);
 $vecchiaFoto = $rowOld['foto'];
 
-// logica FOTO
+// Logica di sostituzione della foto del profilo con pulizia automatica delle versioni precedenti
 $percorsoFotoDB = uploadFotoProfilo($_FILES['foto'] ?? null);
 
 // Decidiamo quale percorso salvare nel DB
@@ -44,9 +44,9 @@ if ($percorsoFotoDB != null) {
 }
 
 try {
+    // Salvataggio dei cambiamenti nel database e allineamento dei dati visualizzati nella sessione attiva
     modificaUtente($cid, $id_utente, $nome, $cognome, $email, $data_nascita, $percorsoFinale);
     
-    // Aggiorniamo la sessione col nuovo nome
     $_SESSION['nome'] = $nome;
             
     // Torniamo al profilo con un messaggio di successo
@@ -54,16 +54,13 @@ try {
     exit;
 
 } catch (mysqli_sql_exception $e) {
-     // Gestione errori specifici (es. email duplicata)
     if ($e->getCode() == 1062) {
         header("Location: " . BASE_URL . "frontend/modifica_profilo.php?error=Email già utilizzata da un altro utente.");
     } else {
-        // Errore generico del database
         header("Location: " . BASE_URL . "frontend/modifica_profilo.php?error=Errore del sistema: " . $e->getMessage());
     }
     exit;
 } catch (Exception $e) {
-    // Altri errori generici
     header("Location: " . BASE_URL . "frontend/modifica_profilo.php?error=Si è verificato un errore imprevisto.");
     exit;
 }

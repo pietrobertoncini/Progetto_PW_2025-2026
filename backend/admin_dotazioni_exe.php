@@ -15,7 +15,7 @@ $action = isset($_POST['action']) ? $_POST['action'] : '';
 
 switch ($action) {
 
-    // CASO 1: CREA
+    // Inserimento di una nuova dotazione nel sistema con controllo preventivo dei duplicati
     case 'create':
         $tipo = trim($_POST['tipo'] ?? '');
 
@@ -31,7 +31,7 @@ switch ($action) {
                 throw new Exception("Errore generico.");
             }
         } catch (mysqli_sql_exception $e) {
-            if ($e->getCode() == 1062) { // Duplicate entry
+            if ($e->getCode() == 1062) { // Errore per voce già esistente
                 header("Location: " . BASE_URL . "frontend/admin_dotazioni.php?error=" . urlencode("Esiste già una dotazione con questo nome."));
             } else {
                 header("Location: " . BASE_URL . "frontend/admin_dotazioni.php?error=" . urlencode("Errore DB: " . $e->getMessage()));
@@ -39,7 +39,7 @@ switch ($action) {
         }
         break;
 
-    // CASO 2: AGGIORNA
+    // Aggiornamento del nome di una dotazione esistente gestendo le eccezioni del database
     case 'update':
         $id_dotazione = intval($_POST['id_dotazione'] ?? 0);
         $tipo = trim($_POST['tipo'] ?? '');
@@ -62,7 +62,7 @@ switch ($action) {
         }
         break;
 
-    // CASO 3: ELIMINA
+    // Rimozione di una voce dal catalogo impedendo l'eliminazione se utilizzata in una sala
     case 'delete':
         $id_dotazione = intval($_POST['id_dotazione'] ?? 0);
 

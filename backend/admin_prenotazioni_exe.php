@@ -24,7 +24,7 @@ if ($action === 'delete') {
         header("Location: " . BASE_URL . "frontend/admin_prenotazioni.php?error=" . urlencode("Dati prenotazione non validi."));
         exit;
     }
-
+    // Eliminazione definitiva della prenotazione selezionata
     if (eliminaPrenotazioneAdmin($cid, $id_settore, $nome_sala, $data, $ora)) {
         header("Location: " . BASE_URL . "frontend/admin_prenotazioni.php?msg=" . urlencode("Prenotazione eliminata con successo."));
     } else {
@@ -35,4 +35,3 @@ if ($action === 'delete') {
 
 header("Location: " . BASE_URL . "frontend/admin_prenotazioni.php");
 exit;
-?>

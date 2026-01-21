@@ -22,19 +22,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['is_responsabile']))
 
     $new_ora_fine = $new_ora + $new_durata;
 
-    // VALIDAZIONE ORARIO
+    // Validazione dell'intervallo orario scelto
     if ($new_ora < 9 || $new_ora_fine > 23) {
         header("Location: " . BASE_URL . "frontend/modifica_prenotazione.php?error=Orario non valido (9-23)&sala=" . urlencode($old_nome_sala) . "&data=$old_data&ora=$old_ora");
         exit;
     }
 
-    // CONTROLLO CONFLITTI 
+    // Verifica della disponibilità della sala per evitare conflitti con altre attività già programmate
     if (checkSovrapposizioneModifica($cid, $id_settore, $old_nome_sala, $new_data, $new_ora, $new_durata, $old_data, $old_ora)) {
         header("Location: " . BASE_URL . "frontend/modifica_prenotazione.php?error=Conflitto! Sala già occupata nel nuovo orario.&sala=" . urlencode($old_nome_sala) . "&data=$old_data&ora=$old_ora");
         exit;
     }
-    // AGGIORNAMENTO DB
+
     try {
+        // Consolidamento delle modifiche nel sistema e gestione degli eventuali errori di salvataggio
         if (aggiornaPrenotazione($cid, $new_data, $new_ora, $new_durata, $new_attivita, $id_settore, $old_nome_sala, $old_data, $old_ora)) {
             header("Location: " . BASE_URL . "frontend/gestione_prenotazioni.php?msg=Prenotazione aggiornata con successo!");
         } else {

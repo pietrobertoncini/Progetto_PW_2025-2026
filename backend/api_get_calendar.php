@@ -33,7 +33,7 @@ if (isset($_GET['id_settore'])) {
 
 $id_utente_sessione = $_SESSION['id_utente'] ?? null;
 
-// Calcolo Date
+// Calcolo dell'intervallo temporale che definisce la settimana
 $timestamp_rif = strtotime($data_rif);
 $lunedi_settimana = date('Y-m-d', strtotime('monday this week', $timestamp_rif));
 $domenica_settimana = date('Y-m-d', strtotime('sunday this week', $timestamp_rif));
@@ -53,26 +53,21 @@ try {
     } elseif ($mode === 'admin' || $mode === 'view') {
         $occupied = getPrenotazioniGriglia($cid, $id_settore, $nome_sala, $lunedi_settimana, $domenica_settimana);
     } else {
-        // Modalità PRENOTA
+        // Caricamento degli spazi occupati per la fase di nuova prenotazione
         if ($nome_sala) {
             $occupied = getOccupazioniSettimana($cid, $nome_sala, $id_settore, $lunedi_settimana, $domenica_settimana, $id_utente_sessione);
         }
     }
 
-    // SELEZIONE FUNZIONE CORRETTA
+    // Generazione della rappresentazione visiva della griglia tramite la funzione di rendering corretta
     if ($mode === 'impegni') {
-        // Usa la funzione specifica per gli impegni
         $is_resp = !empty($_SESSION['is_responsabile']);
         $html = renderCalendarGrid_Impegni($lunedi_settimana, $occupied, $is_resp);
     } elseif ($mode === 'view') {
-        // Usa la NUOVA funzione specifica per la visualizzazione
         $html = renderCalendarGrid_AdminView($lunedi_settimana, $occupied, false);
     } elseif ($mode === 'admin') {
-        // Per ora usiamo quella view anche per admin (provvisorio, poi ne faremo una dedicata se serve)
-        // O se preferisci lasciare admin com'era, possiamo creare renderCalendarGrid_Admin dopo.
         $html = renderCalendarGrid_AdminView($lunedi_settimana, $occupied, true);
     } else {
-        // Modalità Prenota (quella originale con checkbox)
         $html = renderCalendarGrid($lunedi_settimana, $occupied, false, false);
     }
 

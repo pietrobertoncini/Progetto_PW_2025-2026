@@ -17,10 +17,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // logica UPLOAD FOTO
+    // Gestione del caricamento dell'immagine del profilo e assegnazione al settore di competenza scelto
     $percorsoFotoDB = uploadFotoProfilo($_FILES['foto'] ?? null); // restituisce il percorso o null
 
     try {
+        // Registrazione nel sistema e configurazione immediata della sessione per l'accesso automatico
         $id_nuovo_utente = inserisciUtente(
             $cid,
             $_POST['nome'] ?? '',
@@ -33,7 +34,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $percorsoFotoDB
         );
 
-        // Login automatico dopo registrazione
         $_SESSION['id_utente'] = $id_nuovo_utente;
         $_SESSION['nome'] = $_POST["nome"];
         $_SESSION['ruolo'] = $_POST["ruolo"];

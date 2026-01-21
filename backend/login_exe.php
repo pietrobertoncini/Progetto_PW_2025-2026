@@ -13,16 +13,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'] ?? '';
 
     try {
-
+        // Controllo della validità delle credenziali tramite la funzione di sistema
         $utente_trovato = controllaUtente($cid, $email, $password);
 
         if ($utente_trovato) {
+            // Configurazione della sessione utente con le informazioni sui permessi di accesso
             $_SESSION['id_utente'] = $utente_trovato['id_utente'];
             $_SESSION['nome'] = $utente_trovato['nome'];
             $_SESSION['ruolo'] = $utente_trovato['ruolo'];
             $_SESSION['is_responsabile'] = (bool)$utente_trovato['is_responsabile'];
             $_SESSION['is_admin'] = (bool)$utente_trovato['is_admin'];
-
+            // Accesso consentito e ritorno alla pagina iniziale del portale
             header('Location: ' . BASE_URL . 'index.php');
             exit;
         } else {

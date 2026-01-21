@@ -1,5 +1,6 @@
+// Fornisce gli strumenti per l'anteprima delle immagini e la validazione dei dati anagrafici
 function previewFoto(input) {
-    // Se l'utente ha selezionato un file
+    // Genera una visualizzazione temporanea dell'immagine selezionata dall'utente
     if (input.files && input.files[0]) {
         var reader = new FileReader();
 
@@ -48,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         let errori = false;
 
-        // Validazione
+        // Esegue controlli di validità sulla lunghezza dei testi e sulla struttura dell'email
         if (nome.length < 2) {
             document.getElementById('errNome').textContent = "Nome troppo corto";
             errori = true;
@@ -62,6 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById('errEmail').textContent = "Email non valida";
             errori = true;
         }
+        // Verifica che la data inserita non appartenga al futuro
         if (dataNascita === "") {
             document.getElementById('errData').textContent = "Data richiesta";
             errori = true;
@@ -82,6 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const formData = new FormData(form);
         const apiUrl = '../backend/api_update_profile.php';
 
+        // Avvia la procedura di aggiornamento dati tramite interfaccia di sistema
         fetch(apiUrl, {
             method: 'POST',
             body: formData

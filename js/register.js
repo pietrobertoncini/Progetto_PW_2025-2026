@@ -1,5 +1,6 @@
+// Gestisce il processo di registrazione con controlli di sicurezza in tempo reale
 document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById('registerForm');ù
+    const form = document.getElementById('registerForm');
 
     if (!form) return;
 
@@ -26,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         let errori = false;
 
-        // Validazione
+        // Valida la struttura corretta dei dati identificativi forniti dall'utente
         if (nome.length < 2) {
             document.getElementById('errNome').textContent = "Il nome deve avere almeno 2 caratteri.";
             errori = true;
@@ -43,12 +44,12 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById('errEmail').textContent = "Inserisci un'email valida.";
             errori = true;
         }
-
+        // Impone requisiti minimi di lunghezza per la password
         if (password.length < 4) {
             document.getElementById('errPassword').textContent = "La password deve essere di almeno 4 caratteri.";
             errori = true;
         }
-
+        // Verifica che la data inserita non appartenga al futuro
         if (dataNascita === "") {
             document.getElementById('errData').textContent = "Seleziona una data di nascita";
             errori = true;
@@ -73,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const formData = new FormData(form);
         const apiUrl = '../backend/api_register.php';
 
-        // Chiamata fetch
+        // Trasmette la richiesta di creazione account e monitora la risposta del server
         fetch(apiUrl, {
             method: 'POST',
             body: formData

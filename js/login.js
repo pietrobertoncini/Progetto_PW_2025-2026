@@ -1,10 +1,11 @@
+// Gestisce la validazione dei dati di accesso e la comunicazione asincrona con il portale
 document.addEventListener("DOMContentLoaded", function() {
     
     const form = document.getElementById('loginForm');
 
     if (!form) return;
     
-    // Funzione per gestire lo stato della risposta
+    // Controlla l'integrità della risposta del server durante la fase di autenticazione
     function checkStatus(response) {
         if (!response.ok) {
             throw Error("Errore di rete: " + response.status);
@@ -13,7 +14,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     form.addEventListener('submit', function(e) {
-        e.preventDefault(); // Blocca sempre il submit standard
+        // Impedisce il rinvio standard del modulo per gestire l'operazione tramite script
+        e.preventDefault();
 
         const msgDiv = document.getElementById('messaggioAjax');
         const email = document.getElementById('email').value.trim();
@@ -22,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
         let errori = false;
         let msgErrore = "";
 
-        // Validazione
+        // Verifica che tutti i campi necessari siano stati compilati correttamente
         if (email === "") {
             msgErrore += "Inserisci l'email.<br>";
             errori = true;
@@ -46,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         const formData = new FormData(form);
 
-        // Chiamata fetch 
+        // Invia i dati al sistema e gestisce il reindirizzamento in caso di successo
         fetch(apiUrl, {
             method: 'POST',
             body: formData
@@ -61,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 msgDiv.textContent = data.msg;
                 msgDiv.classList.remove('d-none');
 
-                // Aspettiamo un secondo e andiamo alla home
+                // Effettua il passaggio alla pagina principale dopo un breve intervallo di conferma
                 setTimeout(() => {
                     window.location.href = '../index.php';
                 }, 1000);
